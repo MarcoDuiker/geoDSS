@@ -1,0 +1,27 @@
+{ "name": "set 1 json"
+  "title": "Rule set doing a unit like test",
+  "description": "use the unit test to test the framework, demonstrating the json loader on the go.",
+  "logging": {
+    "level": "DEBUG"
+  },
+  "rules": [
+    {
+      "unit_test": {
+        "report_template": "Action should be taken",
+        "type": "tests.unit_test",
+        "description": "unit test testing",
+        "title": "unit test"
+      }
+    },
+    {
+      "postgis_unit_test": {
+        "type": "processors.postgis_unit_test",
+        "db": {
+          "dbname": "gisdefault"
+        },
+        "description": "unit test by buffering subject geometry with distance 1",
+        "title": "processor unit test"
+      }
+    }
+  ]
+}

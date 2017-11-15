@@ -1,0 +1,24 @@
+name: Postgis_spatial_select
+title: Rule set doing a postgis spatial select
+description: Doing a spatial select on gem_2009_gen
+rules:
+- remark:
+    type: tests.remark
+    title: Let op!
+    description: ""
+    report_template: gem_2009_gen should be in the public schema in the gisdefault database
+- postgis_unit_test:
+    type: tests.postgis_spatial_select
+    title: Gemeenten binnen 10 km van de aanvraag
+    description: ""
+    schema: public
+    table: gem_2009_gen
+    relationship: ST_DWithin
+    parameters: 
+    - "subject.geometry"
+    - "wkb_geometry"
+    - "40000"
+    report_template: Doorsturen naar B&W van gemeente {gm_naam}
+    db:
+        dbname: gisdefault
+
