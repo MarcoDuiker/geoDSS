@@ -1,0 +1,12 @@
+name: test_bag_geocoder
+title: Test the BAG geocoder
+description: Test the BAG geocoder by geocoding an address and report the result
+logging:
+  level: DEBUG
+rules:
+- test:
+    type: processors.bag_geocoder
+    title: test_geocoder
+    description: Test 
+    url: "http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm="
+    report_template: Found address on location subject.geometry
