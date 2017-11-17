@@ -57,7 +57,9 @@ def load_execute_report(params):
     data = r.report(output_format = output_format)
 
     status = '200 OK'
-    response_headers = [('Content-type', mime),("Content-Length", str(len(data)))]
+    response_headers = {   
+            'Content-type': mime,
+            "Content-Length": str(len(data))}
 
     return status, response_headers, data
 

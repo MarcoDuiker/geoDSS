@@ -17,6 +17,7 @@ class bag_geocoder(processor):
     This processor provides geocoder using the BAG geocoding service.
 
     Geocoding is done on zip-code and house_number of the subject. 
+    This geocoder takes the first hit as a result
 
     definition is expected to be a dict having:
         url (string):                       base url for the geocoder
@@ -33,7 +34,7 @@ class bag_geocoder(processor):
                 report_template: "Gevonden coordinaten: subject.geometry"
 
     a suitable subject would be:
-        subject = {"postcode": "4171KG", "huisnummer": "74"}
+        subject = '{"postcode": "4171KG", "huisnummer": "74"}'
     '''
 
     def execute(self, subject):

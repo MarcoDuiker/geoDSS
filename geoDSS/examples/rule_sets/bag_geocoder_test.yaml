@@ -7,6 +7,6 @@ rules:
 - test:
     type: processors.bag_geocoder
     title: test_geocoder
-    description: Test 
+    description: Test the bag-geocoder
     url: "http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm="
-    report_template: Found address on location subject.geometry
+    report_template: "Found address on location with EWKT-string: 'subject.geometry'"
