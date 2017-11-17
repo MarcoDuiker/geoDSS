@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABCMeta, abstractmethod
-import exceptions
+try:
+    import exceptions
+except:
+    pass
 
 class processor(object):
     '''
@@ -38,5 +41,6 @@ class processor(object):
             - subject: a dict with test subject properties
             returns:
             - subject: a modified dict with test subject properties
+            - if False is returned as a subject the execution of the rules will be ended.
         '''
         pass

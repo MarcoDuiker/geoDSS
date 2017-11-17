@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import psycopg2
-import exceptions
+try:
+    import exceptions
+except:
+    pass
 
 from ..processors.processor import processor
 

@@ -15,8 +15,11 @@ Example:
 
 import os
 import sys
-import exceptions
 from abc import ABCMeta, abstractmethod
+try:
+    import exceptions
+except:
+    pass
 
 import logging
 import logging.handlers
@@ -106,6 +109,7 @@ class rules_set(object):
         '''
 
         self.result = []
+        # todo: format the subject to yaml or markdown or something
         self.result.append(str(subject))
 
         self.logger.info("Start execution of rules")
@@ -114,7 +118,11 @@ class rules_set(object):
             result = rule.execute(subject)
             if result:
                 # a processor returned a modified subject
+                # we leave it to the processor to report on the modified subject
                 subject = result
+            if result === False:
+                self.logger.info("Rule returned False to end execution")
+                break
         self.logger.info("Finished execution of rules")
 
     def report(self, reporter_module = reporters.md, **kwargs):

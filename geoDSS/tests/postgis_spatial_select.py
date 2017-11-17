@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-
-import exceptions
 import psycopg2
+try:
+    import exceptions
+except:
+    pass
 
 from ..tests.test import test
 

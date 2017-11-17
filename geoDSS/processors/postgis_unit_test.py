@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import psycopg2
-import exceptions
+try:
+    import exceptions
+except:
+    pass
 
 from ..processors.processor import processor
 
@@ -72,8 +75,8 @@ class postgis_unit_test(processor):
             self.result.append(str(error))
             return
 
-        # for this unit test we will put the subject in the report
-        self.result.append(str(subject))
+        # for this unit test we will put the new subject in the report
+        self.result.append("Modified subject to: " + str(subject))
 
         if cur:
             cur.close()

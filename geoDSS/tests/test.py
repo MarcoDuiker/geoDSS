@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABCMeta, abstractmethod
-import exceptions
+try:
+    import exceptions
+except:
+    pass
 
 class test(object):
     '''
@@ -53,5 +56,6 @@ class test(object):
             - self.decision = True | False 
             - self.result to an interable with strings to appear in the report
             should not return a result
+            if False is returned  the execution of the rules will be ended.
         '''
         pass

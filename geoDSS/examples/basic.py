@@ -3,6 +3,7 @@ import geoDSS                                                           # be sur
 
 r = geoDSS.rules_set('geoDSS/examples/rule_sets/unit_test.yaml')        # and then check this path as well
 r.execute( subject = {  'result': True,
-                        'geometry': 'SRID=28992;POINT((125000 360000))'
+                        'geometry': 'SRID=28992;POINT(125000 360000)'
                      })
 r.report()
+print(r)
