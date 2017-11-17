@@ -2,6 +2,7 @@
 
 import markdown as md_lib
 
+
 def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
     '''
     reports on a rule set using markdown or html
@@ -27,7 +28,7 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
     markdown = markdown + '-------' + '\n'
     markdown = markdown + 'Started processing with subject: ' + '\n'
     for row in obj.result:
-        markdown = markdown + '- ' + row + '\n'
+        markdown = markdown + '- ' + str(row) + '\n'
     markdown = markdown + '\n'
     markdown = markdown + 'Results' + '\n'
     markdown = markdown + '=======' + '\n'

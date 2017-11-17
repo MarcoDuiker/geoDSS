@@ -87,6 +87,6 @@ class postgis_spatial_select(test):
             conn.close()
         self.executed = True
 
-        return          # nothing as this is a test
+        return True                    # Returning False will end execution
 
 

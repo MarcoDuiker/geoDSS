@@ -45,12 +45,14 @@ class bag_geocoder(processor):
             huisnummer (string)             house number
         '''
 
-        url = self.definition['url'] + subject['huisnummer subject'] + '+' + ['postcode']
+        url = self.definition['url'] + subject['huisnummer'] + '+' + subject['postcode']
+        self.logger.debug("Geocoding with url: " + url)
         response = requests.get(url);
 
-        if not (r.status_code == requests.codes.ok):
+        if not (response.status_code == requests.codes.ok):
             return False
 
+        doc = parseString(response.text)
         xmlTag = doc.getElementsByTagName("gml:pos")[0].firstChild.nodeValue
         if xmlTag:
             XY = xmlTag.split()
@@ -60,7 +62,7 @@ class bag_geocoder(processor):
         
                 subject['geometry'] = 'SRID=28992;POINT(%s %s)' % (x,y)
                 if self.definition["report_template"]:
-                    self.result.append(self.definition["report_template"].replace('subject.geometry', subject['geometry'])
+                    self.result.append(self.definition["report_template"].replace('subject.geometry', subject['geometry']))
             else:
                 subject = False             # Break the execution as it has no use to continue without geometry
 

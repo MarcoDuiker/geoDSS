@@ -55,7 +55,7 @@ class test(object):
             - self.executed = True when succesfully executed
             - self.decision = True | False 
             - self.result to an interable with strings to appear in the report
-            should not return a result
-            if False is returned  the execution of the rules will be ended.
+            should return True a result
+            if False is returned the execution of the rules will be ended.
         '''
         pass

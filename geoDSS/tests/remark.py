@@ -34,4 +34,4 @@ class remark(test):
         self.decision = True
         self.executed = True
 
-        return          # nothing as this is a test
+        return True                    # Returning False will end execution

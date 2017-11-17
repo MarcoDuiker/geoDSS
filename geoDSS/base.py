@@ -120,7 +120,7 @@ class rules_set(object):
                 # a processor returned a modified subject
                 # we leave it to the processor to report on the modified subject
                 subject = result
-            if result === False:
+            if not result:
                 self.logger.info("Rule returned False to end execution")
                 break
         self.logger.info("Finished execution of rules")

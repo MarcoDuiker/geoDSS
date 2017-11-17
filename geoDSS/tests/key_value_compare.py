@@ -62,6 +62,6 @@ class key_value_compare(test):
             self.result.append(self.definition["report_template"])
             self.executed = True
 
-        return          # nothing as this is a test
+        return True                    # Returning False will end execution
 
 
