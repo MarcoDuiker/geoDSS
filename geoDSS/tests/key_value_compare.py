@@ -36,10 +36,6 @@ class key_value_compare(test):
             <a key> (string):                  the key to test against (the test will not return true when the key is undefined)
         '''
 
-        self.decision = False
-        self.result = []
-        self.executed = False
-
         if self.definition['key'] in subject:
             subject_value = subject[self.definition['key']]
             if self.definition['operator'] == '==':
@@ -62,6 +58,8 @@ class key_value_compare(test):
             self.result.append(self.definition["report_template"])
             self.executed = True
 
+        if self.definition['break_on_error']:
+            return self.executed
         return True                    # Returning False will end execution
 
 

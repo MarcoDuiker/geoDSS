@@ -29,9 +29,6 @@ class remark(test):
         subject is expected a dict (contents doesn't matter)
         '''
 
-        self.result = []
         self.result.append(self.definition["report_template"])
-        self.decision = True
-        self.executed = True
 
         return True                    # Returning False will end execution

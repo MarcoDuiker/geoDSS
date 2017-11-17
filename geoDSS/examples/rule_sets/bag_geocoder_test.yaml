@@ -10,3 +10,4 @@ rules:
     description: Test the bag-geocoder
     url: "http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm="
     report_template: "Found address on location with EWKT-string: 'subject.geometry'"
+    break_on_error: True

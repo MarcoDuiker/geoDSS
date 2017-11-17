@@ -25,6 +25,8 @@ class processor(object):
         self.result = []
         self.executed = False
         self.logger = logger
+        if not 'break_on_error' in self.definition:
+            self.definition['break_on_error'] = False
         
         # todo: merge smarter: only set values when in settings so that definition overrules settings
         if settings:

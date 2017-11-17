@@ -58,7 +58,7 @@ class postgis_unit_test(processor):
         conn = self._get_postgis_connection(self.definition['db'])
         if type(conn) == str:
             self.result = [conn]
-            return
+            return not self.definition['break_on_error']
 
         cur = conn.cursor()
         try:
@@ -73,9 +73,8 @@ class postgis_unit_test(processor):
         except (Exception, psycopg2.DatabaseError, exceptions.TypeError) as error:
             self.result.append(str(cur.query))
             self.result.append(str(error))
-            return
+            return not self.definition['break_on_error']
 
-        # for this unit test we will put the new subject in the report
         self.result.append("Modified subject to: " + str(subject))
 
         if cur:
@@ -83,4 +82,6 @@ class postgis_unit_test(processor):
         if conn:
             conn.close()
         self.executed = True
+        if not self.executed and self.definition['break_on_error']"
+            return False
         return subject      # as this is a processor return a modified subject

@@ -50,22 +50,20 @@ class bag_geocoder(processor):
         self.logger.debug("Geocoding with url: " + url)
         response = requests.get(url);
 
-        if not (response.status_code == requests.codes.ok):
+        if response.status_code == requests.codes.ok:
+            doc = parseString(response.text)
+            positionsList = doc.getElementsByTagName("gml:pos")
+            if positionsList:
+                xmlTag = positionsList[0].firstChild.nodeValue
+                XY = xmlTag.split()
+                if XY:
+                    x = float(XY[0])
+                    y = float(XY[1])
+                    subject['geometry'] = 'SRID=28992;POINT(%s %s)' % (x,y)
+                    if self.definition["report_template"]:
+                        self.result.append(self.definition["report_template"].replace('subject.geometry', subject['geometry']))
+                    self.executed = True
+
+        if not self.executed and self.definition['break_on_error']:
             return False
-
-        doc = parseString(response.text)
-        xmlTag = doc.getElementsByTagName("gml:pos")[0].firstChild.nodeValue
-        if xmlTag:
-            XY = xmlTag.split()
-            if XY:
-                x = float(XY[0])
-                y = float(XY[1])
-        
-                subject['geometry'] = 'SRID=28992;POINT(%s %s)' % (x,y)
-                if self.definition["report_template"]:
-                    self.result.append(self.definition["report_template"].replace('subject.geometry', subject['geometry']))
-            else:
-                subject = False             # Break the execution as it has no use to continue without geometry
-
-        self.executed = True
         return subject                      # as this is a processor return a modified subject

@@ -28,8 +28,6 @@ class postgis_processing(processor):
             geometry (ewkt string):          a proper EWKT string representing the geometry of the subject
         '''
 
-        self.result = []
-
         if "subject.geometry" in self.definition['parameters']:
             loc = self.definition['parameters'].index("subject.geometry")
             self.definition['parameters'][loc] = "ST_GeomFromEWKT('%s')" % subject['geometry']
@@ -39,7 +37,7 @@ class postgis_processing(processor):
             cur = conn.cursor()
         except (Exception, psycopg2.DatabaseError) as error:
             self.result = [str(error)]
-            return
+            return not self.definition['break_on_error']
 
         try:
             cur.execute("SELECT ST_AsEWKT(%s(%s)) as geometry;", (self.definition['processor'], ','.join(self.definition['parameters'])) )
@@ -53,11 +51,14 @@ class postgis_processing(processor):
                 subject['geometry'] = row[0]
         except (Exception, psycopg2.DatabaseError, exceptions.TypeError) as error:
             self.result.append(str(error))
-            return
+            return not self.definition['break_on_error']
 
         if cur:
             cur.close()
         if conn:
             conn.close()
         self.executed = True
+
+        if not self.executed and self.definition['break_on_error']:
+            return False
         return subject      # as this is a processor return a modified subject

@@ -38,10 +38,6 @@ class postgis_spatial_select(test):
             params (dict):                   a dict containing key value pairs to be inserted in the optional WHERE clause given in the definition of the rule
         '''
 
-        self.decision = False
-        self.result = []
-        self.executed = False
-
         if "subject.geometry" in self.definition['parameters']:
             loc = self.definition['parameters'].index("subject.geometry")
             self.definition['parameters'][loc] = "ST_GeomFromEWKT('%s')" % subject['geometry']
@@ -58,7 +54,7 @@ class postgis_spatial_select(test):
             cur = conn.cursor()
         except (Exception, psycopg2.DatabaseError) as error:
             self.result = [str(error)]
-            return
+            return not self.definition['break_on_error'] 
 
         try:
             sql_string = 'SELECT * FROM %s.%s WHERE %s ;' % (self.definition['schema'], self.definition['table'], where)
@@ -79,7 +75,7 @@ class postgis_spatial_select(test):
                     self.result.append(to_report)
         except (Exception, psycopg2.DatabaseError) as error:
             self.result = [str(error)]
-            return
+            return not self.definition['break_on_error'] 
 
         if cur:
             cur.close()
@@ -87,6 +83,8 @@ class postgis_spatial_select(test):
             conn.close()
         self.executed = True
 
+        if self.definition['break_on_error']:
+            return self.executed
         return True                    # Returning False will end execution
 
 

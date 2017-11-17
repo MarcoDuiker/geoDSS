@@ -29,10 +29,6 @@ class unit_test(test):
             result (bool):                  the intended result of the test
         '''
 
-        self.decision = False
-        self.result = []
-        self.executed = False
-
         self.logger.debug('Result asked: %s' % subject['result'])
 
         if subject['result']:
@@ -41,4 +37,6 @@ class unit_test(test):
 
         self.executed = True
 
+        if self.definition['break_on_error']:
+            return self.executed
         return True                    # Returning False will end execution
