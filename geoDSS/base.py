@@ -13,6 +13,7 @@ Example:
 >>>r.report()
 '''
 
+import copy
 import os
 import sys
 from abc import ABCMeta, abstractmethod
@@ -112,13 +113,15 @@ class rules_set(object):
         subject is expected to be a dict which is passed to each rule.
         '''
 
-        self.result = []
-        self.result.append(subject)
+        self.result = []                                                 # the rule_set has it's own result we can report on; we fill it with the subjects
+        self.result.append(copy.deepcopy(subject))                      # add the first subject to the result
 
         self.logger.info("Start execution of rules")
+        self.logger.debug('First subject: ' + str(subject))
         for rule in self.rules:
             self.logger.debug('Executing rule "%s" with subject "%s"' % (str(rule.name), str(subject)))
             result = rule.execute(subject)
+            self.result.append(copy.deepcopy(subject))                  # and add each subject to the rule_set_result as well
             if result:
                 subject = result
             if not result:

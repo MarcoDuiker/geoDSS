@@ -32,8 +32,7 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
     markdown = markdown + 'Subject' + '\n'
     markdown = markdown + '-------' + '\n'
     markdown = markdown + 'Started processing with subject: ' + '\n\n'
-    for row in obj.result:
-        markdown = markdown + '\t' + yaml.safe_dump(row,default_flow_style=False).replace('\n','\n\t') + '\n'
+    markdown = markdown + '\t' + yaml.safe_dump(obj.result[0],default_flow_style=False).replace('\n','\n\t') + '\n'
     markdown = markdown + '\n'
     markdown = markdown + 'Results' + '\n'
     markdown = markdown + '=======' + '\n'
