@@ -61,4 +61,4 @@ class postgis_processing(processor):
 
         if not self.executed and self.definition['break_on_error']:
             return False
-        return subject      # as this is a processor return a modified subject
+        return subject

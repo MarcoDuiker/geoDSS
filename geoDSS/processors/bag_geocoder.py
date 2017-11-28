@@ -46,24 +46,32 @@ class bag_geocoder(processor):
             huisnummer (string)             house number
         '''
 
-        url = self.definition['url'] + subject['huisnummer'] + '+' + subject['postcode']
-        self.logger.debug("Geocoding with url: " + url)
-        response = requests.get(url);
-
-        if response.status_code == requests.codes.ok:
-            doc = parseString(response.text)
-            positionsList = doc.getElementsByTagName("gml:pos")
-            if positionsList:
-                xmlTag = positionsList[0].firstChild.nodeValue
-                XY = xmlTag.split()
-                if XY:
-                    x = float(XY[0])
-                    y = float(XY[1])
-                    subject['geometry'] = 'SRID=28992;POINT(%s %s)' % (x,y)
-                    if self.definition["report_template"]:
-                        self.result.append(self.definition["report_template"].replace('subject.geometry', subject['geometry']))
-                    self.executed = True
+        try:
+            url = self.definition['url'] + subject['huisnummer'] + '+' + subject['postcode']
+            self.logger.debug("Geocoding with url: " + url)
+            response = requests.get(url)
+        except Exception as error:
+            self.result.append("Could not geocode address with error: `%s`" % (str(error)))
+        else:
+            if response.status_code == requests.codes.ok:
+                self.logger.debug("Debugger returned status code: " + str(response.status_code))
+                doc = parseString(response.text)
+                positionsList = doc.getElementsByTagName("gml:pos")
+                if positionsList:
+                    xmlTag = positionsList[0].firstChild.nodeValue
+                    XY = xmlTag.split()
+                    if XY:
+                        x = float(XY[0])
+                        y = float(XY[1])
+                        subject['geometry'] = 'SRID=28992;POINT(%s %s)' % (x,y)
+                        if self.definition["report_template"]:
+                            self.result.append(self.definition["report_template"].replace('subject.geometry', subject['geometry']))
+                        self.executed = True
+                else:
+                    self.result.append("Could not geocode address. The geocoder returned no matches.")
+            else:
+                self.result.append("Could not geocode address. Geocoder returned status code: `%s`" % str(response.status_code))
 
         if not self.executed and self.definition['break_on_error']:
             return False
-        return subject                      # as this is a processor return a modified subject
+        return subject

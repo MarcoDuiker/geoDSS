@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import markdown as md_lib
+try:
+    import markdown as md_lib
+except:
+    import pymarkdown as md_lib
+import yaml
 
+# todo: less naive implementations
 
 def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
     '''
@@ -26,9 +31,9 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
     markdown = markdown + '\n'
     markdown = markdown + 'Subject' + '\n'
     markdown = markdown + '-------' + '\n'
-    markdown = markdown + 'Started processing with subject: ' + '\n'
+    markdown = markdown + 'Started processing with subject: ' + '\n\n'
     for row in obj.result:
-        markdown = markdown + '- ' + str(row) + '\n'
+        markdown = markdown + '\t' + yaml.safe_dump(row,default_flow_style=False).replace('\n','\n\t') + '\n'
     markdown = markdown + '\n'
     markdown = markdown + 'Results' + '\n'
     markdown = markdown + '=======' + '\n'

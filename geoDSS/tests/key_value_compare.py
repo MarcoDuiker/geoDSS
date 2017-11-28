@@ -53,13 +53,17 @@ class key_value_compare(test):
             elif self.definition['operator'] == '<':
                 if subject_value < self.definition['value']:
                     self.decision = True
+            else:
+                self.result.append("Operator %s as given in the rule is not supported." % self.definition['operator'] )
+        else:
+            self.result.append("Key %s not found in subject." % self.definition['key'] )
 
         if self.decision:
             self.result.append(self.definition["report_template"])
             self.executed = True
 
-        if self.definition['break_on_error']:
-            return self.executed
-        return True                    # Returning False will end execution
+        if self.definition['break_on_error'] and self.executed == False:
+            return False
+        return subject                    # Returning False will end execution
 
 

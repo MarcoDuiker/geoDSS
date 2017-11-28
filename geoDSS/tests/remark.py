@@ -31,4 +31,4 @@ class remark(test):
 
         self.result.append(self.definition["report_template"])
 
-        return True                    # Returning False will end execution
+        return subject                    # Returning False will end execution

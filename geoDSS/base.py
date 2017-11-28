@@ -6,7 +6,7 @@ Example:
 >>>import geoDSS                                                        # be sure this is possible by installing geoDSS 
 >>>                                                                     # or invoking this from the right working dir
 
->>>r = geoDSS.rules_set('geoDSS/examples/rule_sets/unit_test.yaml')        # and then check this path as well
+>>>r = geoDSS.rules_set('geoDSS/examples/rule_sets/unit_test.yaml')     # and then check this path as well
 >>>r.execute( subject = {  'result': True,
 ...                        'geometry': 'SRID=28992;POINT((125000 360000))'
 ...                     })
@@ -30,6 +30,8 @@ import tests
 import reporters
 
 
+logger = logging.getLogger()
+
 class rules_set(object):
     '''
     container object for a set of rules
@@ -43,6 +45,7 @@ class rules_set(object):
         rules_set_file is expected file containing the rules set.
         '''
 
+        self.definition = None
         self.definition = loader_module.load_rule_set(rules_set_file)
         if not 'title' in self.definition.keys():
             self.definition['title'] = self.definition['name'] 
@@ -64,6 +67,7 @@ class rules_set(object):
             if hasattr(dss, _group):
                 _group = getattr(dss, _group)
             else:
+                self.logger.error('The group %s is not defined yet.' % _group)
                 raise exceptions.NotImplementedError('The group %s is not defined yet.' % _group)
             if hasattr(_group, _class):
                 # the class is in a module eg unit_test.unit_test
@@ -71,7 +75,8 @@ class rules_set(object):
                 test_to_add = getattr(_group, _class)
                 self.logger.debug("Adding test with name: %s" % name)
                 self.rules.append(test_to_add(name, definition, logger = self.logger, settings = self.definition['settings']))
-            else:   
+            else:
+                self.logger.error('The type %s is not defined yet.' % definition['type'])
                 raise exceptions.NotImplementedError('The type %s is not defined yet.' % definition['type'])
 
     def _setup_logging(self):
@@ -79,7 +84,6 @@ class rules_set(object):
         sets up the logger
         '''
 
-        logger = logging.getLogger( self.definition['name'] )
         logger.name = self.definition['name']
         log_level = logging.INFO
         if 'level' in self.definition['logging'].keys():
@@ -109,19 +113,16 @@ class rules_set(object):
         '''
 
         self.result = []
-        # todo: format the subject to yaml or markdown or something
-        self.result.append(str(subject))
+        self.result.append(subject)
 
         self.logger.info("Start execution of rules")
         for rule in self.rules:
             self.logger.debug('Executing rule "%s" with subject "%s"' % (str(rule.name), str(subject)))
             result = rule.execute(subject)
             if result:
-                # a processor returned a modified subject
-                # we leave it to the processor to report on the modified subject
                 subject = result
             if not result:
-                self.logger.info("Rule returned False to end execution")
+                self.logger.info('Rule "%s" returned False to end execution.' % str(rule.name))
                 break
         self.logger.info("Finished execution of rules")
 

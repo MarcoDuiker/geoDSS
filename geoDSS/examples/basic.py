@@ -5,5 +5,5 @@ r = geoDSS.rules_set('geoDSS/examples/rule_sets/unit_test.yaml')        # and th
 r.execute( subject = {  'result': True,
                         'geometry': 'SRID=28992;POINT(125000 360000)'
                      })
-r.report()
-print(r)
+report  = r.report()
+print(report)

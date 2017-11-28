@@ -82,6 +82,6 @@ class postgis_unit_test(processor):
         if conn:
             conn.close()
         self.executed = True
-        if not self.executed and self.definition['break_on_error']"
+        if not self.executed and self.definition['break_on_error']:
             return False
         return subject      # as this is a processor return a modified subject

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>geoDSS</title>
+
+    <style> 
+
+        form {
+          width: 400px;
+          padding: 1em;
+          border: 1px solid #CCC;
+          border-radius: 1em;
+        }
+
+        label {
+          display: inline-block;
+          width: 200px;
+          text-align: right;
+        }
+
+        input, textarea {
+          width: 100px;
+          box-sizing: border-box;
+          border: 1px solid #999;
+          padding-left:5px;
+        }
+
+        input:focus, textarea:focus {
+          border-color: #000;
+        }
+
+        .button {
+          padding-left: 200px; 
+        }
+
+        button {
+          margin-left: .5em;
+        }
+
+    </style>
+
+    <script type="text/javascript">
+
+        submit_form = function(form) {
+            var url = "http://localhost:8000/cgi-bin/interfaces.cgi";
+            var rule_set_file = "geoDSS/geoDSS/examples/rule_sets/bag_geocoder_test.yaml";
+
+            var fields = form.elements;
+            var subject= {};
+            for (var i=0, fl = fields.length; i < fl; i++) {
+                if (fields[i].type !== "button") {
+                    if (fields[i].type == "checkbox") {
+                        fields[i].value = fields[i].checked;
+                    }
+                    subject[fields[i]['name']] = fields[i].value;
+                }
+            }
+            console.log(subject);
+            window.open(url + '?output_format=html&rule_set_file='+rule_set_file+'&subject='+JSON.stringify(subject))
+
+            return false;
+        };
+
+    </script>
+</head>
+<body>
+    
+    <h1>geoDDS</h1>
+    <form id='geoDSS' onsubmit="submit_form(this)">
+        <p>
+            <label for="id_field">Identificatienummer: </label><input type="text" name="identificatie" id="id_field"></input>
+        </p>
+        <p>
+            <label for="number_field">Huisnummer: </label><input type="text" name="huisnummer" id="number_field"></input>
+        </p>
+        <p>
+            <label for="zipcoce_field">Postcode: </label><input type="text" name="postcode" id="zipcode_field"></input>
+        </p>
+        <p>
+            <label for="brzo_field">BRZO-bedrijf: </label><input type="checkbox" name="brzo" id="brzo_field"></input>
+        </p>
+        <div class='button'> 
+            <input type="button" onClick="submit_form(this.parentNode.parentNode); return false;" value="Verwerk" ></input>
+        </div>
+    </form>
+
+</body>

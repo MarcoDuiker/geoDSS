@@ -1,4 +1,4 @@
-{ "name": "set 1 json"
+{ "name": "set 1 json",
   "title": "Rule set doing a unit like test",
   "description": "use the unit test to test the framework, demonstrating the json loader on the go.",
   "logging": {

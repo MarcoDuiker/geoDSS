@@ -30,13 +30,16 @@ class unit_test(test):
         '''
 
         self.logger.debug('Result asked: %s' % subject['result'])
-
+        
         if subject['result']:
             self.result.append(self.definition["report_template"])
             self.decision = True
-
+        else:
+            self.result.append("Expected key 'result' was not found in subject.")
         self.executed = True
 
-        if self.definition['break_on_error']:
-            return self.executed
-        return True                    # Returning False will end execution
+        if self.definition['break_on_error'] and self.executed == False:
+            return False
+        return subject                    # Returning False will end execution
+
+

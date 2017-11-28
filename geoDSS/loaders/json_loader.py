@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 '''
-This rule_set loader loads a rule_set from a json file.
+This rule_set loader loads a rule_set from a json file from the local file system.
+if rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.
 '''
 
-import yaml as yaml
+import json
+import requests
 
 def load_rule_set(rules_set_file, **kwargs):
     '''
@@ -47,6 +49,10 @@ def load_rule_set(rules_set_file, **kwargs):
     '''
 
     # todo: we might need something like: input_file = codecs.open("some_file.txt", mode="r", encoding="utf-8")
-
-    with open(rules_set_file) as stream:
-        return json.load(stream)
+    if rules_set_file.startswith('http://') or rules_set_file.startswith('https://'):
+        response = requests.get(rules_set_file)
+        if response.status_code == requests.codes.ok:
+            return json.loads(response.text)
+    else:
+        with open(rules_set_file) as stream:
+            return json.load(stream)
