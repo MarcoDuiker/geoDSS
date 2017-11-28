@@ -118,7 +118,7 @@ Extend
 A few useful tests and processors are provided. The most notable ones being:
 
 - `processors.postgis_processing`
-- `test.postgis_spatial_select`
+- `tests.postgis_spatial_select`
 
 You should be able to do some useful work with that. But you can easily add your own tests and processors.
 
@@ -132,9 +132,11 @@ Actually, you can extend the:
 
 You'll probably want to extend the first two of this list to begin with. As the existing tests and processors are heavily documented it won't be a problem to add a new test or processor by mimicking one of the existing ones.
 
+Probably the easiest to understand and extend is `tests.remark`.
+
 Just don't forget to add your newly created test or processor to the `imports` in `__init__.py`. Otherwise your new addition won't show up!
 
 Future developments
 -------------------
 
-You may expect API-docs and help coming soon. The will be linked from here for easy access.
+You may expect API-docs and help coming soon. They will be linked from here for easy access.

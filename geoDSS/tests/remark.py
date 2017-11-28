@@ -29,6 +29,8 @@ class remark(test):
         subject is expected a dict (contents doesn't matter)
         '''
 
-        self.result.append(self.definition["report_template"])
+        self.result.append(self.definition["report_template"])          # in this way we add the report_template to the report
+        self.executed = True                                            # don't forget to set self.executed to True, 
+                                                                        # otherwise "Error: test is not executed:" will be added to the report as well
 
-        return subject                    # Returning False will end execution
+        return subject                                                  # Return the subject to continue to the next test or processor. Returning False will end execution
