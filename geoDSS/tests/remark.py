@@ -29,7 +29,11 @@ class remark(test):
         subject is expected a dict (contents doesn't matter)
         '''
 
+        self.decision = True                                            # don't forget to set self.decision to True,
+                                                                        # otherwise "Test decision is: False" is added to the report instead of the following:
+
         self.result.append(self.definition["report_template"])          # in this way we add the report_template to the report
+        
         self.executed = True                                            # don't forget to set self.executed to True, 
                                                                         # otherwise "Error: test is not executed:" will be added to the report as well
 
