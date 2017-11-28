@@ -33,6 +33,51 @@ class processor(object):
             for key, value in settings.items():
                 self.definition[key] = value
 
+    def _finish_execution(self, subject, message = None, log = False, report = False):
+        '''
+        Convenience function for processors
+
+        Reports the message to the loggers and the reporters.
+        Returns the subject or False depending on definition['break_on_error'] and the self.executed state
+
+        parameters:
+            subject:        the subject
+            
+        optional parameters
+            message:        the message to report and/ or log
+            log:            { True | False } sends the message to the log. Defaults to False
+            report:         { True | False } sends the message to the report. Defaults to False
+        '''
+
+        if log and message:
+            self.logger.error(message)
+        if report and message:
+            self.result.append(message)
+
+        if self.definition['break_on_error'] and not self.executed:
+            return False
+        else:
+            return subject
+
+
+    def _handle_execution_exception(self, subject, message = None, log = True, report = True):
+        '''
+        Convenience function for processors
+
+        Reports the message to the loggers and the reporters.
+        Returns the subject or False depending on definition['break_on_error'] and the self.executed state
+
+        parameters:
+            subject:        the subject
+            
+        optional parameters
+            message:        the message to report and/ or log
+            log:            { True | False } sends the message to the log. Defaults to True
+            report:         { True | False } sends the message to the report. Defaults to True
+        '''
+
+        self._finish_execution(subject, message, log, report)
+
     @abstractmethod
     def execute():
         '''

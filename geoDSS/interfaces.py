@@ -112,12 +112,24 @@ def load_execute_report(params):
 
     try:
         r = geoDSS.rules_set(rule_set_file, loader_module)
+    except Exception as e:
+        if DEBUG_LEVEL:
+            sys.stderr.write("geoDSS: Could not load rule_set with error: %s \n" % str(e))
+        return status, response_headers, "Could not load rule_set with error: " + str(e)
+    
+    try:
         r.execute(subject)
+    except Exception as e:
+        if DEBUG_LEVEL:
+            sys.stderr.write("geoDSS: Could not evaluate rule_set with error: %s \n" % str(e))
+        return status, response_headers, "Could not evaluate rule_set with error: " + str(e)
+
+    try:
         data = r.report(output_format = output_format)
     except Exception as e:
         if DEBUG_LEVEL:
-            sys.stderr.write("geoDSS: Could not load or evaluate rule_set with error: %s \n" % str(e))
-        return status, response_headers, "Could not load or evaluate rule_set with error: " + str(e)
+            sys.stderr.write("geoDSS: Could not report on rule_set with error: %s \n" % str(e))
+        return status, response_headers, "Could not report on rule_set with error: " + str(e)
 
     status = '200 OK'
     response_headers["Content-Length"] = str(len(data))

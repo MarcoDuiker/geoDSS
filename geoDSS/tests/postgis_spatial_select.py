@@ -40,7 +40,10 @@ class postgis_spatial_select(test):
 
         if "subject.geometry" in self.definition['parameters']:
             loc = self.definition['parameters'].index("subject.geometry")
-            self.definition['parameters'][loc] = "ST_GeomFromEWKT('%s')" % subject['geometry']
+            if 'geometry' in subject:
+                self.definition['parameters'][loc] = "ST_GeomFromEWKT('%s')" % subject['geometry']
+            else:
+                return self._handle_execution_exception(subject, 'Could not find key "geometry" in subject.')
 
         try:
             where = ' %s(%s) ' % (self.definition['relationship'], ','.join(self.definition['parameters']))
@@ -50,23 +53,13 @@ class postgis_spatial_select(test):
                 else:
                     where = where + self.definition['where']
         except Exception as error:
-            self.logger.error("Error constructing where clause: " + str(error))
-            self.result.append("Could not construct the SQL WHERE clause with error: " + str(error))
-            if self.definition['break_on_error'] :
-                return False
-            else:
-                return subject
+            return self._handle_execution_exception(subject, "Could not construct the SQL WHERE clause with error: " + str(error))
 
         try:
             conn = psycopg2.connect(**self.definition['db'])
             cur = conn.cursor()
         except (Exception, psycopg2.DatabaseError) as error:
-            self.logger.error("No db connection: " +  str(error))
-            self.result.append("Could not get database connection with error: " + str(error))
-            if self.definition['break_on_error'] :
-                return False
-            else:
-                return subject
+            return self._handle_execution_exception(subject, "Could not get database connection with error: " + str(error))
 
         try:
             sql_string = 'SELECT * FROM %s.%s WHERE %s ;' % (self.definition['schema'], self.definition['table'], where)
@@ -87,12 +80,7 @@ class postgis_spatial_select(test):
                     if not to_report in self.result:
                         self.result.append(to_report)
         except (Exception, psycopg2.DatabaseError) as error:
-            self.logger.error("SQL error: " +  str(error))
-            self.result.append("Could not succefully execute SQL query with error:" + str(error))
-            if self.definition['break_on_error'] :
-                return False
-            else:
-                return subject
+            return self._handle_execution_exception(subject, "SQL query %s returned error %s" % (str(cur.query), str(error)))
 
         if cur:
             cur.close()
@@ -100,8 +88,6 @@ class postgis_spatial_select(test):
             conn.close()
         self.executed = True
 
-        if self.definition['break_on_error'] and self.executed == False:
-            return False
-        return subject
+        return self._finish_execution(subject)
 
 

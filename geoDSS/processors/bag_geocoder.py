@@ -51,7 +51,7 @@ class bag_geocoder(processor):
             self.logger.debug("Geocoding with url: " + url)
             response = requests.get(url)
         except Exception as error:
-            self.result.append("Could not geocode address with error: `%s`" % (str(error)))
+            return self._handle_execution_exception(subject, "Could not geocode address with error: `%s`" % str(error) )
         else:
             if response.status_code == requests.codes.ok:
                 self.logger.debug("Debugger returned status code: " + str(response.status_code))
@@ -68,10 +68,8 @@ class bag_geocoder(processor):
                             self.result.append(self.definition["report_template"].replace('subject.geometry', subject['geometry']))
                         self.executed = True
                 else:
-                    self.result.append("Could not geocode address. The geocoder returned no matches.")
+                    return self._handle_execution_exception(subject, "Could not geocode address. The geocoder returned no matches." )
             else:
-                self.result.append("Could not geocode address. Geocoder returned status code: `%s`" % str(response.status_code))
+                return self._handle_execution_exception(subject, "Could not geocode address. Geocoder returned status code: `%s`" % str(response.status_code) )
 
-        if not self.executed and self.definition['break_on_error']:
-            return False
-        return subject
+        return self._finish_execution(subject)

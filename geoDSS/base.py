@@ -31,7 +31,6 @@ import tests
 import reporters
 
 
-logger = logging.getLogger()
 
 class rules_set(object):
     '''
@@ -57,7 +56,7 @@ class rules_set(object):
         if not 'logging' in self.definition.keys():
             self.definition['logging'] = {}
 
-        self._setup_logging()
+        self.logger = self._setup_logging()
 
         self.rules = []
         dss = sys.modules[__name__]
@@ -85,6 +84,7 @@ class rules_set(object):
         sets up the logger
         '''
 
+        logger = logging.getLogger()
         logger.name = self.definition['name']
         log_level = logging.INFO
         if 'level' in self.definition['logging'].keys():
@@ -101,8 +101,8 @@ class rules_set(object):
         hdlr.setFormatter(formatter)
         logger.addHandler(hdlr)
 
-        self.logger = logger
-        self.logger.info("Logger is activated on level: %s" % logging.getLevelName(log_level) )
+        logger.info("Logger is activated on level: %s" % logging.getLevelName(log_level) )
+        return logger
 
     def execute(self, subject):
         '''
@@ -114,15 +114,15 @@ class rules_set(object):
         '''
 
         self.result = []                                                 # the rule_set has it's own result we can report on; we fill it with the subjects
-        self.result.append(copy.deepcopy(subject))                      # add the first subject to the result
+        self.result.append(copy.deepcopy(subject))                       # add the first subject to the result
 
         self.logger.info("Start execution of rules")
         self.logger.debug('First subject: ' + str(subject))
         for rule in self.rules:
             self.logger.debug('Executing rule "%s" with subject "%s"' % (str(rule.name), str(subject)))
             result = rule.execute(subject)
-            self.result.append(copy.deepcopy(subject))                  # and add each subject to the rule_set_result as well
             if result:
+                self.result.append(copy.deepcopy(subject))               # and add each subject to the rule_set_result as well
                 subject = result
             if not result:
                 self.logger.info('Rule "%s" returned False to end execution.' % str(rule.name))

@@ -1,3 +1,4 @@
+# a rule set to test the postgis select
 name: Postgis_spatial_select
 title: Rule set doing a postgis spatial select
 description: Doing a spatial select on gem_2009_gen
@@ -7,9 +8,9 @@ rules:
     title: Let op!
     description: ""
     report_template: gem_2009_gen should be in the public schema in the gisdefault database
-- postgis_unit_test:
+- select_gemeente:
     type: tests.postgis_spatial_select
-    title: Gemeenten binnen 10 km van de aanvraag
+    title: Gemeenten binnen 40 km van de aanvraag
     description: ""
     schema: public
     table: gem_2009_gen

@@ -1,21 +1,25 @@
+# a collection of different rules
 name: various_rules_test
 title: Doing some different tests
 description: ""
+logging:
+  level: DEBUG
 rules:
 - remark:
     type: tests.remark
     title: Be aware!
     description: ""
-    report_template: description cannot be empty
+    report_template: don't forget a description cannot be empty; use quotes if you don't want a description
 - unit_test:
     type: tests.unit_test
     title: unit test
     description: unit test testing
-    report_template: Action should be taken
+    report_template: This test evaluated to true, so action should be taken
 - postgis_unit_test:
     type: processors.postgis_unit_test
     title: processor unit test
     description: unit test by buffering subject geometry with distance 1
+    break_on_error: true
     db:
         dbname: gisdefault
 - brzo:
@@ -26,9 +30,9 @@ rules:
     value: "true"
     operator: "=="
     report_template: Doorsturen aan RWS
-- postgis_unit_test:
+- gemeenten_binnen_30_km:
     type: tests.postgis_spatial_select
-    title: Gemeenten binnen 10 km van de aanvraag
+    title: Gemeenten binnen 30 km van de aanvraag
     description: ""
     schema: public
     table: gem_2009_gen

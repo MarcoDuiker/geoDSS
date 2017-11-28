@@ -30,14 +30,16 @@ class postgis_processing(processor):
 
         if "subject.geometry" in self.definition['parameters']:
             loc = self.definition['parameters'].index("subject.geometry")
-            self.definition['parameters'][loc] = "ST_GeomFromEWKT('%s')" % subject['geometry']
+            if 'geometry' in subject:
+                self.definition['parameters'][loc] = "ST_GeomFromEWKT('%s')" % subject['geometry']
+            else:
+                return self._handle_execution_exception(subject, 'Could not find key "geometry" in subject.')
 
         try:
             conn = psycopg2.connect(**self.definition['db'])
             cur = conn.cursor()
         except (Exception, psycopg2.DatabaseError) as error:
-            self.result = [str(error)]
-            return not self.definition['break_on_error']
+            return self._handle_execution_exception(subject, "Could not get database connection with error: " + str(error))
 
         try:
             cur.execute("SELECT ST_AsEWKT(%s(%s)) as geometry;", (self.definition['processor'], ','.join(self.definition['parameters'])) )
@@ -50,8 +52,7 @@ class postgis_processing(processor):
                 row = cur.fetchone()
                 subject['geometry'] = row[0]
         except (Exception, psycopg2.DatabaseError, exceptions.TypeError) as error:
-            self.result.append(str(error))
-            return not self.definition['break_on_error']
+            return self._handle_execution_exception(subject, "SQL query %s returned error %s" % (str(cur.query), str(error)))
 
         if cur:
             cur.close()
@@ -59,6 +60,4 @@ class postgis_processing(processor):
             conn.close()
         self.executed = True
 
-        if not self.executed and self.definition['break_on_error']:
-            return False
-        return subject
+        return self._finish_execution(subject)

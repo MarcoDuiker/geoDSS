@@ -1,3 +1,4 @@
+# a simple rule set mimicking a "unit test"
 name: set 1
 title: Rule set doing the unit test
 description: use the unit test to test the framework
@@ -8,4 +9,4 @@ rules:
     type: tests.unit_test
     title: unit test
     description: unit test testing
-    report_template: Action should be taken
+    report_template: This test evaluated to true, so action should be taken

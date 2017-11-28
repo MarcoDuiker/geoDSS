@@ -62,8 +62,6 @@ class key_value_compare(test):
             self.result.append(self.definition["report_template"])
             self.executed = True
 
-        if self.definition['break_on_error'] and self.executed == False:
-            return False
-        return subject                    # Returning False will end execution
+        return self._finish_execution(subject)
 
 

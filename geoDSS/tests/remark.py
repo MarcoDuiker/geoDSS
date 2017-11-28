@@ -29,6 +29,8 @@ class remark(test):
         subject is expected a dict (contents doesn't matter)
         '''
 
+        self.logger.debug('Adding to the report: %s' % self.definition["report_template"])
+
         self.decision = True                                            # don't forget to set self.decision to True,
                                                                         # otherwise "Test decision is: False" is added to the report instead of the following:
 

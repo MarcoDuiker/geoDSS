@@ -57,12 +57,16 @@ class postgis_unit_test(processor):
 
         conn = self._get_postgis_connection(self.definition['db'])
         if type(conn) == str:
-            self.result = [conn]
-            return not self.definition['break_on_error']
+            return self._handle_execution_exception(subject, "Could not get database connection with error: " + str(conn))
 
         cur = conn.cursor()
+
+        if not 'geometry' in subject:
+            return self._handle_execution_exception(subject, 'Could not find key "geometry" in subject.')
+
         try:
             cur.execute("SELECT ST_AsEWKT(ST_Buffer(ST_GeomFromEWKT(%s),1)) as geometry;", [subject['geometry']])
+            self.logger.debug("Executed query: " + cur.query)
             if cur.rowcount == 0:
                 raise exceptions.TypeError("Query returned zero rows.")
             if cur.rowcount > 1:
@@ -71,9 +75,7 @@ class postgis_unit_test(processor):
                 row = cur.fetchone()
                 subject['geometry'] = row[0]
         except (Exception, psycopg2.DatabaseError, exceptions.TypeError) as error:
-            self.result.append(str(cur.query))
-            self.result.append(str(error))
-            return not self.definition['break_on_error']
+            return self._handle_execution_exception(subject, "SQL query %s returned error %s" % (str(cur.query), str(error)))
 
         self.result.append("Modified subject to: " + str(subject))
 
@@ -82,6 +84,6 @@ class postgis_unit_test(processor):
         if conn:
             conn.close()
         self.executed = True
-        if not self.executed and self.definition['break_on_error']:
-            return False
-        return subject      # as this is a processor return a modified subject
+
+        return self._finish_execution(subject)
+
