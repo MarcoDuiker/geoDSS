@@ -38,6 +38,5 @@ def load_rule_set(rules_set_file, **kwargs):
 
     # todo: we might need something like: input_file = codecs.open("some_file.txt", mode="r", encoding="utf-8")
 
-    print('Loading rule_set_file from yaml: %s' % rules_set_file)           # we don't have a logger yet
     with open(rules_set_file) as stream:
         return yaml.load(stream)

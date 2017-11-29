@@ -36,22 +36,25 @@ class key_value_compare(test):
             <a key> (string):                  the key to test against (the test will not return true when the key is undefined)
         '''
 
+        self.decision = False
+        definition_value = str(self.definition['value'])
         if self.definition['key'] in subject:
-            subject_value = subject[self.definition['key']]
+            subject_value = str(subject[self.definition['key']])
+            self.logger.debug("Evaluating %s %s %s" % (subject_value,self.definition['operator'],definition_value))
             if self.definition['operator'] == '==':
-                if subject_value == self.definition['value']:
+                if subject_value == definition_value:
                     self.decision = True
             elif self.definition['operator'] == '>=':
-                if subject_value >= self.definition['value']:
+                if subject_value >= definition_value:
                     self.decision = True
             elif self.definition['operator'] == '<=':
-                if subject_value <= self.definition['value']:
+                if subject_value <= definition_value:
                     self.decision = True
             elif self.definition['operator'] == '>':
-                if subject_value > self.definition['value']:
+                if subject_value > definition_value:
                     self.decision = True
             elif self.definition['operator'] == '<':
-                if subject_value < self.definition['value']:
+                if subject_value < definition_value:
                     self.decision = True
             else:
                 self.result.append("Operator %s as given in the rule is not supported." % self.definition['operator'] )
@@ -60,7 +63,7 @@ class key_value_compare(test):
 
         if self.decision:
             self.result.append(self.definition["report_template"])
-            self.executed = True
+        self.executed = True
 
         return self._finish_execution(subject)
 

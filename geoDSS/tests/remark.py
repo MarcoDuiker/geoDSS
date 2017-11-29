@@ -29,14 +29,15 @@ class remark(test):
         subject is expected a dict (contents doesn't matter)
         '''
 
-        self.logger.debug('Adding to the report: %s' % self.definition["report_template"])
+        self.logger.debug('Adding to the report: %s' % self.definition["report_template"])  # you have a logger available to log some messages
+                                                                                            # the loggers properties are set up in the rule_set definition
 
-        self.decision = True                                            # don't forget to set self.decision to True,
-                                                                        # otherwise "Test decision is: False" is added to the report instead of the following:
+        self.decision = True                                                                # don't forget to set self.decision to True,
+                                                                                            # otherwise "Test decision is: False" is added to the report instead of the following:
 
-        self.result.append(self.definition["report_template"])          # in this way we add the report_template to the report
+        self.result.append(self.definition["report_template"])                              # in this way we add the report_template to the report
         
-        self.executed = True                                            # don't forget to set self.executed to True, 
-                                                                        # otherwise "Error: test is not executed:" will be added to the report as well
+        self.executed = True                                                                # don't forget to set self.executed to True, 
+                                                                                            # otherwise "Error: test is not executed:" will be added to the report as well
 
-        return subject                                                  # Return the subject to continue to the next test or processor. Returning False will end execution
+        return self._finish_execution(subject)                                              # Returns False to end execution or the subject to continue to the next test 
