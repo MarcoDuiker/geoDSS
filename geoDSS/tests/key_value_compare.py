@@ -37,10 +37,10 @@ class key_value_compare(test):
         '''
 
         self.decision = False
-        definition_value = str(self.definition['value'])
+        definition_value = self.definition['value']
         if self.definition['key'] in subject:
-            subject_value = str(subject[self.definition['key']])
-            self.logger.debug("Evaluating %s %s %s" % (subject_value,self.definition['operator'],definition_value))
+            subject_value = subject[self.definition['key']]
+            self.logger.debug("Evaluating %s %s %s" % (str(subject_value),self.definition['operator'],str(definition_value)))
             if self.definition['operator'] == '==':
                 if subject_value == definition_value:
                     self.decision = True

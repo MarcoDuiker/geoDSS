@@ -14,6 +14,8 @@ Example:
 '''
 
 import copy
+import datetime
+import locale
 import os
 import sys
 from abc import ABCMeta, abstractmethod
@@ -118,6 +120,7 @@ class rules_set(object):
 
         self.logger.info("Start execution of rules")
         self.logger.debug('First subject: ' + str(subject))
+
         for rule in self.rules:
             self.logger.debug('Executing rule "%s" with subject "%s"' % (str(rule.name), str(subject)))
             result = rule.execute(subject)
