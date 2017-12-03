@@ -55,21 +55,44 @@ class bag_geocoder(processor):
         else:
             if response.status_code == requests.codes.ok:
                 self.logger.debug("Debugger returned status code: " + str(response.status_code))
-                doc = parseString(response.text)
-                positionsList = doc.getElementsByTagName("gml:pos")
-                if positionsList:
-                    xmlTag = positionsList[0].firstChild.nodeValue
-                    XY = xmlTag.split()
-                    if XY:
-                        x = float(XY[0])
-                        y = float(XY[1])
-                        subject['geometry'] = 'SRID=28992;POINT(%s %s)' % (x,y)
-                        if self.definition["report_template"]:
-                            self.result.append(self.definition["report_template"].replace('subject.geometry', subject['geometry']))
-                        self.executed = True
-                else:
-                    return self._handle_execution_exception(subject, "Could not geocode address. The geocoder returned no matches." )
+                try:
+                    doc = parseString(response.text)
+                    positionsList = doc.getElementsByTagName("gml:pos")
+                    if positionsList:
+                        xmlTag = positionsList[0].firstChild.nodeValue
+                        XY = xmlTag.split()
+                        if XY:
+                            x = float(XY[0])
+                            y = float(XY[1])
+                            subject['geometry'] = 'SRID=28992;POINT(%s %s)' % (x,y)
+                            self.executed = True
+                    else:
+                        return self._handle_execution_exception(subject, "Could not geocode address. The geocoder returned no matches." )
+                except Exception as error:
+                    return self._handle_execution_exception(subject, "Could not geocode address. Response parsing failed with error: " + str(error) )
+                address = None
+                try:
+                    address_element = doc.getElementsByTagName("xls:Address")[0]
+                    street_element = address_element.getElementsByTagName("xls:StreetAddress")[0]
+                    house_number = street_element.childNodes[0].getAttribute('number')
+                    house_number = house_number + street_element.childNodes[0].getAttribute('subdivision')
+                    street = street_element.childNodes[1].firstChild.data
+                    places_list = []
+                    places = address_element.getElementsByTagName("xls:Place")
+                    for p in places:
+                        places_list.append(p.firstChild.data)
+                    address = street + ' ' + house_number + ' ' + ', '.join(places_list)
+                except Exception as error:
+                    self.logger.debug('Could find position but not an address due to error: ' + str(error) )  
             else:
                 return self._handle_execution_exception(subject, "Could not geocode address. Geocoder returned status code: `%s`" % str(response.status_code) )
+
+        if self.executed and  self.definition["report_template"]:
+            result = self.definition["report_template"].replace('subject.geometry', subject['geometry'])
+            if address:
+                result = result.replace('{address}', address)
+            else:
+                result = result.replace('{address}', 'address not known')
+            self.result.append(result)
 
         return self._finish_execution(subject)

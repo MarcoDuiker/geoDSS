@@ -3,12 +3,12 @@ title: Test the BAG geocoder
 description: Test the BAG geocoder by geocoding an address and report the result
 logging:
   level: DEBUG
-  file: "/home/marco/bag_geocoder_cgi.log"
+  #file: "/home/marco/bag_geocoder_cgi.log"
 rules:
 - test:
     type: processors.bag_geocoder
     title: test_geocoder
     description: Test the bag-geocoder
     url: "http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm="
-    report_template: "Found address on location with EWKT-string: 'subject.geometry'"
+    report_template: "Found _{address}_ on location: `'subject.geometry'`"
     break_on_error: True
