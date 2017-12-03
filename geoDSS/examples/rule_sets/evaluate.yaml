@@ -1,0 +1,35 @@
+# a simple rule testing the 'evaluate' test
+name: test_evaluate
+title: Test the evaluate test
+description: Test the evaluate test by doing an and evaluation of two unit_test 
+logging:
+  level: DEBUG
+rules:
+- unit_test_1:
+    type: tests.unit_test
+    title: unit test 1
+    description: unit test testing
+    report_template: test 1 is true
+- unit_test_2:
+    type: tests.unit_test
+    title: unit test 2
+    description: unit test testing
+    report_template: test 2 is true
+- evaluate_tests_1:
+    type: tests.evaluate
+    title: evaluating 'and'
+    description: test the evaluate test by doing an unit_test_1 and unit_test_2
+    expression: "rules.unit_test_1 and rules.unit_test_2"
+    report_template: unit_test_1 and unit_test_2 is true
+    add_to_report:
+    - unit_test_1
+    - unit_test_2 
+- evaluate_tests_1:
+    type: tests.evaluate
+    title: evaluating 'and not'
+    description: test the evaluate test by doing an unit_test_1 or unit_test_2
+    expression: "rules.unit_test_1 and not rules.unit_test_2"
+    report_template: unit_test_1 and not unit_test_2 is true
+    add_to_report:
+    - unit_test_1
+    - unit_test_2 
