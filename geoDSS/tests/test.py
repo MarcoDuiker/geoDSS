@@ -6,6 +6,7 @@ try:
 except:
     pass
 
+
 class test(object):
     '''
     Class meant to sub class
@@ -19,13 +20,14 @@ class test(object):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, name, definition, logger, settings = None):
+    def __init__(self, name, definition, logger, rules, settings = None):
         self.name = name
         self.definition = definition
         self.decision = False
         self.result = []
         self.executed = False
         self.logger = logger
+        self.rules = rules                                              # this is an object with references to executed rules eg. self.rules.rule_1
         if not 'break_on_error' in self.definition:
             self.definition['break_on_error'] = False
 
@@ -34,11 +36,19 @@ class test(object):
             for key, value in settings.items():
                 self.definition[key] = value
 
+    def __nonzero__(self):
+        '''
+        Provides the decision after executing the test for Python 2.
+        '''
+        if self.executed:
+            return bool(self.decision)
+        else:
+            raise exceptions.AttributeError("Test should be executed before evaluation.")
+
     def  __bool__(self):
         '''
-        provides the decision after executing the test.
+        Provides the decision after executing the test for Python 3.
         '''
-
         if self.executed:
             return bool(self.decision)
         else:

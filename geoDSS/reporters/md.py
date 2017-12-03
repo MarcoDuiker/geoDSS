@@ -46,9 +46,7 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
         </head>
         <body>
             <div class="content">
-
                 ___content_goes_here___
-
             </div>
             <div class='tagline'>Powered by <a href="https://github.com/MarcoDuiker/geoDSS">geoDSS</a></div>
         </body>'''

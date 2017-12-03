@@ -26,12 +26,12 @@ Adapt the global variable DEBUG_LEVEL to control what's written to stderr.
     This setting only affects interfaces.py. geoDSS utilyzes a logger which is configured via the rule_set_file.
     When using cgi, most of the time you'll find the things written to stderr in your webservers logs.
     You can set 
-    DEBUG_LEVEL = {False | "INFO" | "DEBUG"}
+    DEBUG_LEVEL = {False | "DEBUG"}
 '''
 
 ENABLE_CGTIB = True
 ENABLE_NON_LOCAL_RULE_SET_FILES = False
-DEBUG_LEVEL = "INFO"
+DEBUG_LEVEL = "DEBUG"
 
 import argparse
 import cgi
@@ -39,6 +39,7 @@ import json
 import logging
 import os
 import sys
+import traceback
 
 try:
     import exceptions
@@ -115,6 +116,7 @@ def load_execute_report(params):
     except Exception as e:
         if DEBUG_LEVEL:
             sys.stderr.write("geoDSS: Could not load rule_set with error: %s \n" % str(e))
+            sys.stderr.write(traceback.format_exc())
         return status, response_headers, "Could not load rule_set with error: " + str(e)
     
     try:
@@ -122,6 +124,7 @@ def load_execute_report(params):
     except Exception as e:
         if DEBUG_LEVEL:
             sys.stderr.write("geoDSS: Could not evaluate rule_set with error: %s \n" % str(e))
+            sys.stderr.write(traceback.format_exc())
         return status, response_headers, "Could not evaluate rule_set with error: " + str(e)
 
     try:
@@ -129,6 +132,7 @@ def load_execute_report(params):
     except Exception as e:
         if DEBUG_LEVEL:
             sys.stderr.write("geoDSS: Could not report on rule_set with error: %s \n" % str(e))
+            sys.stderr.write(traceback.format_exc())
         return status, response_headers, "Could not report on rule_set with error: " + str(e)
 
     status = '200 OK'
@@ -144,10 +148,10 @@ def application(environ, start_response):
 
     if ENABLE_CGTIB:
         cgitb.enable()
-        if DEBUG_LEVEL and DEBUG_LEVEL == "INFO":
+        if DEBUG_LEVEL:
             sys.stderr.write("geoDSS: enabling cgitb. \n")
 
-    if DEBUG_LEVEL and DEBUG_LEVEL == "DEBUG":
+    if DEBUG_LEVEL:
         sys.stderr.write('geoDSS: WSGI environ=%s \n' % str(environ))
 
     if "REQUEST_METHOD" in environ and environ['REQUEST_METHOD'] == 'POST':
@@ -189,7 +193,7 @@ if param_count > 0 and 'wsgi.version' not in parameters and 'REQUEST_METHOD' in 
     # We are called as CGI: handle with CGI function
 
     if ENABLE_CGTIB:
-        if DEBUG_LEVEL and DEBUG_LEVEL == "INFO":
+        if DEBUG_LEVEL:
             sys.stderr.write("geoDSS: enabling cgitb. \n")
         cgitb.enable()
     if os.environ['REQUEST_METHOD'] == "GET":
@@ -201,7 +205,7 @@ if param_count > 0 and 'wsgi.version' not in parameters and 'REQUEST_METHOD' in 
             try:
                 params[param] = parameters.getList(param)
             except:
-                if DEBUG_LEVEL and DEBUG_LEVEL == "DEBUG":
+                if DEBUG_LEVEL:
                     sys.stderr.write("geoDSS: Received POST data in a way not supported yet. Doing a guess. \n")
                 params[param] = [parameters.value]
     else:

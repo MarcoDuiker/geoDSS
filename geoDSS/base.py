@@ -10,7 +10,7 @@ Example:
 >>>r.execute( subject = {  'result': True,
 ...                        'geometry': 'SRID=28992;POINT((125000 360000))'
 ...                     })
->>>r.report()
+>>>print(r.report())
 '''
 
 import copy
@@ -32,12 +32,20 @@ import processors
 import tests
 import reporters
 
-
-
 class rules_set(object):
     '''
     container object for a set of rules
     '''
+
+    class Rules(object):
+        '''
+        A convenience object to stick rules on.
+        Especially handy for the evaluate test so that we can write nice things as rules.test1
+        '''
+
+        pass
+
+        # todo: add an iterator or __getitem__ and use this class instead of the list (keep order!)
 
     def __init__(self, rules_set_file, loader_module = loaders.yaml_loader, **kwargs):
         '''
@@ -60,6 +68,7 @@ class rules_set(object):
 
         self.logger = self._setup_logging()
 
+        self._rules = self.Rules()
         self.rules = []
         dss = sys.modules[__name__]
         for rule in self.definition['rules']:
@@ -76,7 +85,7 @@ class rules_set(object):
                 _group = getattr(_group, _class)
                 test_to_add = getattr(_group, _class)
                 self.logger.debug("Adding test with name: %s" % name)
-                self.rules.append(test_to_add(name, definition, logger = self.logger, settings = self.definition['settings']))
+                self.rules.append(test_to_add(name, definition, logger = self.logger, rules = self._rules, settings = self.definition['settings']))
             else:
                 self.logger.error('The type %s is not defined yet.' % definition['type'])
                 raise exceptions.NotImplementedError('The type %s is not defined yet.' % definition['type'])
@@ -116,7 +125,7 @@ class rules_set(object):
         '''
 
         self.result = []                                                 # the rule_set has it's own result we can report on; we fill it with the subjects
-        self.result.append(copy.deepcopy(subject))                       # add the first subject to the result
+        self.result.append(copy.deepcopy(subject))                       # add the first subject to the rule_set result
 
         self.logger.info("Start execution of rules")
         self.logger.debug('First subject: ' + str(subject))
@@ -124,8 +133,9 @@ class rules_set(object):
         for rule in self.rules:
             self.logger.debug('Executing rule "%s" with subject "%s"' % (str(rule.name), str(subject)))
             result = rule.execute(subject)
+            setattr(self._rules, rule.name, rule)                        # we add a reference to each executed rule here
             if result:
-                self.result.append(copy.deepcopy(subject))               # and add each subject to the rule_set_result as well
+                self.result.append(copy.deepcopy(subject))               # and add each subject to the rule_set result as well
                 subject = result
             if not result:
                 self.logger.info('Rule "%s" returned False to end execution.' % str(rule.name))

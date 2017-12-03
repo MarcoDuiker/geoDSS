@@ -19,12 +19,13 @@ class processor(object):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, name, definition, logger, settings = None):
+    def __init__(self, name, definition, logger, rules, settings = None):
         self.name = name
         self.definition = definition
         self.result = []
         self.executed = False
         self.logger = logger
+        self.rules = rules                                              # this is an object with references to executed rules eg. self.rules.rule_1
         if not 'break_on_error' in self.definition:
             self.definition['break_on_error'] = False
         
