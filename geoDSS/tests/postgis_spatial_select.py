@@ -13,18 +13,57 @@ class postgis_spatial_select(test):
     '''
     This test performs a basic postgis select test.
 
-    definition is expected to be a dict having:
-        db (dict):                          a dictionary specifying a postgis database connection
-        schema (string):                    schema name
-        table (string):                     table name
-        relationship (string):              one of the postgis spatial relationships as ST_Contains, ST_DWithin, etc 
-        parameters (list):                  the parameters which are taken by the relationship;
+    Definition
+    ----------
+
+    `definition` is expected to be a dict having:
+
+    `db` (dict):                          a dictionary specifying a postgis database connection
+
+    `schema` (string):                    schema name
+
+    `table` (string):                     table name
+
+    `relationship` (string):              one of the postgis spatial relationships as ST_Contains, ST_DWithin, etc 
+
+    `parameters` (list):                  the parameters which are taken by the relationship;
                                             "subject.geometry" will be replaced by the subjects geometry
-        report_template (format string):    Python format-like string to be reported when test is True
-                                            in the format-like string columns in the result set of the query can be named
-                                            eg. {my_param} will be replaced by the value in the column my_param
-    optionally:
-        where (string):                     an aditionaly clause to attach to the WHERE clause. should start with a boolean operator like AND, OR, XOR
+
+    `report_template` (string):           String (with markdown support) to be reported when the test is True.
+                                          If multiple rows are returned by the query, multiple reports will be written, but a report will not be duplicated.
+                                          In the string columns in the result set of the query can be named.
+                                          eg. `{my_param}` will be replaced by the value in the column my_param.
+    
+    optionally having:
+
+    `where` (string):                     an aditionaly clause to attach to the WHERE clause. Should start with a boolean operator like AND, OR, XOR.
+
+    Rule example
+    ------------
+
+    a useful yaml snippet for this test would be:
+
+        - select_gemeente:
+            type: tests.postgis_spatial_select
+            title: Gemeenten binnen 40 km van de aanvraag
+            description: ""
+            schema: public
+            table: gem_2009_gen
+            relationship: ST_DWithin
+            parameters: 
+            - "subject.geometry"
+            - "wkb_geometry"
+            - "40000"
+            report_template: Doorsturen naar B&W van gemeente {gm_naam}
+            db:
+                dbname: gisdefault
+
+    Subject example
+    ---------------
+
+    a usefull subject for this would be:
+
+        subject = { "geometry": "SRID=28992;POINT(138034.181 452694.342)"}
 
     '''
 
@@ -32,10 +71,13 @@ class postgis_spatial_select(test):
         ''' 
         Executes the test.
 
-        subject is expected to be a dict having:
-            geometry (ewkt string):          a proper EWKT string representing the geometry of the subject
-        optionally:
-            params (dict):                   a dict containing key value pairs to be inserted in the optional WHERE clause given in the definition of the rule
+        `subject` is expected to be a dict having:
+
+        `geometry` (ewkt string):          a proper EWKT string representing the geometry of the subject
+        
+        optionally having:
+            
+        `params` (dict):                   a dict containing key value pairs to be inserted in the optional WHERE clause given in the definition of the rule
         '''
 
         if "subject.geometry" in self.definition['parameters']:

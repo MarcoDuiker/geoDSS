@@ -4,29 +4,46 @@
 
 '''
 This provides several interfaces to geoDSS:
+
 - command line
 - cgi
 - wsgi
 
-Adapt the global variable ENABLE_CGTIB to enable cgitb.
-    **NOTICE**
-    cgitb doesn't always play nice with apache: (https://bugs.python.org/issue8704)
+Enable citg (cgi)
+-----------------
 
-    **WARNING**
-    don't enable cgitb in a production environment!
-    and remember: don't enable cgitb in a production environment!
+Adapt the global variable ENABLE_CGTIB to enable cgitb.
+
+**NOTICE**
+>cgitb doesn't always play nice with apache: (https://bugs.python.org/issue8704)
+
+**WARNING**
+>don't enable cgitb in a production environment!
+
+>and remember: don't enable cgitb in a production environment!
+
+Fetch remote rule_set files
+---------------------------
 
 Adapt the global variable ENABLE_NON_LOCAL_RULE_SET_FILES to enable fetching of rule_set files from a remote host.
-    **WARNING**    
-    Do not enable this in a production environment with the standard geoDSS processors and tests
-    You allow the execution of arbitrary SQL commands in your database
-    And probably some more ugly stuff as allowing the user to create an open proxy 
+
+**WARNING**    
+>Do not enable this in a production environment with the standard geoDSS processors and tests
+
+>You allow the execution of arbitrary SQL commands in your database
+
+>And probably some more ugly stuff as allowing the user to create an open proxy 
+
+
+Logging
+-------
 
 Adapt the global variable DEBUG_LEVEL to control what's written to stderr. 
-    This setting only affects interfaces.py. geoDSS utilyzes a logger which is configured via the rule_set_file.
-    When using cgi, most of the time you'll find the things written to stderr in your webservers logs.
-    You can set 
-    DEBUG_LEVEL = {False | "DEBUG"}
+
+This setting only affects interfaces.py. geoDSS utilyzes a logger which is configured via the rule_set_file.
+When using cgi, most of the time you'll find the things written to stderr in your webservers logs.
+You can set 
+>DEBUG_LEVEL = {False | "DEBUG"}
 '''
 
 ENABLE_CGTIB = True
@@ -59,7 +76,7 @@ from geoDSS import loaders
 
 def sanitize_headers(headers):
     '''
-    removes hop-by-hop headers as these are not supported by wsgi
+    removes hop-by-hop headers as these are not supported by wsgi.
     '''
 
     hop_by_hop_headers = ('connection','keep-alive','public','proxy-authenticate','transfer-encoding','upgrade')
@@ -72,9 +89,10 @@ def sanitize_headers(headers):
 def load_execute_report(params):
     ''' 
     main entrypoint
-    command line, cgi and wsgi interfaces end up here
+
+    command line, cgi and wsgi interfaces end up here.
     
-    params is a CGI field storage object
+    `params`     a CGI field storage object.
     '''
 
     
@@ -143,7 +161,7 @@ def load_execute_report(params):
 
 def application(environ, start_response):
     '''
-    WSGI entry method: called by WSGI framework
+    WSGI entry method: called by WSGI framework.
     '''
 
     if ENABLE_CGTIB:
@@ -172,7 +190,9 @@ def application(environ, start_response):
 
 def cgi_application(params):
     '''
-    CGI entry method: called locally
+    CGI entry method: called locally.
+
+    example:  `http://localhost:8000/cgi-bin/geodss.cgi?output_format=html&rule_set_file=geoDSS/geoDSS/examples/rule_sets/bag_geocoder_test.yaml&subject={%22postcode%22:%20%224171KG%22,%20%22huisnummer%22:%20%2274%22}`
     '''
 
     status, response_headers, data = load_execute_report(params)
@@ -181,8 +201,6 @@ def cgi_application(params):
      
     sys.stdout.write(headers)
     sys.stdout.write(data)
-
-    # example: http://localhost:8000/cgi-bin/geodss.cgi?output_format=html&rule_set_file=geoDSS/geoDSS/examples/rule_sets/bag_geocoder_test.yaml&subject={%22postcode%22:%20%224171KG%22,%20%22huisnummer%22:%20%2274%22}
 
 
 # Get form/query params (CGI)
@@ -215,11 +233,13 @@ if param_count > 0 and 'wsgi.version' not in parameters and 'REQUEST_METHOD' in 
     cgi_application(params)
 
 elif __name__ == '__main__':
+    '''
+    this script is invoked from command line
 
-    #this script is invoked from command line
+    >example:   `./geoDSS examples/rule_sets/unit_test.yaml '{"result": true, "geometry": "SRID=28992;POINT(125000 360000)" }'`
 
-    #example:   ./geoDSS examples/rule_sets/unit_test.yaml '{"result": true, "geometry": "SRID=28992;POINT(125000 360000)" }'
-    #           ./geoDSS examples/rule_sets/various.yaml '{"result": true, "geometry": "SRID=28992;POINT(125000 360000)", "brzo": "true" }'
+    >           `./geoDSS examples/rule_sets/various.yaml '{"result": true, "geometry": "SRID=28992;POINT(125000 360000)", "brzo": "true" }'`
+    '''
 
     parser = argparse.ArgumentParser(description = 'Invoke geoDSS from command line using the default markdown reporter with output_format markdown.',
                                      epilog =      '''Example: ./geoDSS examples/rule_sets/unit_test.yaml '{"result": true, "geometry": "SRID=28992;POINT(125000 360000)" }' ''')

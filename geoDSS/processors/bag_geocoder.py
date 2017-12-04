@@ -19,12 +19,21 @@ class bag_geocoder(processor):
     Geocoding is done on zip-code and house_number of the subject. 
     This geocoder takes the first hit as a result
 
-    definition is expected to be a dict having:
-        url (string):                       base url for the geocoder
-        report_template (format string):    (optional) Python format string with markdown support to be reported when geocoding is a succes. 
-                                            If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.
+    Definition
+    ----------
+
+    `definition` is expected to be a dict having:
+
+     `url` (string):                    base url for the geocoder
+
+     `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.
+                                        If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.
+
+    Rule example
+    ------------
 
     a suitable yaml snippet would be:
+
         rules:
             geocode_address:
                 type: processors.bag_geocoder
@@ -33,7 +42,11 @@ class bag_geocoder(processor):
                 url: "http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm="
                 report_template: "Gevonden coordinaten: subject.geometry"
 
+    Subject example
+    ---------------
+
     a suitable subject would be:
+
         subject = '{"postcode": "4171KG", "huisnummer": "74"}'
     '''
 
@@ -41,9 +54,10 @@ class bag_geocoder(processor):
         '''
         executes the geoocder
 
-        subject is expected to be a dict having:
-            postcode (string):              zip-code or postal code
-            huisnummer (string)             house number
+        `subject` is expected to be a dict having:
+
+        `postcode` (string):              zip-code or postal code
+        `huisnummer` (string)             house number
         '''
 
         try:

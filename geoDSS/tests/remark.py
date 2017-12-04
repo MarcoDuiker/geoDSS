@@ -4,21 +4,33 @@ from ..tests.test import test
 
 class remark(test):
     '''
-    this test is always true, regardless of the subject.
-    this is usefull for adding comments or remarks to the report 
+    This test always evaluates to True, regardless of the subject.
+    This is usefull for adding comments or remarks to the report 
 
-    definition is expected to be a dict having at least:
-        report_template (format string):    Python format string with markdown support to be reported
+    Definition
+    ----------
+
+    `definition`     is expected to be a dict having at least:
+
+    `report_template` (string):           String (with markdown support) to be reported when the test is True
+
+    Rule example
+    ------------
 
     a useful yaml snippet for this test would be:
-            rules:
-                unit_test:
-                    type: tests.remark
-                    title: Remember
-                    description: Remember
-                    report_template: Remember the milk
+
+        rules:
+            unit_test:
+                type: tests.remark
+                title: Remember
+                description: Remember
+                report_template: Remember the milk
+
+    Subject Example
+    ---------------
 
     a useful subject for this would be (and any other subject will do as well):
+
         subject = {}
     '''
 
@@ -26,7 +38,8 @@ class remark(test):
         ''' 
         Executes the test.
 
-        subject is expected a dict (contents doesn't matter)
+        `subject`    is expected a dict 
+                     (contents doesn't matter)
         '''
 
         self.logger.debug('Adding to the report: %s' % self.definition["report_template"])  # you have a logger available to log some messages

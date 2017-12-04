@@ -4,16 +4,28 @@ from ..tests.test import test
 
 class key_value_compare(test):
     '''
-    this test compares a key from the subject with a value given in the rule definition using an operator given in the rule definition
+    This test compares a key from the subject with a value given in the rule definition using an operator given in the rule definition.
 
-    definition is expected to be a dict having at least:
-        key (string):                       The name of the key in the subject
-        value (string|number):              The value to compare with
-        operator (string):                  The operator used in the comparison. Supported are
-                                                '==', '>', '<', '<=', '>='
-        report_template (format string):    Python format string with markdown support to be reported when test is True
+    Definition
+    ----------
+
+    `definition` is expected to be a dict having at least:
+
+    `key` (string):                       The name of the key in the subject
+
+    `value` (string|number):              The value to compare with
+
+    `operator` (string):                  The operator used in the comparison. Supported are
+                                          '==', '>', '<', '<=', '>='
+
+    `report_template` (string):           String (with markdown support) to be reported when the test is True.
+
+
+    Rule example
+    ------------
 
     a useful yaml snippet for this test would be:
+
         rules:
             brzo_true:
                 type: tests.key_value_compare
@@ -24,7 +36,11 @@ class key_value_compare(test):
                 operator: '==',
                 report_template: "Doorsturen naar"
 
+    Subject example
+    ---------------
+
     a useful subject for this would contain:
+
         subject = {"brzo": "true"}
     '''
 
@@ -33,7 +49,8 @@ class key_value_compare(test):
         Executes the test.
 
         subject is expected a dict having:
-            <a key> (string):                  the key to test against (the test will not return true when the key is undefined)
+
+        `<a key>` (string):                  the key to test against (the test will not return true when the key is undefined)
         '''
 
         self.decision = False

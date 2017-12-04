@@ -42,6 +42,7 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
                 sup, sub {line-height: 0;}
                 .tagline {margin-top: 50px; padding-top:10px; text-align: right;font-size: 70%; color: gray; border-top-style: solid; border-color: gray; border-width: 1px;}
                 .content {background-color: rgba(250,250,250,50);}
+                img [alt="Map"] {}
             </style>
         </head>
         <body>
@@ -57,8 +58,9 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
     markdown = markdown + obj.definition['title'] + '\n'
     markdown = markdown + '=' * len(obj.definition['title']) + '\n'
     markdown = markdown + '\n'
-    markdown = markdown + '_' + obj.definition['description'] + '_' + '\n'
-    markdown = markdown + '\n'
+    if len(obj.definition['description']):
+        markdown = markdown + '_' + obj.definition['description'] + '_' + '\n'
+        markdown = markdown + '\n'
     markdown = markdown + 'Subject' + '\n'
     markdown = markdown + '-------' + '\n'
     markdown = markdown + 'Started processing with subject: ' + '\n\n'
@@ -87,8 +89,9 @@ def rule_reporter(rule):
     markdown = markdown + obj.definition['title'] + '\n'
     markdown = markdown + '-' * len(obj.definition['title']) + '\n'
     markdown = markdown + '\n'
-    markdown = markdown + '_' + obj.definition['description'] + '_' +  '\n'
-    markdown = markdown + '\n'
+    if len(obj.definition['description']):
+        markdown = markdown + '_' + obj.definition['description'] + '_' +  '\n'
+        markdown = markdown + '\n'
     if obj.executed:
         if hasattr(obj,'decision'):
             if obj.decision:   

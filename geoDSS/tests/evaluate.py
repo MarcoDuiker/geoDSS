@@ -7,23 +7,38 @@ class evaluate(test):
     This test does a boolean evaluation on two or more already executed rules.
     This is usefull for combining tests.
 
-    definition is expected to be a dict having at least:
-        expression (string):                The expression to evaluate. Already executed tests must be preceded by "this".
-                                            eg. this.first_test and this.second_test
-                                            Between the named tests python boolan logic and operators can be used like "and", "or", "not"
-        report_template (format string):    Python format string with markdown support to be reported
-        add_to_report:                      a list of all named test of which the reports should be added to the report of this test
+    Definition
+    ----------
+
+    `definition` is expected to be a dict having at least:
+
+    `expression` (string):                The expression to evaluate.
+                                          eg. `"rules.first_test and rules.second_test"`.
+                                          Between the named tests python boolan logic and operators can be used like `and`, `or`, `not`.
+
+    `report_template` (string):           String (with markdown support) to be reported when the test is True
+
+    `add_to_report` (list):               A list of all named test of which the reports should be added to the report of this test
+
+    Rule example
+    ------------
 
     a useful yaml snippet for this test would be:
-            rules:
-            - evaluate_tests_1:
-                type: tests.evaluate
-                title: evaluating 'and'
-                description: test the evaluate test by doing an unit_test_1 and unit_test_2
-                expression: "rules.unit_test_1 and rules.unit_test_2"
-                report_template: unit_test_1 and unit_test_2 is true
+
+        rules:
+        - evaluate_tests_1:
+            type: tests.evaluate
+            title: evaluating 'and'
+            description: test the evaluate test by doing an "unit_test_1 and unit_test_2"
+            expression: "rules.unit_test_1 and rules.unit_test_2"
+            report_template: unit_test_1 and unit_test_2 is true
+
+
+    Subject Example
+    ---------------
 
     a useful subject for this would be:
+
         subject = {'result': True}
     '''
 
@@ -31,7 +46,8 @@ class evaluate(test):
         ''' 
         Executes the test.
 
-        subject is expected a dict (contents doesn't matter)
+        `subject`    is expected to be a dict 
+                     (contents doesn't matter)
         '''
 
         self.logger.debug('Evaluating: %s' % self.definition["expression"]) 

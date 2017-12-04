@@ -2,15 +2,17 @@
 '''
 The base module provides the rules_set class. This class is all you need to work with to run your testing.
 
-Example:
->>>import geoDSS                                                        # be sure this is possible by installing geoDSS 
->>>                                                                     # or invoking this from the right working dir
+Example
+-------
 
->>>r = geoDSS.rules_set('geoDSS/examples/rule_sets/unit_test.yaml')     # and then check this path as well
->>>r.execute( subject = {  'result': True,
-...                        'geometry': 'SRID=28992;POINT((125000 360000))'
-...                     })
->>>print(r.report())
+    import geoDSS                                                        # be sure this is possible by installing geoDSS 
+                                                                         # or invoking this from the right working dir
+
+    r = geoDSS.rules_set('geoDSS/examples/rule_sets/unit_test.yaml')     # and then check this path as well
+    r.execute( subject = {  'result': True,
+                            'geometry': 'SRID=28992;POINT((125000 360000))'
+                         })
+    print(r.report())
 '''
 
 import copy
@@ -34,13 +36,14 @@ import reporters
 
 class rules_set(object):
     '''
-    container object for a set of rules
+    Container object for a set of rules.
     '''
 
     class Rules(object):
         '''
         A convenience object to stick rules on.
-        Especially handy for the evaluate test so that we can write nice things as rules.test1
+
+        Especially handy for the evaluate test so that we can write nice things in the rule_set file like 'rules.test1'
         '''
 
         pass
@@ -49,10 +52,11 @@ class rules_set(object):
 
     def __init__(self, rules_set_file, loader_module = loaders.yaml_loader, **kwargs):
         '''
-        Reads the rules_set with the load_rule_set method of the loader_moduler
+        Reads the rules_set with the load_rule_set method of the loader_moduler.
+
         If not specified the dafault yaml loader is used.
 
-        rules_set_file is expected file containing the rules set.
+        `rules_set_file` is expected to be a file containing the rules set.
         '''
 
         self.definition = None
@@ -92,7 +96,14 @@ class rules_set(object):
 
     def _setup_logging(self):
         '''
-        sets up the logger
+        Sets up the logger.
+
+        It uses settings from the rule_set file:
+
+            - logging:
+              - level                       Python log level. Usually one of: DEBUG, INFO, ERROR (defaults to INFO)
+              - format                      Python logging format string. Default: '%(asctime)s %(name)-12s %(levelname)-7s  %(message)s'
+              - file                        A writeable file to write the log. This file will be log-rotated.
         '''
 
         logger = logging.getLogger()
@@ -121,7 +132,7 @@ class rules_set(object):
 
         this methoud should be called BEFORE the report method.
 
-        subject is expected to be a dict which is passed to each rule.
+        `subject`       is expected to be a dict which is passed to each rule.
         '''
 
         self.result = []                                                 # the rule_set has it's own result we can report on; we fill it with the subjects
@@ -148,13 +159,14 @@ class rules_set(object):
 
         this method should be called AFTER the execute method.
 
-        reporter_module is the module used to report. 
-            This module should have a class 'rule_set_reporter' which is called with the supplied kwargs.
+        `reporter_module` is the module used to report. This module should have a class 'rule_set_reporter' which is called with the supplied kwargs.
 
-        If reporter_module is not supplied the reporters.md module is used as a default.
-            The reporters.md method 'rule_set_reporter' accepts an optional output_format parameter which is expected to be one of:
-                - 'markdown'    (default)
-                - 'html'
+        If `reporter_module` is not supplied the reporters.md module is used as a default.
+        
+        The reporters.md method 'rule_set_reporter' accepts an optional `output_format` parameter which is expected to be one of:
+
+        - 'markdown'    (default)
+        - 'html'
         '''
 
         return reporter_module.rule_set_reporter(self, **kwargs)
