@@ -18,7 +18,7 @@ class key_value_compare(test):
     `operator` (string):                  The operator used in the comparison. Supported are
                                           '==', '>', '<', '<=', '>='
 
-    `report_template` (string):           String (with markdown support) to be reported when the test is True.
+    `report_template` (string):           String to be reported when the test is True.
 
 
     Rule example

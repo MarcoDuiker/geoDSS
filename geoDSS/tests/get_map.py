@@ -141,12 +141,12 @@ class get_map(test):
 
     def _buffer(self, bbox, distance, width = None, height = None):
         '''
-        A private method buffering a bbox
+        A private method buffering a bbox. Aspect ratio is adjusted to the width and height of the image when given.
         '''
 
         bbox[0] = bbox[0] - distance
         bbox[2] = bbox[2] + distance
-        if width and height:
+        if width and height and not width == height:
             new_width = bbox[2] - bbox[0]
             new_height = new_width * height / width
             distance = (new_height - (bbox[3] - bbox[1])) / 2
@@ -180,7 +180,7 @@ class get_map(test):
 
         params = self.definition['params']
         try:
-            bbox = self._buffer(self._get_bbox(subject['geometry']), self.definition["buffer"])
+            bbox = self._buffer(bbox = self._get_bbox(subject['geometry']), distance = self.definition["buffer"], width = params["width"], height = params["height"] )
             params['bbox'] = bbox
             if 'flip_axes' in self.definition and self.definition['flip_axes']:
                 params['bbox'][0] = bbox[1]

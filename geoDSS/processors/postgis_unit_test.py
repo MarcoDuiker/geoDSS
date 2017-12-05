@@ -15,27 +15,40 @@ from ..processors.processor import processor
 
 class postgis_unit_test(processor):
     '''
-    this processor provides a unit test for Postgis processing by buffering with distance 1
+    this processor provides a unit-like test for Postgis processing by buffering with distance 1
 
-    definition is expected to be a dict having:
-        db (dict):                          a dictionary specifying a postgis database connection
+    Definition
+    ----------
+
+    `definition` is expected to be a dict having:
+
+    `db` (dict):                          a dictionary specifying a postgis database connection
+
+    Rule example
+    ------------
 
     a suitable yaml snippet would be:
+
         rules:
-            postgis_unit_test:
+            my_postgis_test:
                 type: processors.postgis_unit_test
                 title: processor unit test
-                description: unit test by buffering subject geometry with distance 1
+                description: unit-like test by buffering subject geometry with distance 1
                 db:
                     dbname: gisdefault
 
-    a suitable subject would be:
+    Subject example
+    ---------------
+
+    a usefull subject for this would be:
+
         subject = {"geometry": "SRID=28992;POINT(125000 360000)"}
+
     '''
 
     def _get_postgis_connection(self,db):
         '''
-        returns a postgis connection
+        Private method; returns a postgis connection.
         '''
 
         try:
@@ -47,10 +60,11 @@ class postgis_unit_test(processor):
 
     def execute(self, subject):
         '''
-        executes the postgis unit test
+        Executes the postgis unit-like test processor
 
-        subject is expected to be a dicht having:
-            geometry (ewkt string):              a proper EWKT string representing the geometry of the subject
+        `subject` is expected to be a dict having:
+
+        `geometry` (ewkt string):          a proper EWKT string representing the geometry of the subject
         '''
 
         self.result = []

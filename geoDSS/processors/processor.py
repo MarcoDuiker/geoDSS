@@ -8,13 +8,28 @@ except:
 
 class processor(object):
     '''
-    Class meant to sub class
+    This is a base class meant to sub class.
 
-    each processor should have a definition where definition is expected to be a dict having:
-        title (string):                     a human readable title
-        description (string):               a human readable description
+    Definition
+    ----------
 
-        when not provided the title will be set from the name; the description will be an empty string.
+    Each processor derived from this class should accept a definition where definition is expected to be a dict having at least:
+
+    'title' (string):                     a human readable title
+    'description' (string):               a human readable description (may be empty)
+
+    The definition is coming from a rule as defined in a rule_set.
+
+    Rule example
+    ------------
+
+    a useful yaml snippet for defining this minimum:
+
+        rules:
+            my_rule_name:
+                type: processors.processor_derived_from_this_abstract_class
+                title: Any title I like
+                description: Anything as long as it is not empty. If you dont wan't a descrition use ""
     '''
 
     __metaclass__ = ABCMeta
@@ -36,18 +51,24 @@ class processor(object):
 
     def _finish_execution(self, subject, message = None, log = False, report = False):
         '''
-        Convenience function for processors
+        Convenience function for processors.
 
         Reports the message to the loggers and the reporters.
-        Returns the subject or False depending on definition['break_on_error'] and the self.executed state
+        Returns the subject or False depending on `definition['break_on_error']` and the `self.executed` state
 
-        parameters:
-            subject:        the subject
+        Parameters
+        ----------
+
+        `subject` (dict):        the subject
             
-        optional parameters
-            message:        the message to report and/ or log
-            log:            { True | False } sends the message to the log. Defaults to False
-            report:         { True | False } sends the message to the report. Defaults to False
+        Optional parameters
+        -------------------
+
+        `message` (string):        the message to report and/ or log
+
+        `log` (bool):              { True | False } sends the message to the log. Defaults to False.
+
+        `report` (bool):           { True | False } sends the message to the report. Defaults to False.
         '''
 
         if log and message:
@@ -63,18 +84,24 @@ class processor(object):
 
     def _handle_execution_exception(self, subject, message = None, log = True, report = True):
         '''
-        Convenience function for processors
+        Convenience function for processors.
 
         Reports the message to the loggers and the reporters.
-        Returns the subject or False depending on definition['break_on_error'] and the self.executed state
+        Returns the subject or False depending on `definition['break_on_error']` and the `self.executed` state.
 
-        parameters:
-            subject:        the subject
+        Parameters
+        ----------
             
-        optional parameters
-            message:        the message to report and/ or log
-            log:            { True | False } sends the message to the log. Defaults to True
-            report:         { True | False } sends the message to the report. Defaults to True
+        `subject` (dict):        the subject
+            
+        Optional parameters
+        -------------------
+
+        `message` (string):        the message to report and/ or log
+
+        `log` (bool):              { True | False } sends the message to the log. Defaults to True.
+
+        `report` (bool):           { True | False } sends the message to the report. Defaults to True.
         '''
 
         self._finish_execution(subject, message, log, report)
@@ -82,13 +109,30 @@ class processor(object):
     @abstractmethod
     def execute():
         '''
-        This method should be provided by each processor
+        This method should be provided by each test.
 
-        each processor should implement a execute method which:
-            accepts:
-            - subject: a dict with test subject properties
-            returns:
-            - subject: a modified dict with test subject properties
-            - if False is returned as a subject the execution of the rules will be ended.
+        each test should implement a execute method which:
+
+        accepts
+        -------
+
+        `subject` (dict):   a dict with test subject properties
+            
+        sets
+        ----
+
+        `self.executed`     to True when succesfully executed
+
+        `self.decision`     to True | False 
+
+        `self.result`       to an interable with strings to appear in the report
+            
+        Returns
+        -------
+
+        A modified subject to continue execution of the rules with the returned subject.
+
+        False to end the execution of the rules.
         '''
+
         pass

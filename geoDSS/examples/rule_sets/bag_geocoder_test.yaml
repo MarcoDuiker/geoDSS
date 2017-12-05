@@ -7,22 +7,22 @@ logging:
 rules:
 - test:
     type: processors.bag_geocoder
-    title: test_geocoder
+    title: Test geocoder
     description: Test the bag-geocoder
     url: "http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm="
     report_template: "Found _{address}_ on location: `'subject.geometry'`"
     break_on_error: True
 - BAG map:
     type: tests.get_map
-    title: a map from the BAG
+    title: A map from the BAG
     description: ""
     url: "https://geodata.nationaalgeoregister.nl/bag/wms/"
     params:
       layers: pand
       styles: ""
-      width: 512
-      height: 512
+      width: 300
+      height: 200
       format: "image/png"
       version: "1.1.0"
-    buffer: 100
+    buffer: 75
     report_template: ""

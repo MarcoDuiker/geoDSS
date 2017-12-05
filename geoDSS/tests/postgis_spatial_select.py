@@ -29,7 +29,7 @@ class postgis_spatial_select(test):
     `parameters` (list):                  the parameters which are taken by the relationship;
                                             "subject.geometry" will be replaced by the subjects geometry
 
-    `report_template` (string):           String (with markdown support) to be reported when the test is True.
+    `report_template` (string):           String to be reported when the test is True.
                                           If multiple rows are returned by the query, multiple reports will be written, but a report will not be duplicated.
                                           In the string columns in the result set of the query can be named.
                                           eg. `{my_param}` will be replaced by the value in the column my_param.

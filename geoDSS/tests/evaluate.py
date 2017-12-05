@@ -16,7 +16,7 @@ class evaluate(test):
                                           eg. `"rules.first_test and rules.second_test"`.
                                           Between the named tests python boolan logic and operators can be used like `and`, `or`, `not`.
 
-    `report_template` (string):           String (with markdown support) to be reported when the test is True
+    `report_template` (string):           String to be reported when the test is True
 
     `add_to_report` (list):               A list of all named test of which the reports should be added to the report of this test
 

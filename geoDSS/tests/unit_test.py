@@ -11,7 +11,7 @@ class unit_test(test):
 
     definition is expected to be a dict having at least:
 
-    `report_template` (string):           String (with markdown support) to be reported when the test is True.
+    `report_template` (string):           String to be reported when the test is True.
 
    
     Rule example

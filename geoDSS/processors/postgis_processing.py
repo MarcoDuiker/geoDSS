@@ -11,21 +11,37 @@ from ..processors.processor import processor
 
 class postgis_processing(processor):
     '''
-    this processor does basic Postgis processing like ST_Buffer or ST_Transform
+    This processor does basic Postgis processing like ST_Buffer or ST_Transform.
 
-    definition is expected to be a dict having:
-        db (dict):                          a dictionary specifying a postgis database connection
-        processor (string):                 one of the postgis spatial processing as ST_Buffer, ST_Transform, etc 
-        parameters (list):                  the parameters which are taken by the processor;
+    Definition
+    ----------
+
+    `definition` is expected to be a dict having:
+
+    `db` (dict):                          a dictionary specifying a postgis database connection
+
+    `processor` (string):                 one of the postgis spatial processing as ST_Buffer, ST_Transform, etc 
+
+    `parameters` (list):                  the parameters which are taken by the relationship;
                                             "subject.geometry" will be replaced by the subjects geometry
+
+
+    Subject example
+    ---------------
+
+    a usefull subject for this would be:
+
+        subject = { "geometry": "SRID=28992;POINT(138034.181 452694.342)"}
+
     '''
 
     def execute(self, subject):
         ''' 
-        Executes the processing.
+        Executes the processor.
 
-        subject is expected to be a dict having:
-            geometry (ewkt string):          a proper EWKT string representing the geometry of the subject
+        `subject` is expected to be a dict having:
+
+        `geometry` (ewkt string):          a proper EWKT string representing the geometry of the subject
         '''
 
         if "subject.geometry" in self.definition['parameters']:

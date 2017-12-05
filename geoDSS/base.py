@@ -169,6 +169,9 @@ class rules_set(object):
         - 'html'
         '''
 
+        # todo: add the ability to set the reporter in the rule set
+        # in this way, the report string doesn't have te be markdown
+
         return reporter_module.rule_set_reporter(self, **kwargs)
 
 

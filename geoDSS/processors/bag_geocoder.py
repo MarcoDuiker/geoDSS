@@ -57,6 +57,7 @@ class bag_geocoder(processor):
         `subject` is expected to be a dict having:
 
         `postcode` (string):              zip-code or postal code
+
         `huisnummer` (string)             house number
         '''
 

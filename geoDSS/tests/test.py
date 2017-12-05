@@ -144,6 +144,7 @@ class test(object):
         `self.executed`     to True when succesfully executed
 
         `self.decision`     to True | False 
+
         `self.result`       to an interable with strings to appear in the report
             
         Returns
@@ -153,4 +154,5 @@ class test(object):
 
         False to end the execution of the rules.
         '''
+
         pass
