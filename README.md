@@ -42,7 +42,19 @@ And then do:
 
 	pip install <the_wheel_file_you_created.whl>
 	
+Documentation
+-------------
 
+The [API-docs](https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/index.html) provide useful information for both users and developers.
+
+Especially useful are:
+>https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/interfaces.m.html
+>https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/base.m.html
+>https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/tests/index.html
+>https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/processors/index.html
+
+Help pages to be expected ...
+	
 
 Quick Start
 -----------
@@ -112,13 +124,7 @@ if your on Linux you might want to add a symlink to interfaces.py so that you ca
 	./geoDSS examples/rule_sets/various.yaml '{"result": true, "geometry": "SRID=28992;POINT(125000 360000)", "brzo": "true" }'
 	
 	
-Documentation
--------------
 
-The [API-docs](https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/index.html) provide useful information for both users and developers.
-
-Help pages to be expected ...
-	
 	
 Extend
 ------
@@ -147,4 +153,4 @@ Just don't forget to add your newly created test or processor to the `imports` i
 Future developments
 -------------------
 
-You may expect API-docs and help coming soon. They will be linked from here for easy access.
+You may expect help pages coming soon. They will be linked from here for easy access.
