@@ -101,7 +101,7 @@ then use the following script to run a subject against the rules and see the rep
 	r.execute( subject = {  'result': True,
 		                    'geometry': 'SRID=28992;POINT((125000 360000))'
 		             })
-	r.report()
+	print(r.report())
 	
 alternatively you can execute from command line with something like:
 
@@ -110,6 +110,14 @@ alternatively you can execute from command line with something like:
 if your on Linux you might want to add a symlink to interfaces.py so that you can do something like:
 
 	./geoDSS examples/rule_sets/various.yaml '{"result": true, "geometry": "SRID=28992;POINT(125000 360000)", "brzo": "true" }'
+	
+	
+Documentation
+-------------
+
+The [API-docs](geoDSS/docs/API/index.html) provide useful information for both users and developers.
+
+Help pages to be expected ...
 	
 	
 Extend
