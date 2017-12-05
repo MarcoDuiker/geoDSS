@@ -115,7 +115,7 @@ if your on Linux you might want to add a symlink to interfaces.py so that you ca
 Documentation
 -------------
 
-The [API-docs](geoDSS/docs/API/index.html) provide useful information for both users and developers.
+The [API-docs](https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/index.html) provide useful information for both users and developers.
 
 Help pages to be expected ...
 	
