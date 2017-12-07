@@ -20,6 +20,7 @@ class evaluate(test):
 
     `add_to_report` (list):               A list of all named test of which the reports should be added to the report of this test
 
+
     Rule example
     ------------
 

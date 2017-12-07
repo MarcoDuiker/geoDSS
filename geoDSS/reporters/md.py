@@ -89,28 +89,30 @@ def rule_reporter(rule):
     obj = rule
 
     markdown = ''
-    markdown = markdown + obj.definition['title'] + '\n'
-    markdown = markdown + '-' * len(obj.definition['title']) + '\n'
-    markdown = markdown + '\n'
-    if len(obj.definition['description']):
-        markdown = markdown + '_' + obj.definition['description'] + '_' +  '\n'
+
+    if obj.definition['report']:
+        markdown = markdown + obj.definition['title'] + '\n'
+        markdown = markdown + '-' * len(obj.definition['title']) + '\n'
         markdown = markdown + '\n'
-    if obj.executed:
-        if hasattr(obj,'decision'):
-            if obj.decision:   
-                for row in obj.result:
-                    markdown = markdown + '- ' + row + '\n'
+        if len(obj.definition['description']):
+            markdown = markdown + '_' + obj.definition['description'] + '_' +  '\n'
+            markdown = markdown + '\n'
+        if obj.executed:
+            if hasattr(obj,'decision'):
+                if obj.decision:   
+                    for row in obj.result:
+                        markdown = markdown + '- ' + row + '\n'
+                else:
+                    markdown = markdown + 'Test decision is: **False**' + '\n'
             else:
-                markdown = markdown + 'Test decision is: **False**' + '\n'
+                if obj.result:
+                    for row in obj.result:
+                        markdown = markdown + row + '\n'
         else:
             if obj.result:
+                markdown = markdown + '**Error**: test is not executed: ' + '\n'
                 for row in obj.result:
                     markdown = markdown + row + '\n'
-    else:
-        if obj.result:
-            markdown = markdown + '**Error**: test is not executed: ' + '\n'
-            for row in obj.result:
-                markdown = markdown + row + '\n'
-        else:
-            markdown = markdown + '**Error**: test is not executed.' + '\n'
+            else:
+                markdown = markdown + '**Error**: test is not executed.' + '\n'
     return markdown

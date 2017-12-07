@@ -16,7 +16,13 @@ class processor(object):
     Each processor derived from this class should accept a definition where definition is expected to be a dict having at least:
 
     'title' (string):                     a human readable title
+
     'description' (string):               a human readable description (may be empty)
+
+    `definition` optionally can have:
+
+    `report` (bool)                       When set to `False` this rule will not be reported. The report results will be available to other tests.
+                                          Defaults to `True`.
 
     The definition is coming from a rule as defined in a rule_set.
 
@@ -43,11 +49,13 @@ class processor(object):
         self.rules = rules                                              # this is an object with references to executed rules eg. self.rules.rule_1
         if not 'break_on_error' in self.definition:
             self.definition['break_on_error'] = False
-        
-        # todo: merge smarter: only set values when in settings so that definition overrules settings
+        if not 'report' in in self.definition:
+            self.definition['report'] = True
+
         if settings:
             for key, value in settings.items():
-                self.definition[key] = value
+                if not key in self.definition:
+                    self.definition[key] = value
 
     def _finish_execution(self, subject, message = None, log = False, report = False):
         '''
