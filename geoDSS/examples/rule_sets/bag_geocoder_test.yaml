@@ -10,7 +10,7 @@ rules:
     title: Test geocoder
     description: Test the bag-geocoder
     url: "http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm="
-    report_template: "Found _{address}_ on location: `'subject.geometry'`"
+    report_template: "Found _{address}_ on location: ['subject.geometry'](https://bagviewer.kadaster.nl/lvbag/bag-viewer/index.html#?geometry.x={x}&geometry.y={y}&zoomlevel=7)"
     break_on_error: True
 - BAG map:
     type: tests.get_map

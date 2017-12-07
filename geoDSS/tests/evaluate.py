@@ -7,6 +7,8 @@ class evaluate(test):
     This test does a boolean evaluation on two or more already executed rules.
     This is usefull for combining tests.
 
+    It might be useful to add `report: False` to the definition of the rules being evaluated to suppress reporting of those rules. 
+
     Definition
     ----------
 

@@ -27,8 +27,14 @@ class bag_geocoder(processor):
      `url` (string):                    base url for the geocoder
 
      `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.
+
                                         If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.
-                                        if the format string contains {address} it will be replaced by the found address
+
+                                        if the format string contains {address} it will be replaced by the found address.
+
+                                        if the format string contains {x} it will be replaced by the x coordinate of the found location.
+
+                                        if the format string contains {y} it will be replaced by the x coordinate of the found location.
 
     Rule example
     ------------
@@ -41,7 +47,7 @@ class bag_geocoder(processor):
                 title: Geocodeer adres
                 description: Geocodeer adres op basis van postcode huisnummer
                 url: "http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm="
-                report_template: "Gevonden {address} coordinaten: subject.geometry"
+                report_template: "Gevonden {address} op ['subject.geometry'](https://bagviewer.kadaster.nl/lvbag/bag-viewer/index.html#?geometry.x={x}&geometry.y={y}&zoomlevel=7)"
 
     Subject example
     ---------------
@@ -105,6 +111,7 @@ class bag_geocoder(processor):
 
         if self.executed and  self.definition["report_template"]:
             result = self.definition["report_template"].replace('subject.geometry', subject['geometry'])
+            result = result.replace('{x}', str(x)).replace('{y}', str(y))
             if address:
                 result = result.replace('{address}', address)
             else:
