@@ -1138,6 +1138,8 @@ print(r.report())
 <span class="sd">        `rules_set_file` is expected to be a file containing the rules set.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
+        <span class="n">dss</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">loader_module</span><span class="o">.</span><span class="n">load_rule_set</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;title&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -1151,9 +1153,28 @@ print(r.report())
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_logging</span><span class="p">()</span>
 
+        <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;reporter&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span> <span class="o">=</span> <span class="n">reporters</span><span class="o">.</span><span class="n">md</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_group</span><span class="p">,</span> <span class="n">_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">):</span>                                        <span class="c"># this allows for reporters outside the reporters module</span>
+                <span class="n">_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>                         
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet. Did you mean to use the reporters module?&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Selecting reporter </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The reporter </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter&#39;</span><span class="p">])</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The reporter </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="s">&#39;reporter_args&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter_args&#39;</span><span class="p">]</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rules</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">dss</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;rules&#39;</span><span class="p">]:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">definition</span> <span class="o">=</span> <span class="n">rule</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
@@ -1161,13 +1182,13 @@ print(r.report())
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">):</span>
                 <span class="n">_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The group </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The group </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet.Did you mean to use the tests or processors module?&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">):</span>
                 <span class="c"># the class is in a module eg unit_test.unit_test</span>
                 <span class="n">_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">)</span>
                 <span class="n">test_to_add</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Adding test with name: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Adding rule with name: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_to_add</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="n">rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rules</span><span class="p">,</span> <span class="n">settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;settings&#39;</span><span class="p">]))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The type </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">definition</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">])</span>
@@ -1232,26 +1253,39 @@ print(r.report())
                 <span class="k">break</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Finished execution of rules&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reporter_module</span> <span class="o">=</span> <span class="n">reporters</span><span class="o">.</span><span class="n">md</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Report the result of the rules.</span>
 
 <span class="sd">        this method should be called AFTER the execute method.</span>
 
-<span class="sd">        `reporter_module` is the module used to report. This module should have a class &#39;rule_set_reporter&#39; which is called with the supplied kwargs.</span>
+<span class="sd">        The default reporter module is reporters.md.</span>
 
-<span class="sd">        If `reporter_module` is not supplied the reporters.md module is used as a default.</span>
-<span class="sd">        </span>
-<span class="sd">        The reporters.md method &#39;rule_set_reporter&#39; accepts an optional `output_format` parameter which is expected to be one of:</span>
+<span class="sd">        if `reporter` is part of the definition of the rule set, that reporter will be used.</span>
+
+<span class="sd">        if `reporter_args` is part of the definition of the rule set the arguments defined there will be passed to the reporter.</span>
+
+<span class="sd">        A yaml snippet to illustrate the selection of the markdown reporter with html output:</span>
+
+<span class="sd">            name: test_bag_geocoder</span>
+<span class="sd">            title: Test the BAG geocoder</span>
+<span class="sd">            description: Test the BAG geocoder by geocoding an address and report the result</span>
+<span class="sd">            reporter: reporters.md</span>
+<span class="sd">            reporter_args:</span>
+<span class="sd">              output_format: html</span>
+
+<span class="sd">        If no arguments are defined in the rule set, arguments passed in this report method will be passed to the reporter.</span>
+
+<span class="sd">        The &#39;rule_set_reporter&#39; method in the default reporter reporters.md accepts an optional `output_format` parameter which is expected to be one of:</span>
 
 <span class="sd">        - &#39;markdown&#39;    (default)</span>
 <span class="sd">        - &#39;html&#39;</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
-        <span class="c"># todo: add the ability to set the reporter in the rule set</span>
-        <span class="c"># in this way, the report string doesn&#39;t have te be markdown</span>
-
-        <span class="k">return</span> <span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1296,6 +1330,8 @@ print(r.report())
 <span class="sd">        `rules_set_file` is expected to be a file containing the rules set.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
+        <span class="n">dss</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">loader_module</span><span class="o">.</span><span class="n">load_rule_set</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;title&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -1309,9 +1345,28 @@ print(r.report())
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_logging</span><span class="p">()</span>
 
+        <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;reporter&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span> <span class="o">=</span> <span class="n">reporters</span><span class="o">.</span><span class="n">md</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_group</span><span class="p">,</span> <span class="n">_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">):</span>                                        <span class="c"># this allows for reporters outside the reporters module</span>
+                <span class="n">_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>                         
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet. Did you mean to use the reporters module?&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Selecting reporter </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The reporter </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter&#39;</span><span class="p">])</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The reporter </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="s">&#39;reporter_args&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter_args&#39;</span><span class="p">]</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rules</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">dss</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;rules&#39;</span><span class="p">]:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">definition</span> <span class="o">=</span> <span class="n">rule</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
@@ -1319,13 +1374,13 @@ print(r.report())
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">):</span>
                 <span class="n">_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The group </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The group </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet.Did you mean to use the tests or processors module?&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">):</span>
                 <span class="c"># the class is in a module eg unit_test.unit_test</span>
                 <span class="n">_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">)</span>
                 <span class="n">test_to_add</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Adding test with name: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Adding rule with name: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_to_add</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="n">rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rules</span><span class="p">,</span> <span class="n">settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;settings&#39;</span><span class="p">]))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The type </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">definition</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">])</span>
@@ -1390,26 +1445,39 @@ print(r.report())
                 <span class="k">break</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Finished execution of rules&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reporter_module</span> <span class="o">=</span> <span class="n">reporters</span><span class="o">.</span><span class="n">md</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Report the result of the rules.</span>
 
 <span class="sd">        this method should be called AFTER the execute method.</span>
 
-<span class="sd">        `reporter_module` is the module used to report. This module should have a class &#39;rule_set_reporter&#39; which is called with the supplied kwargs.</span>
+<span class="sd">        The default reporter module is reporters.md.</span>
 
-<span class="sd">        If `reporter_module` is not supplied the reporters.md module is used as a default.</span>
-<span class="sd">        </span>
-<span class="sd">        The reporters.md method &#39;rule_set_reporter&#39; accepts an optional `output_format` parameter which is expected to be one of:</span>
+<span class="sd">        if `reporter` is part of the definition of the rule set, that reporter will be used.</span>
+
+<span class="sd">        if `reporter_args` is part of the definition of the rule set the arguments defined there will be passed to the reporter.</span>
+
+<span class="sd">        A yaml snippet to illustrate the selection of the markdown reporter with html output:</span>
+
+<span class="sd">            name: test_bag_geocoder</span>
+<span class="sd">            title: Test the BAG geocoder</span>
+<span class="sd">            description: Test the BAG geocoder by geocoding an address and report the result</span>
+<span class="sd">            reporter: reporters.md</span>
+<span class="sd">            reporter_args:</span>
+<span class="sd">              output_format: html</span>
+
+<span class="sd">        If no arguments are defined in the rule set, arguments passed in this report method will be passed to the reporter.</span>
+
+<span class="sd">        The &#39;rule_set_reporter&#39; method in the default reporter reporters.md accepts an optional `output_format` parameter which is expected to be one of:</span>
 
 <span class="sd">        - &#39;markdown&#39;    (default)</span>
 <span class="sd">        - &#39;html&#39;</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
-        <span class="c"># todo: add the ability to set the reporter in the rule set</span>
-        <span class="c"># in this way, the report string doesn&#39;t have te be markdown</span>
-
-        <span class="k">return</span> <span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1455,6 +1523,16 @@ print(r.report())
 
             </div>
             <div class="item">
+            <p id="geoDSS.base.rules_set.reporter_args" class="name">var <span class="ident">reporter_args</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="geoDSS.base.rules_set.rules" class="name">var <span class="ident">rules</span></p>
             
 
@@ -1486,6 +1564,7 @@ print(r.report())
 <span class="sd">    If not specified the dafault yaml loader is used.</span>
 <span class="sd">    `rules_set_file` is expected to be a file containing the rules set.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">dss</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">loader_module</span><span class="o">.</span><span class="n">load_rule_set</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;title&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -1497,9 +1576,26 @@ print(r.report())
     <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;logging&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;logging&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_logging</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;reporter&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span> <span class="o">=</span> <span class="n">reporters</span><span class="o">.</span><span class="n">md</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_group</span><span class="p">,</span> <span class="n">_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">):</span>                                        <span class="c"># this allows for reporters outside the reporters module</span>
+            <span class="n">_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>                         
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet. Did you mean to use the reporters module?&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Selecting reporter </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The reporter </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter&#39;</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The reporter </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter&#39;</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="s">&#39;reporter_args&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;reporter_args&#39;</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rules</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">dss</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;rules&#39;</span><span class="p">]:</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">definition</span> <span class="o">=</span> <span class="n">rule</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
@@ -1507,13 +1603,13 @@ print(r.report())
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">):</span>
             <span class="n">_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="n">_group</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The group </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The group </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s">&#39;The module </span><span class="si">%s</span><span class="s"> is not defined yet.Did you mean to use the tests or processors module?&#39;</span> <span class="o">%</span> <span class="n">_group</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">):</span>
             <span class="c"># the class is in a module eg unit_test.unit_test</span>
             <span class="n">_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">)</span>
             <span class="n">test_to_add</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_group</span><span class="p">,</span> <span class="n">_class</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Adding test with name: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Adding rule with name: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_to_add</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="n">rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rules</span><span class="p">,</span> <span class="n">settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;settings&#39;</span><span class="p">]))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;The type </span><span class="si">%s</span><span class="s"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">definition</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">])</span>
@@ -1571,7 +1667,7 @@ print(r.report())
             
   <div class="item">
     <div class="name def" id="geoDSS.base.rules_set.report">
-    <p>def <span class="ident">report</span>(</p><p>self, reporter_module=&lt;module &#39;geoDSS.reporters.md&#39; from &#39;/home/marco/MD2/Projecten/OGG_RUD/code/versioned/geoDSS/geoDSS/reporters/md.pyc&#39;&gt;, **kwargs)</p>
+    <p>def <span class="ident">report</span>(</p><p>self, **kwargs)</p>
     </div>
     
 
@@ -1579,9 +1675,21 @@ print(r.report())
   
     <div class="desc"><p>Report the result of the rules.</p>
 <p>this method should be called AFTER the execute method.</p>
-<p><code>reporter_module</code> is the module used to report. This module should have a class 'rule_set_reporter' which is called with the supplied kwargs.</p>
-<p>If <code>reporter_module</code> is not supplied the reporters.md module is used as a default.</p>
-<p>The reporters.md method 'rule_set_reporter' accepts an optional <code>output_format</code> parameter which is expected to be one of:</p>
+<p>The default reporter module is reporters.md.</p>
+<p>if <code>reporter</code> is part of the definition of the rule set, that reporter will be used.</p>
+<p>if <code>reporter_args</code> is part of the definition of the rule set the arguments defined there will be passed to the reporter.</p>
+<p>A yaml snippet to illustrate the selection of the markdown reporter with html output:</p>
+<div class="codehilite"><pre>name: test_bag_geocoder
+title: Test the BAG geocoder
+description: Test the BAG geocoder by geocoding an address and report the result
+reporter: reporters.md
+reporter_args:
+  output_format: html
+</pre></div>
+
+
+<p>If no arguments are defined in the rule set, arguments passed in this report method will be passed to the reporter.</p>
+<p>The 'rule_set_reporter' method in the default reporter reporters.md accepts an optional <code>output_format</code> parameter which is expected to be one of:</p>
 <ul>
 <li>'markdown'    (default)</li>
 <li>'html'</li>
@@ -1589,20 +1697,29 @@ print(r.report())
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.base.rules_set.report', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.base.rules_set.report" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reporter_module</span> <span class="o">=</span> <span class="n">reporters</span><span class="o">.</span><span class="n">md</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Report the result of the rules.</span>
 <span class="sd">    this method should be called AFTER the execute method.</span>
-<span class="sd">    `reporter_module` is the module used to report. This module should have a class &#39;rule_set_reporter&#39; which is called with the supplied kwargs.</span>
-<span class="sd">    If `reporter_module` is not supplied the reporters.md module is used as a default.</span>
-<span class="sd">    </span>
-<span class="sd">    The reporters.md method &#39;rule_set_reporter&#39; accepts an optional `output_format` parameter which is expected to be one of:</span>
+<span class="sd">    The default reporter module is reporters.md.</span>
+<span class="sd">    if `reporter` is part of the definition of the rule set, that reporter will be used.</span>
+<span class="sd">    if `reporter_args` is part of the definition of the rule set the arguments defined there will be passed to the reporter.</span>
+<span class="sd">    A yaml snippet to illustrate the selection of the markdown reporter with html output:</span>
+<span class="sd">        name: test_bag_geocoder</span>
+<span class="sd">        title: Test the BAG geocoder</span>
+<span class="sd">        description: Test the BAG geocoder by geocoding an address and report the result</span>
+<span class="sd">        reporter: reporters.md</span>
+<span class="sd">        reporter_args:</span>
+<span class="sd">          output_format: html</span>
+<span class="sd">    If no arguments are defined in the rule set, arguments passed in this report method will be passed to the reporter.</span>
+<span class="sd">    The &#39;rule_set_reporter&#39; method in the default reporter reporters.md accepts an optional `output_format` parameter which is expected to be one of:</span>
 <span class="sd">    - &#39;markdown&#39;    (default)</span>
 <span class="sd">    - &#39;html&#39;</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="c"># todo: add the ability to set the reporter in the rule set</span>
-    <span class="c"># in this way, the report string doesn&#39;t have te be markdown</span>
-    <span class="k">return</span> <span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>

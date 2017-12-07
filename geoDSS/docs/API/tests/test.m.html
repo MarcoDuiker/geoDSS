@@ -1085,7 +1085,13 @@ table {
 <span class="sd">    Each test derived from this class should accept a definition where definition is expected to be a dict having at least:</span>
 
 <span class="sd">    &#39;title&#39; (string):                     a human readable title</span>
+
 <span class="sd">    &#39;description&#39; (string):               a human readable description (may be empty)</span>
+
+<span class="sd">    `definition` optionally can have:</span>
+
+<span class="sd">    `report` (bool)                       When set to `False` this rule will not be reported. The report results will be available to other tests.</span>
+<span class="sd">                                          Defaults to `True`.</span>
 
 <span class="sd">    The definition is coming from a rule as defined in a rule_set.</span>
 
@@ -1113,11 +1119,14 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="n">rules</span>                                              <span class="c"># this is an object with references to executed rules eg. self.rules.rule_1</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;break_on_error&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;break_on_error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;report&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
-        <span class="c"># todo: merge smarter: only set values when in settings so that definition overrules settings</span>
         <span class="k">if</span> <span class="n">settings</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
 
     <span class="k">def</span> <span class="nf">__nonzero__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1148,7 +1157,7 @@ table {
 <span class="sd">        ----------</span>
 
 <span class="sd">        `subject` (dict):        the subject</span>
-<span class="sd">            </span>
+
 <span class="sd">        Optional parameters</span>
 <span class="sd">        -------------------</span>
 
@@ -1179,9 +1188,9 @@ table {
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">            </span>
+
 <span class="sd">        `subject` (dict):        the subject</span>
-<span class="sd">            </span>
+
 <span class="sd">        Optional parameters</span>
 <span class="sd">        -------------------</span>
 
@@ -1205,7 +1214,7 @@ table {
 <span class="sd">        -------</span>
 
 <span class="sd">        `subject` (dict):   a dict with test subject properties</span>
-<span class="sd">            </span>
+
 <span class="sd">        sets</span>
 <span class="sd">        ----</span>
 
@@ -1214,7 +1223,7 @@ table {
 <span class="sd">        `self.decision`     to True | False </span>
 
 <span class="sd">        `self.result`       to an interable with strings to appear in the report</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 
@@ -1242,8 +1251,11 @@ table {
     <div class="desc"><p>This is a base class meant to sub class.</p>
 <h2>Definition</h2>
 <p>Each test derived from this class should accept a definition where definition is expected to be a dict having at least:</p>
-<p>'title' (string):                     a human readable title
-'description' (string):               a human readable description (may be empty)</p>
+<p>'title' (string):                     a human readable title</p>
+<p>'description' (string):               a human readable description (may be empty)</p>
+<p><code>definition</code> optionally can have:</p>
+<p><code>report</code> (bool)                       When set to <code>False</code> this rule will not be reported. The report results will be available to other tests.
+                                      Defaults to <code>True</code>.</p>
 <p>The definition is coming from a rule as defined in a rule_set.</p>
 <h2>Rule example</h2>
 <p>a useful yaml snippet for defining this minimum:</p>
@@ -1266,7 +1278,13 @@ table {
 <span class="sd">    Each test derived from this class should accept a definition where definition is expected to be a dict having at least:</span>
 
 <span class="sd">    &#39;title&#39; (string):                     a human readable title</span>
+
 <span class="sd">    &#39;description&#39; (string):               a human readable description (may be empty)</span>
+
+<span class="sd">    `definition` optionally can have:</span>
+
+<span class="sd">    `report` (bool)                       When set to `False` this rule will not be reported. The report results will be available to other tests.</span>
+<span class="sd">                                          Defaults to `True`.</span>
 
 <span class="sd">    The definition is coming from a rule as defined in a rule_set.</span>
 
@@ -1294,11 +1312,14 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="n">rules</span>                                              <span class="c"># this is an object with references to executed rules eg. self.rules.rule_1</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;break_on_error&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;break_on_error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;report&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
-        <span class="c"># todo: merge smarter: only set values when in settings so that definition overrules settings</span>
         <span class="k">if</span> <span class="n">settings</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
 
     <span class="k">def</span> <span class="nf">__nonzero__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1329,7 +1350,7 @@ table {
 <span class="sd">        ----------</span>
 
 <span class="sd">        `subject` (dict):        the subject</span>
-<span class="sd">            </span>
+
 <span class="sd">        Optional parameters</span>
 <span class="sd">        -------------------</span>
 
@@ -1360,9 +1381,9 @@ table {
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">            </span>
+
 <span class="sd">        `subject` (dict):        the subject</span>
-<span class="sd">            </span>
+
 <span class="sd">        Optional parameters</span>
 <span class="sd">        -------------------</span>
 
@@ -1386,7 +1407,7 @@ table {
 <span class="sd">        -------</span>
 
 <span class="sd">        `subject` (dict):   a dict with test subject properties</span>
-<span class="sd">            </span>
+
 <span class="sd">        sets</span>
 <span class="sd">        ----</span>
 
@@ -1395,7 +1416,7 @@ table {
 <span class="sd">        `self.decision`     to True | False </span>
 
 <span class="sd">        `self.result`       to an interable with strings to appear in the report</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 
@@ -1511,10 +1532,12 @@ table {
     <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="n">rules</span>                                              <span class="c"># this is an object with references to executed rules eg. self.rules.rule_1</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;break_on_error&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;break_on_error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="c"># todo: merge smarter: only set values when in settings so that definition overrules settings</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;report&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">if</span> <span class="n">settings</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 </pre></div>
 
   </div>
@@ -1553,13 +1576,11 @@ table {
 <span class="sd">    accepts</span>
 <span class="sd">    -------</span>
 <span class="sd">    `subject` (dict):   a dict with test subject properties</span>
-<span class="sd">        </span>
 <span class="sd">    sets</span>
 <span class="sd">    ----</span>
 <span class="sd">    `self.executed`     to True when succesfully executed</span>
 <span class="sd">    `self.decision`     to True | False </span>
 <span class="sd">    `self.result`       to an interable with strings to appear in the report</span>
-<span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    The subject to continue execution of the rules with the returned subject.</span>

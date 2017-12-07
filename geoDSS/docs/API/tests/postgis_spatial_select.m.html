@@ -1413,10 +1413,12 @@ table {
     <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="n">rules</span>                                              <span class="c"># this is an object with references to executed rules eg. self.rules.rule_1</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;break_on_error&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;break_on_error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="c"># todo: merge smarter: only set values when in settings so that definition overrules settings</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;report&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">if</span> <span class="n">settings</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 </pre></div>
 
   </div>

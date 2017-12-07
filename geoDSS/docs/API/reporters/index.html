@@ -6,7 +6,7 @@
     <title>geoDSS.reporters API documentation</title>
     <meta name="description" content="The reporters module provides reporters for the rule_set and rules.
 
-The standard reporter is md, pr..." />
+The standard reporter is report..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1041,6 +1041,7 @@ table {
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
         <li class="mono"><a href="md.m.html">geoDSS.reporters.md</a></li>
+        <li class="mono"><a href="plain_text.m.html">geoDSS.reporters.plain_text</a></li>
       </ul>
     </li>
     </ul>
@@ -1056,8 +1057,8 @@ table {
   <header id="section-intro">
   <h1 class="title"><span class="name">geoDSS.reporters</span> module</h1>
   <p>The reporters module provides reporters for the rule_set and rules.</p>
-<p>The standard reporter is md, providing a markdown reporter. This one can output html as well.</p>
-<p>Extending the md reporter or creating a new one can easily be done with pandoc.</p>
+<p>The standard reporter is reporters.md, providing a markdown reporter. This one can output html as well.</p>
+<p>Extending the reporters.md reporter or creating a new one can easily be done with pandoc.</p>
 <p>Of course, you can also convert via https://www.docverter.com/</p>
 <p>When extending mind the following:</p>
 <ul>
@@ -1073,9 +1074,9 @@ table {
     <div class="codehilite"><pre><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">The reporters module provides reporters for the rule_set and rules.</span>
 
-<span class="sd">The standard reporter is md, providing a markdown reporter. This one can output html as well.</span>
+<span class="sd">The standard reporter is reporters.md, providing a markdown reporter. This one can output html as well.</span>
 
-<span class="sd">Extending the md reporter or creating a new one can easily be done with pandoc.</span>
+<span class="sd">Extending the reporters.md reporter or creating a new one can easily be done with pandoc.</span>
 
 <span class="sd">Of course, you can also convert via https://www.docverter.com/</span>
 
@@ -1088,7 +1089,7 @@ table {
 
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">from</span> <span class="nn">..reporters</span> <span class="kn">import</span> <span class="n">md</span>
+<span class="kn">from</span> <span class="nn">..reporters</span> <span class="kn">import</span> <span class="n">md</span><span class="p">,</span> <span class="n">plain_text</span>
 </pre></div>
 
   </div>
@@ -1102,6 +1103,12 @@ table {
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
       <p class="name"><a href="md.m.html">geoDSS.reporters.md</a></p>
+      
+  
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="plain_text.m.html">geoDSS.reporters.plain_text</a></p>
       
   
 

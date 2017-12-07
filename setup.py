@@ -6,7 +6,7 @@ geoDss is a library to quickly evaluate a subject against rules.
 
 setup(
     name='geoDSS',
-    version='0.6',
+    version='0.7',
     description='geoDSS',
     long_description=long_description,
     url='',

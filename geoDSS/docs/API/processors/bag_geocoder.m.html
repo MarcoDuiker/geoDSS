@@ -1082,7 +1082,7 @@ table {
 
 <span class="k">class</span> <span class="nc">bag_geocoder</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This processor provides geocoder using the BAG geocoding service.</span>
+<span class="sd">    This processor provides geocoder using the Dutch BAG geocoding service.</span>
 
 <span class="sd">    Geocoding is done on zip-code and house_number of the subject. </span>
 <span class="sd">    This geocoder takes the first hit as a result</span>
@@ -1095,7 +1095,14 @@ table {
 <span class="sd">     `url` (string):                    base url for the geocoder</span>
 
 <span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.</span>
+
 <span class="sd">                                        If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.</span>
+
+<span class="sd">                                        if the format string contains {address} it will be replaced by the found address.</span>
+
+<span class="sd">                                        if the format string contains {x} it will be replaced by the x coordinate of the found location.</span>
+
+<span class="sd">                                        if the format string contains {y} it will be replaced by the x coordinate of the found location.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1108,7 +1115,7 @@ table {
 <span class="sd">                title: Geocodeer adres</span>
 <span class="sd">                description: Geocodeer adres op basis van postcode huisnummer</span>
 <span class="sd">                url: &quot;http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm=&quot;</span>
-<span class="sd">                report_template: &quot;Gevonden coordinaten: subject.geometry&quot;</span>
+<span class="sd">                report_template: &quot;Gevonden {address} op [&#39;subject.geometry&#39;](https://bagviewer.kadaster.nl/lvbag/bag-viewer/index.html#?geometry.x={x}&amp;geometry.y={y}&amp;zoomlevel=7)&quot;</span>
 
 <span class="sd">    Subject example</span>
 <span class="sd">    ---------------</span>
@@ -1172,6 +1179,7 @@ table {
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="ow">and</span>  <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">]:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;subject.geometry&#39;</span><span class="p">,</span> <span class="n">subject</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">])</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{x}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{y}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">address</span><span class="p">:</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{address}&#39;</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1194,14 +1202,23 @@ table {
       <p id="geoDSS.processors.bag_geocoder.bag_geocoder" class="name">class <span class="ident">bag_geocoder</span></p>
       
   
-    <div class="desc"><p>This processor provides geocoder using the BAG geocoding service.</p>
+    <div class="desc"><p>This processor provides geocoder using the Dutch BAG geocoding service.</p>
 <p>Geocoding is done on zip-code and house_number of the subject. 
 This geocoder takes the first hit as a result</p>
 <h2>Definition</h2>
 <p><code>definition</code> is expected to be a dict having:</p>
 <p><code>url</code> (string):                    base url for the geocoder</p>
-<p><code>report_template</code> (string):        (optional) String (with markdown support) to be reported when the test is True.
-                                    If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.</p>
+<p><code>report_template</code> (string):        (optional) String (with markdown support) to be reported when the test is True.</p>
+<div class="codehilite"><pre>                                If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.
+
+                                if the format string contains {address} it will be replaced by the found address.
+
+                                if the format string contains {x} it will be replaced by the x coordinate of the found location.
+
+                                if the format string contains {y} it will be replaced by the x coordinate of the found location.
+</pre></div>
+
+
 <h2>Rule example</h2>
 <p>a suitable yaml snippet would be:</p>
 <div class="codehilite"><pre>rules:
@@ -1210,7 +1227,7 @@ This geocoder takes the first hit as a result</p>
         title: Geocodeer adres
         description: Geocodeer adres op basis van postcode huisnummer
         url: &quot;http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm=&quot;
-        report_template: &quot;Gevonden coordinaten: subject.geometry&quot;
+        report_template: &quot;Gevonden {address} op [&#39;subject.geometry&#39;](https://bagviewer.kadaster.nl/lvbag/bag-viewer/index.html#?geometry.x={x}&amp;geometry.y={y}&amp;zoomlevel=7)&quot;
 </pre></div>
 
 
@@ -1223,7 +1240,7 @@ This geocoder takes the first hit as a result</p>
   <div id="source-geoDSS.processors.bag_geocoder.bag_geocoder" class="source">
     <div class="codehilite"><pre><span class="k">class</span> <span class="nc">bag_geocoder</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This processor provides geocoder using the BAG geocoding service.</span>
+<span class="sd">    This processor provides geocoder using the Dutch BAG geocoding service.</span>
 
 <span class="sd">    Geocoding is done on zip-code and house_number of the subject. </span>
 <span class="sd">    This geocoder takes the first hit as a result</span>
@@ -1236,7 +1253,14 @@ This geocoder takes the first hit as a result</p>
 <span class="sd">     `url` (string):                    base url for the geocoder</span>
 
 <span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.</span>
+
 <span class="sd">                                        If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.</span>
+
+<span class="sd">                                        if the format string contains {address} it will be replaced by the found address.</span>
+
+<span class="sd">                                        if the format string contains {x} it will be replaced by the x coordinate of the found location.</span>
+
+<span class="sd">                                        if the format string contains {y} it will be replaced by the x coordinate of the found location.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1249,7 +1273,7 @@ This geocoder takes the first hit as a result</p>
 <span class="sd">                title: Geocodeer adres</span>
 <span class="sd">                description: Geocodeer adres op basis van postcode huisnummer</span>
 <span class="sd">                url: &quot;http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm=&quot;</span>
-<span class="sd">                report_template: &quot;Gevonden coordinaten: subject.geometry&quot;</span>
+<span class="sd">                report_template: &quot;Gevonden {address} op [&#39;subject.geometry&#39;](https://bagviewer.kadaster.nl/lvbag/bag-viewer/index.html#?geometry.x={x}&amp;geometry.y={y}&amp;zoomlevel=7)&quot;</span>
 
 <span class="sd">    Subject example</span>
 <span class="sd">    ---------------</span>
@@ -1313,6 +1337,7 @@ This geocoder takes the first hit as a result</p>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="ow">and</span>  <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">]:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;subject.geometry&#39;</span><span class="p">,</span> <span class="n">subject</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">])</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{x}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{y}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">address</span><span class="p">:</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{address}&#39;</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1355,11 +1380,12 @@ This geocoder takes the first hit as a result</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="n">rules</span>                                              <span class="c"># this is an object with references to executed rules eg. self.rules.rule_1</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;break_on_error&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;break_on_error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
-    
-    <span class="c"># todo: merge smarter: only set values when in settings so that definition overrules settings</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;report&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">if</span> <span class="n">settings</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 </pre></div>
 
   </div>
@@ -1432,6 +1458,7 @@ This geocoder takes the first hit as a result</p>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s">&quot;Could not geocode address. Geocoder returned status code: `</span><span class="si">%s</span><span class="s">`&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span> <span class="p">)</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="ow">and</span>  <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">]:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;subject.geometry&#39;</span><span class="p">,</span> <span class="n">subject</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">])</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{x}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{y}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">address</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{address}&#39;</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>

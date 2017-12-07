@@ -1075,6 +1075,8 @@ table {
 <span class="sd">    This test does a boolean evaluation on two or more already executed rules.</span>
 <span class="sd">    This is usefull for combining tests.</span>
 
+<span class="sd">    It might be useful to add `report: False` to the definition of the rules being evaluated to suppress reporting of those rules. </span>
+
 <span class="sd">    Definition</span>
 <span class="sd">    ----------</span>
 
@@ -1087,6 +1089,7 @@ table {
 <span class="sd">    `report_template` (string):           String to be reported when the test is True</span>
 
 <span class="sd">    `add_to_report` (list):               A list of all named test of which the reports should be added to the report of this test</span>
+
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1153,6 +1156,7 @@ table {
   
     <div class="desc"><p>This test does a boolean evaluation on two or more already executed rules.
 This is usefull for combining tests.</p>
+<p>It might be useful to add <code>report: False</code> to the definition of the rules being evaluated to suppress reporting of those rules. </p>
 <h2>Definition</h2>
 <p><code>definition</code> is expected to be a dict having at least:</p>
 <p><code>expression</code> (string):                The expression to evaluate.
@@ -1184,6 +1188,8 @@ This is usefull for combining tests.</p>
 <span class="sd">    This test does a boolean evaluation on two or more already executed rules.</span>
 <span class="sd">    This is usefull for combining tests.</span>
 
+<span class="sd">    It might be useful to add `report: False` to the definition of the rules being evaluated to suppress reporting of those rules. </span>
+
 <span class="sd">    Definition</span>
 <span class="sd">    ----------</span>
 
@@ -1196,6 +1202,7 @@ This is usefull for combining tests.</p>
 <span class="sd">    `report_template` (string):           String to be reported when the test is True</span>
 
 <span class="sd">    `add_to_report` (list):               A list of all named test of which the reports should be added to the report of this test</span>
+
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1281,10 +1288,12 @@ This is usefull for combining tests.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="n">rules</span>                                              <span class="c"># this is an object with references to executed rules eg. self.rules.rule_1</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;break_on_error&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;break_on_error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="c"># todo: merge smarter: only set values when in settings so that definition overrules settings</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;report&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">if</span> <span class="n">settings</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 </pre></div>
 
   </div>

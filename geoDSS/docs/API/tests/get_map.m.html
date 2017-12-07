@@ -1106,7 +1106,13 @@ table {
 
 <span class="sd">    `flip_axes`      (optional) When using WMS 1.3.0 specify True if EPSG code and service requires the BBOX to be ymin,xmin,ymax,xmax</span>
 
-<span class="sd">    `report_template` (string):           An emty string (&quot;&quot;)</span>
+<span class="sd">    `report_template` (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url.</span>
+<span class="sd">                                    When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the </span>
+<span class="sd">                                    image can be added by providing an alt text like this:</span>
+<span class="sd">                                    </span>
+<span class="sd">                                    `report_template`: &quot;![Centered_map_small]({url})&quot;</span>
+
+<span class="sd">                                    _small, _medium and _large refer to the image size. If no red box appears, go one size up.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1215,9 +1221,14 @@ table {
         <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">distance</span>
         <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">distance</span>
         <span class="k">if</span> <span class="n">width</span> <span class="ow">and</span> <span class="n">height</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">width</span> <span class="o">==</span> <span class="n">height</span><span class="p">:</span>
-            <span class="n">new_width</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">new_height</span> <span class="o">=</span> <span class="n">new_width</span> <span class="o">*</span> <span class="n">height</span> <span class="o">/</span> <span class="n">width</span>
-            <span class="n">distance</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_height</span> <span class="o">-</span> <span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">width</span> <span class="o">&gt;</span> <span class="n">height</span><span class="p">:</span>
+                <span class="n">new_width</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">new_height</span> <span class="o">=</span> <span class="n">new_width</span> <span class="o">*</span> <span class="n">height</span> <span class="o">/</span> <span class="n">width</span>
+                <span class="n">distance</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_height</span> <span class="o">-</span> <span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_height</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">new_width</span> <span class="o">=</span> <span class="n">new_height</span> <span class="o">*</span> <span class="n">width</span> <span class="o">/</span> <span class="n">height</span>
+                <span class="n">distance</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_width</span> <span class="o">-</span> <span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">distance</span>
         <span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">distance</span>
 
@@ -1283,7 +1294,7 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.decision to True,</span>
                                                                                             <span class="c"># otherwise &quot;Test decision is: False&quot; is added to the report instead of the following:</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;![Map](</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="n">url</span> <span class="p">)</span>                                         
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{url}&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.executed to True, </span>
                                                                                             <span class="c"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
@@ -1319,7 +1330,15 @@ This is usefull for adding a map to the report </p>
 - <code>version</code>      WMS version</p>
 <p><code>buffer</code>         The buffer around the subjects geometry (in map units)</p>
 <p><code>flip_axes</code>      (optional) When using WMS 1.3.0 specify True if EPSG code and service requires the BBOX to be ymin,xmin,ymax,xmax</p>
-<p><code>report_template</code> (string):           An emty string ("")</p>
+<p><code>report_template</code> (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url.
+                                When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the 
+                                image can be added by providing an alt text like this:</p>
+<div class="codehilite"><pre>                            `report_template`: &quot;![Centered_map_small]({url})&quot;
+
+                            _small, _medium and _large refer to the image size. If no red box appears, go one size up.
+</pre></div>
+
+
 <h2>Rule example</h2>
 <p>a useful yaml snippet for this test would be:</p>
 <div class="codehilite"><pre>rules:
@@ -1363,7 +1382,13 @@ This is usefull for adding a map to the report </p>
 
 <span class="sd">    `flip_axes`      (optional) When using WMS 1.3.0 specify True if EPSG code and service requires the BBOX to be ymin,xmin,ymax,xmax</span>
 
-<span class="sd">    `report_template` (string):           An emty string (&quot;&quot;)</span>
+<span class="sd">    `report_template` (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url.</span>
+<span class="sd">                                    When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the </span>
+<span class="sd">                                    image can be added by providing an alt text like this:</span>
+<span class="sd">                                    </span>
+<span class="sd">                                    `report_template`: &quot;![Centered_map_small]({url})&quot;</span>
+
+<span class="sd">                                    _small, _medium and _large refer to the image size. If no red box appears, go one size up.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1472,9 +1497,14 @@ This is usefull for adding a map to the report </p>
         <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">distance</span>
         <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">distance</span>
         <span class="k">if</span> <span class="n">width</span> <span class="ow">and</span> <span class="n">height</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">width</span> <span class="o">==</span> <span class="n">height</span><span class="p">:</span>
-            <span class="n">new_width</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">new_height</span> <span class="o">=</span> <span class="n">new_width</span> <span class="o">*</span> <span class="n">height</span> <span class="o">/</span> <span class="n">width</span>
-            <span class="n">distance</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_height</span> <span class="o">-</span> <span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">width</span> <span class="o">&gt;</span> <span class="n">height</span><span class="p">:</span>
+                <span class="n">new_width</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">new_height</span> <span class="o">=</span> <span class="n">new_width</span> <span class="o">*</span> <span class="n">height</span> <span class="o">/</span> <span class="n">width</span>
+                <span class="n">distance</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_height</span> <span class="o">-</span> <span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_height</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">new_width</span> <span class="o">=</span> <span class="n">new_height</span> <span class="o">*</span> <span class="n">width</span> <span class="o">/</span> <span class="n">height</span>
+                <span class="n">distance</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_width</span> <span class="o">-</span> <span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">distance</span>
         <span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">distance</span>
 
@@ -1540,7 +1570,7 @@ This is usefull for adding a map to the report </p>
         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.decision to True,</span>
                                                                                             <span class="c"># otherwise &quot;Test decision is: False&quot; is added to the report instead of the following:</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;![Map](</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="n">url</span> <span class="p">)</span>                                         
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{url}&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.executed to True, </span>
                                                                                             <span class="c"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
@@ -1582,10 +1612,12 @@ This is usefull for adding a map to the report </p>
     <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="n">rules</span>                                              <span class="c"># this is an object with references to executed rules eg. self.rules.rule_1</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;break_on_error&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;break_on_error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="c"># todo: merge smarter: only set values when in settings so that definition overrules settings</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;report&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">if</span> <span class="n">settings</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 </pre></div>
 
   </div>
@@ -1653,7 +1685,7 @@ This is usefull for adding a map to the report </p>
         <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">+</span> <span class="s">&#39;?&#39;</span> <span class="o">+</span> <span class="n">qs</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.decision to True,</span>
                                                                                         <span class="c"># otherwise &quot;Test decision is: False&quot; is added to the report instead of the following:</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;![Map](</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="n">url</span> <span class="p">)</span>                                         
+    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{url}&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
     
     <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.executed to True, </span>
                                                                                         <span class="c"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
