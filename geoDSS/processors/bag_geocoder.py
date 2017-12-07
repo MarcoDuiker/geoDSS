@@ -14,7 +14,7 @@ from ..processors.processor import processor
 
 class bag_geocoder(processor):
     '''
-    This processor provides geocoder using the BAG geocoding service.
+    This processor provides geocoder using the Dutch BAG geocoding service.
 
     Geocoding is done on zip-code and house_number of the subject. 
     This geocoder takes the first hit as a result
@@ -28,6 +28,7 @@ class bag_geocoder(processor):
 
      `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.
                                         If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.
+                                        if the format string contains {address} it will be replaced by the found address
 
     Rule example
     ------------
@@ -40,7 +41,7 @@ class bag_geocoder(processor):
                 title: Geocodeer adres
                 description: Geocodeer adres op basis van postcode huisnummer
                 url: "http://geodata.nationaalgeoregister.nl/geocoder/Geocoder?zoekterm="
-                report_template: "Gevonden coordinaten: subject.geometry"
+                report_template: "Gevonden {address} coordinaten: subject.geometry"
 
     Subject example
     ---------------

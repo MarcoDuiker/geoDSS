@@ -38,7 +38,13 @@ class get_map(test):
 
     `flip_axes`      (optional) When using WMS 1.3.0 specify True if EPSG code and service requires the BBOX to be ymin,xmin,ymax,xmax
 
-    `report_template` (string):           An emty string ("")
+    `report_template` (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url.
+                                    When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the 
+                                    image can be added by providing an alt text like this:
+                                    
+                                    `report_template`: "![Centered_map_small]({url})"
+
+                                    _small, _medium and _large refer to the image size. If no red box appears, go one size up.
 
     Rule example
     ------------
@@ -147,9 +153,14 @@ class get_map(test):
         bbox[0] = bbox[0] - distance
         bbox[2] = bbox[2] + distance
         if width and height and not width == height:
-            new_width = bbox[2] - bbox[0]
-            new_height = new_width * height / width
-            distance = (new_height - (bbox[3] - bbox[1])) / 2
+            if width > height:
+                new_width = bbox[2] - bbox[0]
+                new_height = new_width * height / width
+                distance = (new_height - (bbox[3] - bbox[1])) / 2
+            else:
+                new_height = bbox[3] - bbox[1]
+                new_width = new_height * width / height
+                distance = (new_width - (bbox[2] - bbox[0])) / 2
         bbox[1] = bbox[1] - distance
         bbox[3] = bbox[3] + distance
 
@@ -215,7 +226,7 @@ class get_map(test):
         self.decision = True                                                                # don't forget to set self.decision to True,
                                                                                             # otherwise "Test decision is: False" is added to the report instead of the following:
 
-        self.result.append("![Map](%s)" % url )                                         
+        self.result.append(self.definition["report_template"].replace('{url}', url))
         
         self.executed = True                                                                # don't forget to set self.executed to True, 
                                                                                             # otherwise "Error: test is not executed:" will be added to the report as well

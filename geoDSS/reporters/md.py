@@ -43,7 +43,9 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
                 .tagline {margin-top: 50px; padding-top:10px; text-align: right;font-size: 70%; color: gray; border-top-style: solid; border-color: gray; border-width: 1px;}
                 .content {background-color: rgba(250,250,250,50);}
                 img {border: 2px solid gray;}
-                img[alt='Map'] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -90px; }
+                img[alt='Centered_map_small'] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -90px; }
+                img[alt='Centered_map_medium'] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -190px; }
+                img[alt='Centered_map_large'] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -340px; }
             </style>
         </head>
         <body>

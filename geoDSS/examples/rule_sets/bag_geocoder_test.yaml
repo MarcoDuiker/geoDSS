@@ -25,4 +25,4 @@ rules:
       format: "image/png"
       version: "1.1.0"
     buffer: 75
-    report_template: ""
+    report_template: "![Centered_map_small]({url})"
