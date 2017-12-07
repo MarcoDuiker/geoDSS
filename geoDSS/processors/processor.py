@@ -49,7 +49,7 @@ class processor(object):
         self.rules = rules                                              # this is an object with references to executed rules eg. self.rules.rule_1
         if not 'break_on_error' in self.definition:
             self.definition['break_on_error'] = False
-        if not 'report' in in self.definition:
+        if not 'report' in self.definition:
             self.definition['report'] = True
 
         if settings:

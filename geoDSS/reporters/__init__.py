@@ -16,4 +16,4 @@ When extending mind the following:
 
 '''
 
-from ..reporters import md
+from ..reporters import md, plain_text
