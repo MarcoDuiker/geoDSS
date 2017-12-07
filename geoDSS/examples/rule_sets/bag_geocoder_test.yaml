@@ -4,6 +4,9 @@ description: Test the BAG geocoder by geocoding an address and report the result
 logging:
   level: DEBUG
   #file: "/home/marco/bag_geocoder_cgi.log"
+reporter: reporters.md
+reporter_args:
+  output_format: html
 rules:
 - test:
     type: processors.bag_geocoder

@@ -13,6 +13,7 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
     reports on a rule set using markdown or html
 
     output format is expected to be one of:
+
     - 'markdown' (default)
     - 'html'
 
@@ -83,7 +84,7 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
 
 def rule_reporter(rule):
     '''
-    reports on a rule using markdown
+    Reports on a rule using markdown.
     '''
 
     obj = rule

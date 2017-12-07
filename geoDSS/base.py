@@ -59,6 +59,8 @@ class rules_set(object):
         `rules_set_file` is expected to be a file containing the rules set.
         '''
 
+        dss = sys.modules[__name__]
+
         self.definition = None
         self.definition = loader_module.load_rule_set(rules_set_file)
         if not 'title' in self.definition.keys():
@@ -72,9 +74,28 @@ class rules_set(object):
 
         self.logger = self._setup_logging()
 
+        if not 'reporter' in self.definition.keys():
+            self.reporter_module = reporters.md
+        else:
+            _group, _class = self.definition['reporter'].split('.',2)
+            if hasattr(dss, _group):                                        # this allows for reporters outside the reporters module
+                _group = getattr(dss, _group)
+            else:
+                self.logger.error('The module %s is not defined yet.' % _group)                         
+                raise exceptions.NotImplementedError('The module %s is not defined yet. Did you mean to use the reporters module?' % _group)
+            if hasattr(_group, _class):
+                self.reporter_module = getattr(_group, _class)
+                self.logger.debug("Selecting reporter %s" % self.reporter_module.__name__)
+            else:
+                self.logger.error('The reporter %s is not defined yet.' % self.definition['reporter'])
+                raise exceptions.NotImplementedError('The reporter %s is not defined yet.' % self.definition['reporter'])
+
+        self.reporter_args = None
+        if 'reporter_args' in self.definition.keys():
+            self.reporter_args = self.definition['reporter_args']
+
         self._rules = self.Rules()
         self.rules = []
-        dss = sys.modules[__name__]
         for rule in self.definition['rules']:
             name = rule.keys()[0]
             definition = rule[name]
@@ -82,13 +103,13 @@ class rules_set(object):
             if hasattr(dss, _group):
                 _group = getattr(dss, _group)
             else:
-                self.logger.error('The group %s is not defined yet.' % _group)
-                raise exceptions.NotImplementedError('The group %s is not defined yet.' % _group)
+                self.logger.error('The module %s is not defined yet.' % _group)
+                raise exceptions.NotImplementedError('The module %s is not defined yet.Did you mean to use the tests or processors module?' % _group)
             if hasattr(_group, _class):
                 # the class is in a module eg unit_test.unit_test
                 _group = getattr(_group, _class)
                 test_to_add = getattr(_group, _class)
-                self.logger.debug("Adding test with name: %s" % name)
+                self.logger.debug("Adding rule with name: %s" % name)
                 self.rules.append(test_to_add(name, definition, logger = self.logger, rules = self._rules, settings = self.definition['settings']))
             else:
                 self.logger.error('The type %s is not defined yet.' % definition['type'])
@@ -153,25 +174,38 @@ class rules_set(object):
                 break
         self.logger.info("Finished execution of rules")
 
-    def report(self, reporter_module = reporters.md, **kwargs):
+    def report(self, **kwargs):
         '''
         Report the result of the rules.
 
         this method should be called AFTER the execute method.
 
-        `reporter_module` is the module used to report. This module should have a class 'rule_set_reporter' which is called with the supplied kwargs.
+        The default reporter module is reporters.md.
 
-        If `reporter_module` is not supplied the reporters.md module is used as a default.
-        
-        The reporters.md method 'rule_set_reporter' accepts an optional `output_format` parameter which is expected to be one of:
+        if `reporter` is part of the definition of the rule set, that reporter will be used.
+
+        if `reporter_args` is part of the definition of the rule set the arguments defined there will be passed to the reporter.
+
+        A yaml snippet to illustrate the selection of the markdown reporter with html output:
+
+            name: test_bag_geocoder
+            title: Test the BAG geocoder
+            description: Test the BAG geocoder by geocoding an address and report the result
+            reporter: reporters.md
+            reporter_args:
+              output_format: html
+
+        If the reporter method is called with arguments, these argument will be passed to the reporterd instead of those defined in the rule set.
+
+        The 'rule_set_reporter' method in the default reporter reporters.md accepts an optional `output_format` parameter which is expected to be one of:
 
         - 'markdown'    (default)
         - 'html'
         '''
 
-        # todo: add the ability to set the reporter in the rule set
-        # in this way, the report string doesn't have te be markdown
-
-        return reporter_module.rule_set_reporter(self, **kwargs)
+        if kwargs:
+            return self.reporter_module.rule_set_reporter(self, **kwargs)
+        else:
+            return self.reporter_module.rule_set_reporter(self, **self.reporter_args)
 
 
