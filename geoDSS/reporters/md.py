@@ -17,10 +17,12 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
     - 'markdown' (default)
     - 'html'
 
-    **kwargs is not used in this reporter and only inserted here as an example for extending the reporters
-    '''
+    Furthermore the following optional parameters can be passed:
 
-    # todo: add what to report as parameter?
+    - decision_false_report (string):           The string to report when the test evaluated to the decision False
+    - decision_error_report (string):           The string to report when the test could not be evaluated due to an error
+
+    '''
 
     if 'html_wrapper' in kwargs:
         html_wrapper = kwargs['html_wrapper']
@@ -75,21 +77,28 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
     markdown = markdown + '\n'
 
     for rule in rule_set.rules:
-        markdown = markdown + rule_reporter(rule) + '\n'
+        markdown = markdown + rule_reporter(rule, **kwargs) + '\n'
 
     if output_format == 'html':
         return html_wrapper.replace('___content_goes_here___',md_lib.markdown(markdown))
     else:
         return markdown
 
-def rule_reporter(rule):
+def rule_reporter(rule, **kwargs):
     '''
     Reports on a rule using markdown.
     '''
 
+    decision_false_report = 'Test decision is: **False**'
+    decision_error_report = '**Error**: test failed to produce a decision or report'
+    if 'decision_false_report' in kwargs:
+        decision_false_report = kwargs['decision_false_report']
+    if 'decision_error_report' in kwargs:
+        decision_error_report = kwargs['decision_error_report']
+
     obj = rule
 
-    markdown = ''
+    markdown = u''
 
     if obj.definition['report']:
         markdown = markdown + obj.definition['title'] + '\n'
@@ -104,16 +113,16 @@ def rule_reporter(rule):
                     for row in obj.result:
                         markdown = markdown + '- ' + row + '\n'
                 else:
-                    markdown = markdown + 'Test decision is: **False**' + '\n'
+                    markdown = markdown + decision_false_report + '\n'
             else:
                 if obj.result:
                     for row in obj.result:
                         markdown = markdown + row + '\n'
         else:
             if obj.result:
-                markdown = markdown + '**Error**: test is not executed: ' + '\n'
+                markdown = markdown + decision_error_report + '\n' + '\n'
                 for row in obj.result:
                     markdown = markdown + row + '\n'
             else:
-                markdown = markdown + '**Error**: test is not executed.' + '\n'
+                markdown = markdown + decision_error_report + '\n'
     return markdown

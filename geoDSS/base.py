@@ -195,7 +195,7 @@ class rules_set(object):
             reporter_args:
               output_format: html
 
-        If the reporter method is called with arguments, these argument will be passed to the reporterd instead of those defined in the rule set.
+        If no arguments are defined in the rule set, arguments passed in this report method will be passed to the reporter.
 
         The 'rule_set_reporter' method in the default reporter reporters.md accepts an optional `output_format` parameter which is expected to be one of:
 
@@ -203,9 +203,9 @@ class rules_set(object):
         - 'html'
         '''
 
-        if kwargs:
-            return self.reporter_module.rule_set_reporter(self, **kwargs)
-        else:
+        if self.reporter_args:
             return self.reporter_module.rule_set_reporter(self, **self.reporter_args)
+        else:
+            return self.reporter_module.rule_set_reporter(self, **kwargs)
 
 

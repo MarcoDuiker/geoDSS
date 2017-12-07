@@ -89,7 +89,7 @@ class test(object):
         ----------
 
         `subject` (dict):        the subject
-            
+
         Optional parameters
         -------------------
 
@@ -120,9 +120,9 @@ class test(object):
 
         Parameters
         ----------
-            
+
         `subject` (dict):        the subject
-            
+
         Optional parameters
         -------------------
 
@@ -146,7 +146,7 @@ class test(object):
         -------
 
         `subject` (dict):   a dict with test subject properties
-            
+
         sets
         ----
 
@@ -155,7 +155,7 @@ class test(object):
         `self.decision`     to True | False 
 
         `self.result`       to an interable with strings to appear in the report
-            
+
         Returns
         -------
 
