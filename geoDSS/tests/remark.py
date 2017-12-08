@@ -45,7 +45,7 @@ class remark(test):
         '''
 
         result = self.definition["report_template"]                                         # we have the report_template available to manipulate
-        for key, value in subject:                                                          # in this case we replace place holders by values in the subject
+        for key, value in subject.items():                                                  # in this case we replace place holders by values in the subject
             result.replace('{' + key + '}', str(value))
 
         self.logger.debug('Adding to the report: %s' % result )                             # you have a logger available to log some messages

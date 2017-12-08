@@ -59,7 +59,6 @@ class test(object):
                 if not key in self.definition:
                     self.definition[key] = value
 
-
     def __nonzero__(self):
         '''
         Provides the decision after executing the test for Python 2.
@@ -77,6 +76,7 @@ class test(object):
             return bool(self.decision)
         else:
             raise exceptions.AttributeError("Test should be executed before evaluation.")
+
 
     def _finish_execution(self, subject, message = None, log = False, report = False):
         '''
