@@ -13,6 +13,8 @@ class remark(test):
     `definition`     is expected to be a dict having at least:
 
     `report_template` (string):           String  to be reported when the test is True (which is always the case).
+                                          In this string every {parameter} written like this, and is defined in
+                                          the subject will be replaced by the value of that parameter.
 
     Rule example
     ------------
@@ -38,18 +40,22 @@ class remark(test):
         ''' 
         Executes the test.
 
-        `subject`    is expected a dict 
+        `subject`    is expected to be a dict.
                      (contents doesn't matter)
         '''
 
-        self.logger.debug('Adding to the report: %s' % self.definition["report_template"])  # you have a logger available to log some messages
+        result = self.definition["report_template"]                                         # we have the report_template available to manipulate
+        for key, value in subject:                                                          # in this case we replace place holders by values in the subject
+            result.replace('{' + key + '}', str(value))
+
+        self.logger.debug('Adding to the report: %s' % result )                             # you have a logger available to log some messages
                                                                                             # the loggers properties are set up in the rule_set definition
 
         self.decision = True                                                                # don't forget to set self.decision to True,
                                                                                             # otherwise "Test decision is: False" is added to the report instead of the following:
 
-        self.result.append(self.definition["report_template"])                              # in this way we add the report_template to the report
-        
+        self.result.append(result)                                                          # in this way we add a string to the report
+
         self.executed = True                                                                # don't forget to set self.executed to True, 
                                                                                             # otherwise "Error: test is not executed:" will be added to the report as well
 
