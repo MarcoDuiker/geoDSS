@@ -1,0 +1,2691 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>geoDSS.serve_cgi API documentation</title>
+    <meta name="description" content="With servi_cgi it is easy to bring up a webserver listening on port 8000
+to start using geoDSS via a..." />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#geoDSS.serve_cgi.address">address</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.port">port</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#geoDSS.serve_cgi.main">main</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler">MyCGIHTTPRequestHandler</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.__init__">__init__</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.address_string">address_string</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.copyfile">copyfile</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.date_time_string">date_time_string</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_GET">do_GET</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_HEAD">do_HEAD</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_POST">do_POST</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.end_headers">end_headers</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.finish">finish</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.guess_type">guess_type</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle">handle</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle_one_request">handle_one_request</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_cgi">is_cgi</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_executable">is_executable</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_python">is_python</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.list_directory">list_directory</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_date_time_string">log_date_time_string</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_error">log_error</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_message">log_message</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_request">log_request</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.parse_request">parse_request</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.run_cgi">run_cgi</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_error">send_error</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_head">send_head</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_header">send_header</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_response">send_response</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.setup">setup</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.translate_path">translate_path</a></li>
+    <li class="mono"><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler.version_string">version_string</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">geoDSS.serve_cgi</span> module</h1>
+  <p>With servi_cgi it is easy to bring up a webserver listening on port 8000
+to start using geoDSS via a webinterface. 
+Furthermore this serves as an example for how to include geoDSS in
+webinterfaces.</p>
+<h2>Warning</h2>
+<p><strong>serve.cgi is not meant for production use.</strong></p>
+<p><strong>Probably you don't want to expose serve.cgi to the internet.</strong></p>
+<h2>Usage</h2>
+<p>On windows start serve_cgi by running <code>serve_cgi.bat</code>.</p>
+<p>On Linux start serve_cgi by running <code>serve_cgi.sh</code> or <code>serve_cgi.py</code>.</p>
+<p>Once you've started serve_cgi you can open a browser and browse to one of the examples:</p>
+<blockquote>
+<p>http://localhost:8000/cgi-bin/interfaces.py?form=../geoDSS/examples/forms/basic.yaml&amp;template=../geoDSS/examples/forms/basic_template.html&amp;output_format=html</p>
+</blockquote>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi" class="source">
+    <div class="codehilite"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!C:/Python27/python.exe -u</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">With servi_cgi it is easy to bring up a webserver listening on port 8000</span>
+<span class="sd">to start using geoDSS via a webinterface. </span>
+<span class="sd">Furthermore this serves as an example for how to include geoDSS in</span>
+<span class="sd">webinterfaces.</span>
+
+<span class="sd">Warning</span>
+<span class="sd">-------</span>
+
+<span class="sd">**serve.cgi is not meant for production use.**</span>
+
+<span class="sd">**Probably you don&#39;t want to expose serve.cgi to the internet.**</span>
+
+<span class="sd">Usage</span>
+<span class="sd">-----</span>
+
+<span class="sd">On windows start serve_cgi by running `serve_cgi.bat`.</span>
+
+<span class="sd">On Linux start serve_cgi by running `serve_cgi.sh` or `serve_cgi.py`.</span>
+
+<span class="sd">Once you&#39;ve started serve_cgi you can open a browser and browse to one of the examples:</span>
+<span class="sd">&gt;http://localhost:8000/cgi-bin/interfaces.py?form=../geoDSS/examples/forms/basic.yaml&amp;template=../geoDSS/examples/forms/basic_template.html&amp;output_format=html</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">CGIHTTPServer</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># default port and address to listen to</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">8000</span>
+<span class="n">address</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+<span class="k">class</span> <span class="nc">MyCGIHTTPRequestHandler</span><span class="p">(</span><span class="n">CGIHTTPServer</span><span class="o">.</span><span class="n">CGIHTTPRequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="c1"># Extend as to enable .cgi files to be recognized (Windows issue)</span>
+        <span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tail</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">,</span> <span class="s2">&quot;.pyw&quot;</span><span class="p">,</span> <span class="s2">&quot;.cgi&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="n">server</span> <span class="o">=</span> <span class="n">CGIHTTPServer</span><span class="o">.</span><span class="n">BaseHTTPServer</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">((</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span> <span class="n">MyCGIHTTPRequestHandler</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;HTTP and CGI server starting, browse to http://127.0.0.1:</span><span class="si">%i</span><span class="s1">/cgi-bin/interfaces.py, shutdown with Ctrl-C&#39;</span> <span class="o">%</span> <span class="n">port</span><span class="p">)</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+
+  </header>
+
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="geoDSS.serve_cgi.address" class="name">var <span class="ident">address</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="geoDSS.serve_cgi.port" class="name">var <span class="ident">port</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.main">
+    <p>def <span class="ident">main</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.main', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.main" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="n">server</span> <span class="o">=</span> <span class="n">CGIHTTPServer</span><span class="o">.</span><span class="n">BaseHTTPServer</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">((</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span> <span class="n">MyCGIHTTPRequestHandler</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;HTTP and CGI server starting, browse to http://127.0.0.1:</span><span class="si">%i</span><span class="s1">/cgi-bin/interfaces.py, shutdown with Ctrl-C&#39;</span> <span class="o">%</span> <span class="n">port</span><span class="p">)</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler" class="name">class <span class="ident">MyCGIHTTPRequestHandler</span></p>
+      
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler" class="source">
+    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">MyCGIHTTPRequestHandler</span><span class="p">(</span><span class="n">CGIHTTPServer</span><span class="o">.</span><span class="n">CGIHTTPRequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="c1"># Extend as to enable .cgi files to be recognized (Windows issue)</span>
+        <span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tail</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">,</span> <span class="s2">&quot;.pyw&quot;</span><span class="p">,</span> <span class="s2">&quot;.cgi&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#geoDSS.serve_cgi.MyCGIHTTPRequestHandler">MyCGIHTTPRequestHandler</a></li>
+          <li>CGIHTTPServer.CGIHTTPRequestHandler</li>
+          <li>SimpleHTTPServer.SimpleHTTPRequestHandler</li>
+          <li>BaseHTTPServer.BaseHTTPRequestHandler</li>
+          <li>SocketServer.StreamRequestHandler</li>
+          <li>SocketServer.BaseRequestHandler</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.MessageClass" class="name">var <span class="ident">MessageClass</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.cgi_directories" class="name">var <span class="ident">cgi_directories</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.default_request_version" class="name">var <span class="ident">default_request_version</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.disable_nagle_algorithm" class="name">var <span class="ident">disable_nagle_algorithm</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.error_content_type" class="name">var <span class="ident">error_content_type</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.error_message_format" class="name">var <span class="ident">error_message_format</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.extensions_map" class="name">var <span class="ident">extensions_map</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.have_fork" class="name">var <span class="ident">have_fork</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.have_popen2" class="name">var <span class="ident">have_popen2</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.have_popen3" class="name">var <span class="ident">have_popen3</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.monthname" class="name">var <span class="ident">monthname</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.protocol_version" class="name">var <span class="ident">protocol_version</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.rbufsize" class="name">var <span class="ident">rbufsize</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.responses" class="name">var <span class="ident">responses</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.server_version" class="name">var <span class="ident">server_version</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.sys_version" class="name">var <span class="ident">sys_version</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.timeout" class="name">var <span class="ident">timeout</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.wbufsize" class="name">var <span class="ident">wbufsize</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.weekdayname" class="name">var <span class="ident">weekdayname</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, request, client_address, server)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.__init__" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">client_address</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">request</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">client_address</span> <span class="o">=</span> <span class="n">client_address</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.address_string">
+    <p>def <span class="ident">address_string</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the client address formatted for logging.</p>
+<p>This version looks up the full hostname using gethostbyaddr(),
+and tries to find a name that contains at least one dot.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.address_string', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.address_string" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">address_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the client address formatted for logging.</span>
+<span class="sd">    This version looks up the full hostname using gethostbyaddr(),</span>
+<span class="sd">    and tries to find a name that contains at least one dot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_address</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">socket</span><span class="o">.</span><span class="n">getfqdn</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.copyfile">
+    <p>def <span class="ident">copyfile</span>(</p><p>self, source, outputfile)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Copy all data between two file objects.</p>
+<p>The SOURCE argument is a file object open for reading
+(or anything with a read() method) and the DESTINATION
+argument is a file object open for writing (or
+anything with a write() method).</p>
+<p>The only reason for overriding this would be to change
+the block size or perhaps to replace newlines by CRLF
+-- note however that this the default server uses this
+to copy binary data as well.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.copyfile', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.copyfile" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">outputfile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Copy all data between two file objects.</span>
+<span class="sd">    The SOURCE argument is a file object open for reading</span>
+<span class="sd">    (or anything with a read() method) and the DESTINATION</span>
+<span class="sd">    argument is a file object open for writing (or</span>
+<span class="sd">    anything with a write() method).</span>
+<span class="sd">    The only reason for overriding this would be to change</span>
+<span class="sd">    the block size or perhaps to replace newlines by CRLF</span>
+<span class="sd">    -- note however that this the default server uses this</span>
+<span class="sd">    to copy binary data as well.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">outputfile</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.date_time_string">
+    <p>def <span class="ident">date_time_string</span>(</p><p>self, timestamp=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the current date and time formatted for a message header.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.date_time_string', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.date_time_string" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">date_time_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the current date and time formatted for a message header.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hh</span><span class="p">,</span> <span class="n">mm</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">wd</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">gmtime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">, </span><span class="si">%02d</span><span class="s2"> </span><span class="si">%3s</span><span class="s2"> </span><span class="si">%4d</span><span class="s2"> </span><span class="si">%02d</span><span class="s2">:</span><span class="si">%02d</span><span class="s2">:</span><span class="si">%02d</span><span class="s2"> GMT&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weekdayname</span><span class="p">[</span><span class="n">wd</span><span class="p">],</span>
+            <span class="n">day</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">monthname</span><span class="p">[</span><span class="n">month</span><span class="p">],</span> <span class="n">year</span><span class="p">,</span>
+            <span class="n">hh</span><span class="p">,</span> <span class="n">mm</span><span class="p">,</span> <span class="n">ss</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_GET">
+    <p>def <span class="ident">do_GET</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Serve a GET request.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_GET', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_GET" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">do_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Serve a GET request.&quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_head</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_HEAD">
+    <p>def <span class="ident">do_HEAD</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Serve a HEAD request.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_HEAD', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_HEAD" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">do_HEAD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Serve a HEAD request.&quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_head</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_POST">
+    <p>def <span class="ident">do_POST</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Serve a POST request.</p>
+<p>This is only implemented for CGI scripts.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_POST', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_POST" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">do_POST</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Serve a POST request.</span>
+<span class="sd">    This is only implemented for CGI scripts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cgi</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_cgi</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">501</span><span class="p">,</span> <span class="s2">&quot;Can only POST to CGI scripts&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.end_headers">
+    <p>def <span class="ident">end_headers</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Send the blank line ending the MIME headers.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.end_headers', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.end_headers" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">end_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Send the blank line ending the MIME headers.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_version</span> <span class="o">!=</span> <span class="s1">&#39;HTTP/0.9&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.finish">
+    <p>def <span class="ident">finish</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.finish', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.finish" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+            <span class="c1"># A final socket error may have occurred here, such as</span>
+            <span class="c1"># the local error ECONNABORTED.</span>
+            <span class="k">pass</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.guess_type">
+    <p>def <span class="ident">guess_type</span>(</p><p>self, path)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Guess the type of a file.</p>
+<p>Argument is a PATH (a filename).</p>
+<p>Return value is a string of the form type/subtype,
+usable for a MIME Content-type header.</p>
+<p>The default implementation looks the file's extension
+up in the table self.extensions_map, using application/octet-stream
+as a default; however it would be permissible (if
+slow) to look inside the data to make a better guess.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.guess_type', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.guess_type" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Guess the type of a file.</span>
+<span class="sd">    Argument is a PATH (a filename).</span>
+<span class="sd">    Return value is a string of the form type/subtype,</span>
+<span class="sd">    usable for a MIME Content-type header.</span>
+<span class="sd">    The default implementation looks the file&#39;s extension</span>
+<span class="sd">    up in the table self.extensions_map, using application/octet-stream</span>
+<span class="sd">    as a default; however it would be permissible (if</span>
+<span class="sd">    slow) to look inside the data to make a better guess.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">posixpath</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extensions_map</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extensions_map</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extensions_map</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extensions_map</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extensions_map</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle">
+    <p>def <span class="ident">handle</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Handle multiple requests if necessary.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Handle multiple requests if necessary.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">handle_one_request</span><span class="p">()</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_one_request</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle_one_request">
+    <p>def <span class="ident">handle_one_request</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Handle a single HTTP request.</p>
+<p>You normally don't need to override this method; see the class
+<strong>doc</strong> string for information on how to handle specific HTTP
+commands such as GET and POST.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle_one_request', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle_one_request" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">handle_one_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Handle a single HTTP request.</span>
+<span class="sd">    You normally don&#39;t need to override this method; see the class</span>
+<span class="sd">    __doc__ string for information on how to handle specific HTTP</span>
+<span class="sd">    commands such as GET and POST.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_requestline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">readline</span><span class="p">(</span><span class="mi">65537</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_requestline</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">65536</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">requestline</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request_version</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">414</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_requestline</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_request</span><span class="p">():</span>
+            <span class="c1"># An error code has been sent, just exit</span>
+            <span class="k">return</span>
+        <span class="n">mname</span> <span class="o">=</span> <span class="s1">&#39;do_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mname</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">501</span><span class="p">,</span> <span class="s2">&quot;Unsupported method (</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mname</span><span class="p">)</span>
+        <span class="n">method</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span> <span class="c1">#actually send the response if not already done.</span>
+    <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1">#a read or a write timed out.  Discard this connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="s2">&quot;Request timed out: </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_cgi">
+    <p>def <span class="ident">is_cgi</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Test whether self.path corresponds to a CGI script.</p>
+<p>Returns True and updates the cgi_info attribute to the tuple
+(dir, rest) if self.path requires running a CGI script.
+Returns False otherwise.</p>
+<p>If any exception is raised, the caller should assume that
+self.path was rejected as invalid and act accordingly.</p>
+<p>The default implementation tests whether the normalized url
+path begins with one of the strings in self.cgi_directories
+(and the next character is a '/' or the end of the string).</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_cgi', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_cgi" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">is_cgi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test whether self.path corresponds to a CGI script.</span>
+<span class="sd">    Returns True and updates the cgi_info attribute to the tuple</span>
+<span class="sd">    (dir, rest) if self.path requires running a CGI script.</span>
+<span class="sd">    Returns False otherwise.</span>
+<span class="sd">    If any exception is raised, the caller should assume that</span>
+<span class="sd">    self.path was rejected as invalid and act accordingly.</span>
+<span class="sd">    The default implementation tests whether the normalized url</span>
+<span class="sd">    path begins with one of the strings in self.cgi_directories</span>
+<span class="sd">    (and the next character is a &#39;/&#39; or the end of the string).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">collapsed_path</span> <span class="o">=</span> <span class="n">_url_collapse_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">dir_sep</span> <span class="o">=</span> <span class="n">collapsed_path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">collapsed_path</span><span class="p">[:</span><span class="n">dir_sep</span><span class="p">],</span> <span class="n">collapsed_path</span><span class="p">[</span><span class="n">dir_sep</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="n">head</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgi_directories</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgi_info</span> <span class="o">=</span> <span class="n">head</span><span class="p">,</span> <span class="n">tail</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_executable">
+    <p>def <span class="ident">is_executable</span>(</p><p>self, path)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Test whether argument path is an executable file.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_executable', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_executable" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">is_executable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test whether argument path is an executable file.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">executable</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_python">
+    <p>def <span class="ident">is_python</span>(</p><p>self, path)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_python', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_python" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">is_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="c1"># Extend as to enable .cgi files to be recognized (Windows issue)</span>
+    <span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tail</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">,</span> <span class="s2">&quot;.pyw&quot;</span><span class="p">,</span> <span class="s2">&quot;.cgi&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.list_directory">
+    <p>def <span class="ident">list_directory</span>(</p><p>self, path)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Helper to produce a directory listing (absent index.html).</p>
+<p>Return value is either a file object, or None (indicating an
+error).  In either case, the headers are sent, making the
+interface the same as for send_head().</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.list_directory', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.list_directory" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">list_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Helper to produce a directory listing (absent index.html).</span>
+<span class="sd">    Return value is either a file object, or None (indicating an</span>
+<span class="sd">    error).  In either case, the headers are sent, making the</span>
+<span class="sd">    interface the same as for send_head().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">list</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">os</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">404</span><span class="p">,</span> <span class="s2">&quot;No permission to list directory&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="nb">list</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">displaypath</span> <span class="o">=</span> <span class="n">cgi</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 3.2 Final//EN&quot;&gt;&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&lt;html&gt;</span><span class="se">\n</span><span class="s2">&lt;title&gt;Directory listing for </span><span class="si">%s</span><span class="s2">&lt;/title&gt;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">displaypath</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&lt;body&gt;</span><span class="se">\n</span><span class="s2">&lt;h2&gt;Directory listing for </span><span class="si">%s</span><span class="s2">&lt;/h2&gt;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">displaypath</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&lt;hr&gt;</span><span class="se">\n</span><span class="s2">&lt;ul&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">fullname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">displayname</span> <span class="o">=</span> <span class="n">linkname</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="c1"># Append / for directories or @ for symbolic links</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fullname</span><span class="p">):</span>
+            <span class="n">displayname</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="n">linkname</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">fullname</span><span class="p">):</span>
+            <span class="n">displayname</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;@&quot;</span>
+            <span class="c1"># Note: a link to a directory displays with @ and links with /</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;li&gt;&lt;a href=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/a&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">linkname</span><span class="p">),</span> <span class="n">cgi</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">displayname</span><span class="p">)))</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&lt;/ul&gt;</span><span class="se">\n</span><span class="s2">&lt;hr&gt;</span><span class="se">\n</span><span class="s2">&lt;/body&gt;</span><span class="se">\n</span><span class="s2">&lt;/html&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">encoding</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getfilesystemencoding</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s2">&quot;Content-type&quot;</span><span class="p">,</span> <span class="s2">&quot;text/html; charset=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">encoding</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">end_headers</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">f</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_date_time_string">
+    <p>def <span class="ident">log_date_time_string</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the current time formatted for logging.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_date_time_string', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_date_time_string" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">log_date_time_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the current time formatted for logging.&quot;&quot;&quot;</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hh</span><span class="p">,</span> <span class="n">mm</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">/</span><span class="si">%3s</span><span class="s2">/</span><span class="si">%04d</span><span class="s2"> </span><span class="si">%02d</span><span class="s2">:</span><span class="si">%02d</span><span class="s2">:</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">day</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">monthname</span><span class="p">[</span><span class="n">month</span><span class="p">],</span> <span class="n">year</span><span class="p">,</span> <span class="n">hh</span><span class="p">,</span> <span class="n">mm</span><span class="p">,</span> <span class="n">ss</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_error">
+    <p>def <span class="ident">log_error</span>(</p><p>self, format, *args)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Log an error.</p>
+<p>This is called when a request cannot be fulfilled.  By
+default it passes the message on to log_message().</p>
+<p>Arguments are the same as for log_message().</p>
+<p>XXX This should go to the separate error log.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_error', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_error" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Log an error.</span>
+<span class="sd">    This is called when a request cannot be fulfilled.  By</span>
+<span class="sd">    default it passes the message on to log_message().</span>
+<span class="sd">    Arguments are the same as for log_message().</span>
+<span class="sd">    XXX This should go to the separate error log.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log_message</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_message">
+    <p>def <span class="ident">log_message</span>(</p><p>self, format, *args)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Log an arbitrary message.</p>
+<p>This is used by all other logging functions.  Override
+it if you have specific logging wishes.</p>
+<p>The first argument, FORMAT, is a format string for the
+message to be logged.  If the format string contains
+any % escapes requiring parameters, they should be
+specified as subsequent arguments (it's just like
+printf!).</p>
+<p>The client ip address and current date/time are prefixed to every
+message.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_message', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_message" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">log_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Log an arbitrary message.</span>
+<span class="sd">    This is used by all other logging functions.  Override</span>
+<span class="sd">    it if you have specific logging wishes.</span>
+<span class="sd">    The first argument, FORMAT, is a format string for the</span>
+<span class="sd">    message to be logged.  If the format string contains</span>
+<span class="sd">    any % escapes requiring parameters, they should be</span>
+<span class="sd">    specified as subsequent arguments (it&#39;s just like</span>
+<span class="sd">    printf!).</span>
+<span class="sd">    The client ip address and current date/time are prefixed to every</span>
+<span class="sd">    message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> - - [</span><span class="si">%s</span><span class="s2">] </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span>
+                     <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">client_address</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">log_date_time_string</span><span class="p">(),</span>
+                      <span class="n">format</span><span class="o">%</span><span class="n">args</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_request">
+    <p>def <span class="ident">log_request</span>(</p><p>self, code=&#39;-&#39;, size=&#39;-&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Log an accepted request.</p>
+<p>This is called by send_response().</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_request', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_request" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">log_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Log an accepted request.</span>
+<span class="sd">    This is called by send_response().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log_message</span><span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot; </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">requestline</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.parse_request">
+    <p>def <span class="ident">parse_request</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Parse a request (internal).</p>
+<p>The request should be stored in self.raw_requestline; the results
+are in self.command, self.path, self.request_version and
+self.headers.</p>
+<p>Return True for success, False for failure; on failure, an
+error is sent back.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.parse_request', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.parse_request" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">parse_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse a request (internal).</span>
+<span class="sd">    The request should be stored in self.raw_requestline; the results</span>
+<span class="sd">    are in self.command, self.path, self.request_version and</span>
+<span class="sd">    self.headers.</span>
+<span class="sd">    Return True for success, False for failure; on failure, an</span>
+<span class="sd">    error is sent back.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c1"># set in case of error on the first line</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">request_version</span> <span class="o">=</span> <span class="n">version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_request_version</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">requestline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_requestline</span>
+    <span class="n">requestline</span> <span class="o">=</span> <span class="n">requestline</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">requestline</span> <span class="o">=</span> <span class="n">requestline</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">requestline</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">words</span>
+        <span class="k">if</span> <span class="n">version</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;HTTP/&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;Bad request version (</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="n">version</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">base_version_number</span> <span class="o">=</span> <span class="n">version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">version_number</span> <span class="o">=</span> <span class="n">base_version_number</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="c1"># RFC 2145 section 3.1 says there can be only one &quot;.&quot; and</span>
+            <span class="c1">#   - major and minor numbers MUST be treated as</span>
+            <span class="c1">#      separate integers;</span>
+            <span class="c1">#   - HTTP/2.4 is a lower version than HTTP/2.13, which in</span>
+            <span class="c1">#      turn is lower than HTTP/12.3;</span>
+            <span class="c1">#   - Leading zeros MUST be ignored by recipients.</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">version_number</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="n">version_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">version_number</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">version_number</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;Bad request version (</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="n">version</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">version_number</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol_version</span> <span class="o">&gt;=</span> <span class="s2">&quot;HTTP/1.1&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">version_number</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">505</span><span class="p">,</span>
+                      <span class="s2">&quot;Invalid HTTP Version (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="n">base_version_number</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">words</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">command</span> <span class="o">!=</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span>
+                            <span class="s2">&quot;Bad HTTP/0.9 request type (</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="n">command</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">words</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;Bad request syntax (</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="n">requestline</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_version</span> <span class="o">=</span> <span class="n">command</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">version</span>
+    <span class="c1"># Examine the headers and look for a Connection directive</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MessageClass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">conntype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Connection&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">conntype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;close&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">conntype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;keep-alive&#39;</span> <span class="ow">and</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">protocol_version</span> <span class="o">&gt;=</span> <span class="s2">&quot;HTTP/1.1&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.run_cgi">
+    <p>def <span class="ident">run_cgi</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Execute a CGI script.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.run_cgi', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.run_cgi" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">run_cgi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Execute a CGI script.&quot;&quot;&quot;</span>
+    <span class="nb">dir</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgi_info</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="nb">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">rest</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">nextdir</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">nextrest</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">scriptdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translate_path</span><span class="p">(</span><span class="n">nextdir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">scriptdir</span><span class="p">):</span>
+            <span class="nb">dir</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="n">nextdir</span><span class="p">,</span> <span class="n">nextrest</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="c1"># find an explicit query string, if present.</span>
+    <span class="n">rest</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">query</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">)</span>
+    <span class="c1"># dissect the part after the directory name into a script name &amp;</span>
+    <span class="c1"># a possible additional path, to be stored in PATH_INFO.</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">script</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="n">rest</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">rest</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">script</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="n">rest</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">scriptname</span> <span class="o">=</span> <span class="nb">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">script</span>
+    <span class="n">scriptfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translate_path</span><span class="p">(</span><span class="n">scriptname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">scriptfile</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">404</span><span class="p">,</span> <span class="s2">&quot;No such CGI script (</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="n">scriptname</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">scriptfile</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">403</span><span class="p">,</span> <span class="s2">&quot;CGI script is not a plain file (</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span>
+                        <span class="n">scriptname</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">ispy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_python</span><span class="p">(</span><span class="n">scriptname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ispy</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">have_fork</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">have_popen2</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">have_popen3</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">403</span><span class="p">,</span> <span class="s2">&quot;CGI script is not a Python script (</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span>
+                            <span class="n">scriptname</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_executable</span><span class="p">(</span><span class="n">scriptfile</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="mi">403</span><span class="p">,</span> <span class="s2">&quot;CGI script is not executable (</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span>
+                            <span class="n">scriptname</span><span class="p">)</span>
+            <span class="k">return</span>
+    <span class="c1"># Reference: http://hoohoo.ncsa.uiuc.edu/cgi/env.html</span>
+    <span class="c1"># XXX Much of the following could be prepared ahead of time!</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;SERVER_SOFTWARE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">version_string</span><span class="p">()</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;SERVER_NAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">server_name</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;GATEWAY_INTERFACE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CGI/1.1&#39;</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;SERVER_PROTOCOL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol_version</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;SERVER_PORT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">server_port</span><span class="p">)</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span>
+    <span class="n">uqrest</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;PATH_INFO&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">uqrest</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;PATH_TRANSLATED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translate_path</span><span class="p">(</span><span class="n">uqrest</span><span class="p">)</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;SCRIPT_NAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scriptname</span>
+    <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
+        <span class="n">env</span><span class="p">[</span><span class="s1">&#39;QUERY_STRING&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">query</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_string</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">host</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_address</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">env</span><span class="p">[</span><span class="s1">&#39;REMOTE_HOST&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">host</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;REMOTE_ADDR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_address</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">authorization</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s2">&quot;authorization&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">authorization</span><span class="p">:</span>
+        <span class="n">authorization</span> <span class="o">=</span> <span class="n">authorization</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">authorization</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">base64</span><span class="o">,</span> <span class="nn">binascii</span>
+            <span class="n">env</span><span class="p">[</span><span class="s1">&#39;AUTH_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">authorization</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">authorization</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;basic&quot;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">authorization</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">decodestring</span><span class="p">(</span><span class="n">authorization</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">except</span> <span class="n">binascii</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">authorization</span> <span class="o">=</span> <span class="n">authorization</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">authorization</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">env</span><span class="p">[</span><span class="s1">&#39;REMOTE_USER&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">authorization</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># XXX REMOTE_IDENT</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">typeheader</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">env</span><span class="p">[</span><span class="s1">&#39;CONTENT_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">type</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">env</span><span class="p">[</span><span class="s1">&#39;CONTENT_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">typeheader</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s1">&#39;content-length&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">length</span><span class="p">:</span>
+        <span class="n">env</span><span class="p">[</span><span class="s1">&#39;CONTENT_LENGTH&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
+    <span class="n">referer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s1">&#39;referer&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">referer</span><span class="p">:</span>
+        <span class="n">env</span><span class="p">[</span><span class="s1">&#39;HTTP_REFERER&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">referer</span>
+    <span class="n">accept</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">getallmatchingheaders</span><span class="p">(</span><span class="s1">&#39;accept&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="s2">&quot;</span><span class="se">\t\n\r</span><span class="s2"> &quot;</span><span class="p">:</span>
+            <span class="n">accept</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">accept</span> <span class="o">=</span> <span class="n">accept</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">env</span><span class="p">[</span><span class="s1">&#39;HTTP_ACCEPT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">accept</span><span class="p">)</span>
+    <span class="n">ua</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s1">&#39;user-agent&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ua</span><span class="p">:</span>
+        <span class="n">env</span><span class="p">[</span><span class="s1">&#39;HTTP_USER_AGENT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ua</span>
+    <span class="n">co</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">getheaders</span><span class="p">(</span><span class="s1">&#39;cookie&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">co</span><span class="p">:</span>
+        <span class="n">env</span><span class="p">[</span><span class="s1">&#39;HTTP_COOKIE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">co</span><span class="p">)</span>
+    <span class="c1"># XXX Other HTTP_* headers</span>
+    <span class="c1"># Since we&#39;re setting the env in the parent, provide empty</span>
+    <span class="c1"># values to override previously set values</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;QUERY_STRING&#39;</span><span class="p">,</span> <span class="s1">&#39;REMOTE_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTENT_LENGTH&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;HTTP_USER_AGENT&#39;</span><span class="p">,</span> <span class="s1">&#39;HTTP_COOKIE&#39;</span><span class="p">,</span> <span class="s1">&#39;HTTP_REFERER&#39;</span><span class="p">):</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;Script output follows&quot;</span><span class="p">)</span>
+    <span class="n">decoded_query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">have_fork</span><span class="p">:</span>
+        <span class="c1"># Unix -- fork as we should</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">script</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;=&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">decoded_query</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">decoded_query</span><span class="p">)</span>
+        <span class="n">nobody</span> <span class="o">=</span> <span class="n">nobody_uid</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span> <span class="c1"># Always flush before forking</span>
+        <span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">pid</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Parent</span>
+            <span class="n">pid</span><span class="p">,</span> <span class="n">sts</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">waitpid</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># throw away additional data [see bug #427345]</span>
+            <span class="k">while</span> <span class="n">select</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="p">],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">sts</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="s2">&quot;CGI script exit status </span><span class="si">%#x</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sts</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="c1"># Child</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">setuid</span><span class="p">(</span><span class="n">nobody</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">os</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">execve</span><span class="p">(</span><span class="n">scriptfile</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">handle_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_address</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">_exit</span><span class="p">(</span><span class="mi">127</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Non Unix - use subprocess</span>
+        <span class="kn">import</span> <span class="nn">subprocess</span>
+        <span class="n">cmdline</span> <span class="o">=</span> <span class="p">[</span><span class="n">scriptfile</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_python</span><span class="p">(</span><span class="n">scriptfile</span><span class="p">):</span>
+            <span class="n">interp</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
+            <span class="k">if</span> <span class="n">interp</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;w.exe&quot;</span><span class="p">):</span>
+                <span class="c1"># On Windows, use python.exe, not pythonw.exe</span>
+                <span class="n">interp</span> <span class="o">=</span> <span class="n">interp</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="n">interp</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span>
+            <span class="n">cmdline</span> <span class="o">=</span> <span class="p">[</span><span class="n">interp</span><span class="p">,</span> <span class="s1">&#39;-u&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">cmdline</span>
+        <span class="k">if</span> <span class="s1">&#39;=&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">query</span><span class="p">:</span>
+            <span class="n">cmdline</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_message</span><span class="p">(</span><span class="s2">&quot;command: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">list2cmdline</span><span class="p">(</span><span class="n">cmdline</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">nbytes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">nbytes</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmdline</span><span class="p">,</span>
+                             <span class="n">stdin</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                             <span class="n">stdout</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                             <span class="n">stderr</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                             <span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+                            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;post&quot;</span> <span class="ow">and</span> <span class="n">nbytes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">nbytes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c1"># throw away additional data [see bug #427345]</span>
+        <span class="k">while</span> <span class="n">select</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">_sock</span><span class="p">],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">_sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">break</span>
+        <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">stderr</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="s2">&quot;CGI script exit status </span><span class="si">%#x</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_message</span><span class="p">(</span><span class="s2">&quot;CGI script exited OK&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_error">
+    <p>def <span class="ident">send_error</span>(</p><p>self, code, message=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Send and log an error reply.</p>
+<p>Arguments are the error code, and a detailed message.
+The detailed message defaults to the short entry matching the
+response code.</p>
+<p>This sends an error response (so it must be called before any
+output has been generated), logs the error, and finally sends
+a piece of HTML explaining the error to the user.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_error', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_error" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">send_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Send and log an error reply.</span>
+<span class="sd">    Arguments are the error code, and a detailed message.</span>
+<span class="sd">    The detailed message defaults to the short entry matching the</span>
+<span class="sd">    response code.</span>
+<span class="sd">    This sends an error response (so it must be called before any</span>
+<span class="sd">    output has been generated), logs the error, and finally sends</span>
+<span class="sd">    a piece of HTML explaining the error to the user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">short</span><span class="p">,</span> <span class="nb">long</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">responses</span><span class="p">[</span><span class="n">code</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">short</span><span class="p">,</span> <span class="nb">long</span> <span class="o">=</span> <span class="s1">&#39;???&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span>
+    <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">short</span>
+    <span class="n">explain</span> <span class="o">=</span> <span class="nb">long</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="s2">&quot;code </span><span class="si">%d</span><span class="s2">, message </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s1">&#39;Connection&#39;</span><span class="p">,</span> <span class="s1">&#39;close&#39;</span><span class="p">)</span>
+    <span class="c1"># Message body is omitted for cases described in:</span>
+    <span class="c1">#  - RFC7230: 3.3. 1xx, 204(No Content), 304(Not Modified)</span>
+    <span class="c1">#  - RFC7231: 6.3.6. 205(Reset Content)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">code</span> <span class="o">&gt;=</span> <span class="mi">200</span> <span class="ow">and</span> <span class="n">code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">204</span><span class="p">,</span> <span class="mi">205</span><span class="p">,</span> <span class="mi">304</span><span class="p">):</span>
+        <span class="c1"># HTML encode to prevent Cross Site Scripting attacks</span>
+        <span class="c1"># (see bug #1100201)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_message_format</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="n">code</span><span class="p">,</span>
+            <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="n">_quote_html</span><span class="p">(</span><span class="n">message</span><span class="p">),</span>
+            <span class="s1">&#39;explain&#39;</span><span class="p">:</span> <span class="n">explain</span>
+        <span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_content_type</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">end_headers</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">!=</span> <span class="s1">&#39;HEAD&#39;</span> <span class="ow">and</span> <span class="n">content</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_head">
+    <p>def <span class="ident">send_head</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Version of send_head that support CGI scripts</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_head', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_head" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">send_head</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Version of send_head that support CGI scripts&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cgi</span><span class="p">():</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cgi</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SimpleHTTPServer</span><span class="o">.</span><span class="n">SimpleHTTPRequestHandler</span><span class="o">.</span><span class="n">send_head</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_header">
+    <p>def <span class="ident">send_header</span>(</p><p>self, keyword, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Send a MIME header.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_header', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_header" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">send_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Send a MIME header.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_version</span> <span class="o">!=</span> <span class="s1">&#39;HTTP/0.9&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="se">\r\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">keyword</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;connection&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;close&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;keep-alive&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_response">
+    <p>def <span class="ident">send_response</span>(</p><p>self, code, message=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Send the response header and log the response code.</p>
+<p>Also send two standard headers with the server software
+version and the current date.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_response', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_response" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">send_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Send the response header and log the response code.</span>
+<span class="sd">    Also send two standard headers with the server software</span>
+<span class="sd">    version and the current date.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log_request</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">code</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">responses</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">responses</span><span class="p">[</span><span class="n">code</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_version</span> <span class="o">!=</span> <span class="s1">&#39;HTTP/0.9&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%d</span><span class="s2"> </span><span class="si">%s</span><span class="se">\r\n</span><span class="s2">&quot;</span> <span class="o">%</span>
+                         <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="p">))</span>
+        <span class="c1"># print (self.protocol_version, code, message)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s1">&#39;Server&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">version_string</span><span class="p">())</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_time_string</span><span class="p">())</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.setup">
+    <p>def <span class="ident">setup</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.setup', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.setup" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_nagle_algorithm</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">IPPROTO_TCP</span><span class="p">,</span>
+                                   <span class="n">socket</span><span class="o">.</span><span class="n">TCP_NODELAY</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">makefile</span><span class="p">(</span><span class="s1">&#39;rb&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rbufsize</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">makefile</span><span class="p">(</span><span class="s1">&#39;wb&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wbufsize</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.translate_path">
+    <p>def <span class="ident">translate_path</span>(</p><p>self, path)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Translate a /-separated PATH to the local filename syntax.</p>
+<p>Components that mean special things to the local file system
+(e.g. drive or directory names) are ignored.  (XXX They should
+probably be diagnosed.)</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.translate_path', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.translate_path" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">translate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Translate a /-separated PATH to the local filename syntax.</span>
+<span class="sd">    Components that mean special things to the local file system</span>
+<span class="sd">    (e.g. drive or directory names) are ignored.  (XXX They should</span>
+<span class="sd">    probably be diagnosed.)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># abandon query parameters</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># Don&#39;t forget explicit trailing slash when normalizing. Issue17324</span>
+    <span class="n">trailing_slash</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">posixpath</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">words</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="ow">or</span> <span class="n">word</span> <span class="ow">in</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">pardir</span><span class="p">):</span>
+            <span class="c1"># Ignore components that are not a simple file/directory name</span>
+            <span class="k">continue</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">word</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">trailing_slash</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span>
+    <span class="k">return</span> <span class="n">path</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="geoDSS.serve_cgi.MyCGIHTTPRequestHandler.version_string">
+    <p>def <span class="ident">version_string</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the server software version string.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.version_string', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.version_string" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">version_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the server software version string.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_version</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_version</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>

@@ -858,8 +858,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -894,6 +896,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1060,7 +1063,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.reporters.md', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.reporters.md" class="source">
-    <div class="codehilite"><pre><span class="c"># -*- coding: utf-8 -*-</span>
+    <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">markdown</span> <span class="kn">as</span> <span class="nn">md_lib</span>
@@ -1068,9 +1071,8 @@ table {
     <span class="kn">import</span> <span class="nn">pymarkdown</span> <span class="kn">as</span> <span class="nn">md_lib</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
-<span class="c"># todo: less naive implementations</span>
 
-<span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="s">&#39;markdown&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;markdown&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    reports on a rule set using markdown or html</span>
 
@@ -1086,107 +1088,109 @@ table {
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">if</span> <span class="s">&#39;html_wrapper&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">html_wrapper</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;html_wrapper&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;html_wrapper&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">html_wrapper</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;html_wrapper&#39;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">html_wrapper</span> <span class="o">=</span> <span class="s">u&#39;&#39;&#39;</span>
-<span class="s">        &lt;html&gt;</span>
-<span class="s">        &lt;head&gt;</span>
-<span class="s">            &lt;title&gt;geoDSS&lt;/title&gt;</span>
-<span class="s">            &lt;style&gt;</span>
-<span class="s">                body {width: 600px; margin: 0; padding-left: 5%; font-size: 80%; line-height: 1.5;font-family: arial;color: #333333;}</span>
-<span class="s">                article, aside, figcaption, figure, footer, header, nav, section {display: block;}</span>
-<span class="s">                pre {padding-left: 6px; border-left-style: solid; border-color: gray; border-width: 8px;}</span>
-<span class="s">                h1, h2, h3, h4 {margin: 1em 0 0em; line-height: 1.25;background-color: white;}</span>
-<span class="s">                h1 {font-size: 2em;padding:10px; padding-top:50px; border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;}</span>
-<span class="s">                h2 {font-size: 1.5em;margin-top: 0;padding-top: 1.5em; border-bottom-style: solid; border-color: black; border-width: 2px;}</span>
-<span class="s">                h3 {font-size: 1.2em;}</span>
-<span class="s">                ul, ol {margin: 1em 0; padding-left: 40px;}</span>
-<span class="s">                p, figure {margin: 1em 0; }</span>
-<span class="s">                a img {border: none;}</span>
-<span class="s">                sup, sub {line-height: 0;}</span>
-<span class="s">                .tagline {margin-top: 50px; padding-top:10px; text-align: right;font-size: 70%; color: gray; border-top-style: solid; border-color: gray; border-width: 1px;}</span>
-<span class="s">                .content {background-color: rgba(250,250,250,50);}</span>
-<span class="s">                img {border: 2px solid gray;}</span>
-<span class="s">                img[alt=&#39;Centered_map_small&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -90px; }</span>
-<span class="s">                img[alt=&#39;Centered_map_medium&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -190px; }</span>
-<span class="s">                img[alt=&#39;Centered_map_large&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -340px; }</span>
-<span class="s">            &lt;/style&gt;</span>
-<span class="s">        &lt;/head&gt;</span>
-<span class="s">        &lt;body&gt;</span>
-<span class="s">            &lt;div class=&quot;content&quot;&gt;</span>
-<span class="s">                ___content_goes_here___</span>
-<span class="s">            &lt;/div&gt;</span>
-<span class="s">            &lt;div class=&#39;tagline&#39;&gt;Powered by &lt;a href=&quot;https://github.com/MarcoDuiker/geoDSS&quot;&gt;geoDSS&lt;/a&gt;&lt;/div&gt;</span>
-<span class="s">        &lt;/body&gt;&#39;&#39;&#39;</span>
+        <span class="n">html_wrapper</span> <span class="o">=</span> <span class="s1">u&#39;&#39;&#39;</span>
+<span class="s1">        &lt;html&gt;</span>
+<span class="s1">        &lt;head&gt;</span>
+<span class="s1">            &lt;title&gt;geoDSS&lt;/title&gt;</span>
+<span class="s1">            &lt;style&gt;</span>
+<span class="s1">                body {width: 600px; margin: 0; padding-left: 5%; font-size: 80%; line-height: 1.5;font-family: arial;color: #333333;}</span>
+<span class="s1">                article, aside, figcaption, figure, footer, header, nav, section {display: block;}</span>
+<span class="s1">                pre {padding-left: 6px; border-left-style: solid; border-color: gray; border-width: 8px;}</span>
+<span class="s1">                h1, h2, h3, h4 {margin: 1em 0 0em; line-height: 1.25;background-color: white;}</span>
+<span class="s1">                h1 {font-size: 2em;padding:10px; padding-top:50px; border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;}</span>
+<span class="s1">                h2 {font-size: 1.5em;margin-top: 0;padding-top: 1.5em; border-bottom-style: solid; border-color: black; border-width: 2px;}</span>
+<span class="s1">                h3 {font-size: 1.2em;}</span>
+<span class="s1">                ul, ol {margin: 1em 0; padding-left: 40px;}</span>
+<span class="s1">                p, figure {margin: 1em 0; }</span>
+<span class="s1">                a img {border: none;}</span>
+<span class="s1">                sup, sub {line-height: 0;}</span>
+<span class="s1">                .tagline {margin-top: 50px; padding-top:10px; text-align: right;font-size: 70%; color: gray;</span>
+<span class="s1">                          border-top-style: solid; border-color: gray; border-width: 1px;}</span>
+<span class="s1">                .content {background-color: rgba(250,250,250,50);}</span>
+<span class="s1">                img {border: 2px solid gray;}</span>
+<span class="s1">                img[alt=&#39;Centered_map_small&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -90px; }</span>
+<span class="s1">                img[alt=&#39;Centered_map_medium&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -190px; }</span>
+<span class="s1">                img[alt=&#39;Centered_map_large&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -340px; }</span>
+<span class="s1">            &lt;/style&gt;</span>
+<span class="s1">        &lt;/head&gt;</span>
+<span class="s1">        &lt;body&gt;</span>
+<span class="s1">            &lt;div class=&quot;content&quot;&gt;</span>
+<span class="s1">                ___content_goes_here___</span>
+<span class="s1">            &lt;/div&gt;</span>
+<span class="s1">            &lt;div class=&#39;tagline&#39;&gt;Powered by &lt;a href=&quot;https://github.com/MarcoDuiker/geoDSS&quot;&gt;geoDSS&lt;/a&gt;&lt;/div&gt;</span>
+<span class="s1">        &lt;/body&gt;&#39;&#39;&#39;</span>
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule_set</span>
 
-    <span class="n">markdown</span> <span class="o">=</span> <span class="s">u&#39;&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;=&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]):</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;Subject&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;-------&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;Started processing with subject: &#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">default_flow_style</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;</span><span class="se">\n\t</span><span class="s">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;Results&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;=======&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;Subject&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;-------&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;Started processing with subject: &#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;Results&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;=======&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_set</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
-    <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s">&#39;html&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">html_wrapper</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;___content_goes_here___&#39;</span><span class="p">,</span><span class="n">md_lib</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">markdown</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s1">&#39;html&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">html_wrapper</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;___content_goes_here___&#39;</span><span class="p">,</span> <span class="n">md_lib</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">markdown</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">markdown</span>
+
 
 <span class="k">def</span> <span class="nf">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Reports on a rule using markdown.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="n">decision_false_report</span> <span class="o">=</span> <span class="s">&#39;Test decision is: **False**&#39;</span>
-    <span class="n">decision_error_report</span> <span class="o">=</span> <span class="s">&#39;**Error**: test failed to produce a decision or report&#39;</span>
-    <span class="k">if</span> <span class="s">&#39;decision_false_report&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">decision_false_report</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;decision_false_report&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="s">&#39;decision_error_report&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">decision_error_report</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;decision_error_report&#39;</span><span class="p">]</span>
+    <span class="n">decision_false_report</span> <span class="o">=</span> <span class="s1">&#39;Test decision is: **False**&#39;</span>
+    <span class="n">decision_error_report</span> <span class="o">=</span> <span class="s1">&#39;**Error**: test failed to produce a decision or report&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;decision_false_report&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">decision_false_report</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;decision_false_report&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;decision_error_report&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">decision_error_report</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;decision_error_report&#39;</span><span class="p">]</span>
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule</span>
 
-    <span class="n">markdown</span> <span class="o">=</span> <span class="s">u&#39;&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
 
-    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]:</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;-&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]):</span>
-            <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span>  <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-            <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report&#39;</span><span class="p">]:</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
+            <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">executed</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;decision&#39;</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>   
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;decision&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-                        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;- &#39;</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;- &#39;</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_false_report</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_false_report</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-                        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-                <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_error_report</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_error_report</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-                    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_error_report</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_error_report</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="k">return</span> <span class="n">markdown</span>
 </pre></div>
 
@@ -1215,42 +1219,42 @@ table {
 <span class="sd">    Reports on a rule using markdown.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="n">decision_false_report</span> <span class="o">=</span> <span class="s">&#39;Test decision is: **False**&#39;</span>
-    <span class="n">decision_error_report</span> <span class="o">=</span> <span class="s">&#39;**Error**: test failed to produce a decision or report&#39;</span>
-    <span class="k">if</span> <span class="s">&#39;decision_false_report&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">decision_false_report</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;decision_false_report&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="s">&#39;decision_error_report&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">decision_error_report</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;decision_error_report&#39;</span><span class="p">]</span>
+    <span class="n">decision_false_report</span> <span class="o">=</span> <span class="s1">&#39;Test decision is: **False**&#39;</span>
+    <span class="n">decision_error_report</span> <span class="o">=</span> <span class="s1">&#39;**Error**: test failed to produce a decision or report&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;decision_false_report&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">decision_false_report</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;decision_false_report&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;decision_error_report&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">decision_error_report</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;decision_error_report&#39;</span><span class="p">]</span>
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule</span>
 
-    <span class="n">markdown</span> <span class="o">=</span> <span class="s">u&#39;&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
 
-    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]:</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;-&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]):</span>
-            <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span>  <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-            <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report&#39;</span><span class="p">]:</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
+            <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">executed</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;decision&#39;</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>   
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;decision&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-                        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;- &#39;</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;- &#39;</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_false_report</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_false_report</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-                        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-                <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_error_report</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_error_report</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-                    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_error_report</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+                <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">decision_error_report</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="k">return</span> <span class="n">markdown</span>
 </pre></div>
 
@@ -1282,7 +1286,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.reporters.md.rule_set_reporter', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.reporters.md.rule_set_reporter" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="s">&#39;markdown&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;markdown&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    reports on a rule set using markdown or html</span>
 
@@ -1298,63 +1302,64 @@ table {
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">if</span> <span class="s">&#39;html_wrapper&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">html_wrapper</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;html_wrapper&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;html_wrapper&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">html_wrapper</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;html_wrapper&#39;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">html_wrapper</span> <span class="o">=</span> <span class="s">u&#39;&#39;&#39;</span>
-<span class="s">        &lt;html&gt;</span>
-<span class="s">        &lt;head&gt;</span>
-<span class="s">            &lt;title&gt;geoDSS&lt;/title&gt;</span>
-<span class="s">            &lt;style&gt;</span>
-<span class="s">                body {width: 600px; margin: 0; padding-left: 5%; font-size: 80%; line-height: 1.5;font-family: arial;color: #333333;}</span>
-<span class="s">                article, aside, figcaption, figure, footer, header, nav, section {display: block;}</span>
-<span class="s">                pre {padding-left: 6px; border-left-style: solid; border-color: gray; border-width: 8px;}</span>
-<span class="s">                h1, h2, h3, h4 {margin: 1em 0 0em; line-height: 1.25;background-color: white;}</span>
-<span class="s">                h1 {font-size: 2em;padding:10px; padding-top:50px; border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;}</span>
-<span class="s">                h2 {font-size: 1.5em;margin-top: 0;padding-top: 1.5em; border-bottom-style: solid; border-color: black; border-width: 2px;}</span>
-<span class="s">                h3 {font-size: 1.2em;}</span>
-<span class="s">                ul, ol {margin: 1em 0; padding-left: 40px;}</span>
-<span class="s">                p, figure {margin: 1em 0; }</span>
-<span class="s">                a img {border: none;}</span>
-<span class="s">                sup, sub {line-height: 0;}</span>
-<span class="s">                .tagline {margin-top: 50px; padding-top:10px; text-align: right;font-size: 70%; color: gray; border-top-style: solid; border-color: gray; border-width: 1px;}</span>
-<span class="s">                .content {background-color: rgba(250,250,250,50);}</span>
-<span class="s">                img {border: 2px solid gray;}</span>
-<span class="s">                img[alt=&#39;Centered_map_small&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -90px; }</span>
-<span class="s">                img[alt=&#39;Centered_map_medium&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -190px; }</span>
-<span class="s">                img[alt=&#39;Centered_map_large&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -340px; }</span>
-<span class="s">            &lt;/style&gt;</span>
-<span class="s">        &lt;/head&gt;</span>
-<span class="s">        &lt;body&gt;</span>
-<span class="s">            &lt;div class=&quot;content&quot;&gt;</span>
-<span class="s">                ___content_goes_here___</span>
-<span class="s">            &lt;/div&gt;</span>
-<span class="s">            &lt;div class=&#39;tagline&#39;&gt;Powered by &lt;a href=&quot;https://github.com/MarcoDuiker/geoDSS&quot;&gt;geoDSS&lt;/a&gt;&lt;/div&gt;</span>
-<span class="s">        &lt;/body&gt;&#39;&#39;&#39;</span>
+        <span class="n">html_wrapper</span> <span class="o">=</span> <span class="s1">u&#39;&#39;&#39;</span>
+<span class="s1">        &lt;html&gt;</span>
+<span class="s1">        &lt;head&gt;</span>
+<span class="s1">            &lt;title&gt;geoDSS&lt;/title&gt;</span>
+<span class="s1">            &lt;style&gt;</span>
+<span class="s1">                body {width: 600px; margin: 0; padding-left: 5%; font-size: 80%; line-height: 1.5;font-family: arial;color: #333333;}</span>
+<span class="s1">                article, aside, figcaption, figure, footer, header, nav, section {display: block;}</span>
+<span class="s1">                pre {padding-left: 6px; border-left-style: solid; border-color: gray; border-width: 8px;}</span>
+<span class="s1">                h1, h2, h3, h4 {margin: 1em 0 0em; line-height: 1.25;background-color: white;}</span>
+<span class="s1">                h1 {font-size: 2em;padding:10px; padding-top:50px; border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;}</span>
+<span class="s1">                h2 {font-size: 1.5em;margin-top: 0;padding-top: 1.5em; border-bottom-style: solid; border-color: black; border-width: 2px;}</span>
+<span class="s1">                h3 {font-size: 1.2em;}</span>
+<span class="s1">                ul, ol {margin: 1em 0; padding-left: 40px;}</span>
+<span class="s1">                p, figure {margin: 1em 0; }</span>
+<span class="s1">                a img {border: none;}</span>
+<span class="s1">                sup, sub {line-height: 0;}</span>
+<span class="s1">                .tagline {margin-top: 50px; padding-top:10px; text-align: right;font-size: 70%; color: gray;</span>
+<span class="s1">                          border-top-style: solid; border-color: gray; border-width: 1px;}</span>
+<span class="s1">                .content {background-color: rgba(250,250,250,50);}</span>
+<span class="s1">                img {border: 2px solid gray;}</span>
+<span class="s1">                img[alt=&#39;Centered_map_small&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -90px; }</span>
+<span class="s1">                img[alt=&#39;Centered_map_medium&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -190px; }</span>
+<span class="s1">                img[alt=&#39;Centered_map_large&#39;] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -340px; }</span>
+<span class="s1">            &lt;/style&gt;</span>
+<span class="s1">        &lt;/head&gt;</span>
+<span class="s1">        &lt;body&gt;</span>
+<span class="s1">            &lt;div class=&quot;content&quot;&gt;</span>
+<span class="s1">                ___content_goes_here___</span>
+<span class="s1">            &lt;/div&gt;</span>
+<span class="s1">            &lt;div class=&#39;tagline&#39;&gt;Powered by &lt;a href=&quot;https://github.com/MarcoDuiker/geoDSS&quot;&gt;geoDSS&lt;/a&gt;&lt;/div&gt;</span>
+<span class="s1">        &lt;/body&gt;&#39;&#39;&#39;</span>
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule_set</span>
 
-    <span class="n">markdown</span> <span class="o">=</span> <span class="s">u&#39;&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;=&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]):</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;Subject&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;-------&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;Started processing with subject: &#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">default_flow_style</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;</span><span class="se">\n\t</span><span class="s">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;Results&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;=======&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;Subject&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;-------&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;Started processing with subject: &#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;Results&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;=======&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_set</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
-        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
-    <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s">&#39;html&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">html_wrapper</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;___content_goes_here___&#39;</span><span class="p">,</span><span class="n">md_lib</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">markdown</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s1">&#39;html&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">html_wrapper</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;___content_goes_here___&#39;</span><span class="p">,</span> <span class="n">md_lib</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">markdown</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">markdown</span>
 </pre></div>

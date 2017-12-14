@@ -860,8 +860,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -896,6 +898,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1062,7 +1065,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.loaders.yaml_loader', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.loaders.yaml_loader" class="source">
-    <div class="codehilite"><pre><span class="c"># -*- coding: utf-8 -*-</span>
+    <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">This is the default rule_set loader.</span>
 
@@ -1100,7 +1103,7 @@ table {
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
+    <span class="c1"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
@@ -1173,7 +1176,7 @@ rules:
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
+    <span class="c1"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>

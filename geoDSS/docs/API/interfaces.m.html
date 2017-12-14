@@ -865,8 +865,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -901,6 +903,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1112,9 +1115,9 @@ You can set </p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.interfaces', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.interfaces" class="source">
-    <div class="codehilite"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="c">#!C:/Python27/python.exe -u</span>
-<span class="c"># -*- coding: utf-8 -*-</span>
+    <div class="codehilite"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!C:/Python27/python.exe -u</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">This provides several interfaces to geoDSS:</span>
@@ -1162,7 +1165,7 @@ You can set </p>
 
 <span class="n">ENABLE_CGTIB</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="n">ENABLE_NON_LOCAL_RULE_SET_FILES</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="n">DEBUG_LEVEL</span> <span class="o">=</span> <span class="s">&quot;DEBUG&quot;</span>
+<span class="n">DEBUG_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;DEBUG&quot;</span>
 
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">cgi</span>
@@ -1180,20 +1183,21 @@ You can set </p>
 <span class="k">if</span> <span class="n">ENABLE_CGTIB</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">cgitb</span>
 
-<span class="c"># make sure we can import the package when run as script</span>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span> <span class="ow">and</span> <span class="n">__package__</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+<span class="c1"># make sure we can import the package when run as script</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span> <span class="ow">and</span> <span class="n">__package__</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">sys</span><span class="p">,</span> <span class="n">path</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))))</span>
 
 <span class="kn">import</span> <span class="nn">geoDSS</span> 
 <span class="kn">from</span> <span class="nn">geoDSS</span> <span class="kn">import</span> <span class="n">loaders</span>
+<span class="kn">from</span> <span class="nn">geoDSS</span> <span class="kn">import</span> <span class="n">ui_generators</span>
 
 <span class="k">def</span> <span class="nf">sanitize_headers</span><span class="p">(</span><span class="n">headers</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    removes hop-by-hop headers as these are not supported by wsgi.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="n">hop_by_hop_headers</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;connection&#39;</span><span class="p">,</span><span class="s">&#39;keep-alive&#39;</span><span class="p">,</span><span class="s">&#39;public&#39;</span><span class="p">,</span><span class="s">&#39;proxy-authenticate&#39;</span><span class="p">,</span><span class="s">&#39;transfer-encoding&#39;</span><span class="p">,</span><span class="s">&#39;upgrade&#39;</span><span class="p">)</span>
+    <span class="n">hop_by_hop_headers</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span><span class="s1">&#39;keep-alive&#39;</span><span class="p">,</span><span class="s1">&#39;public&#39;</span><span class="p">,</span><span class="s1">&#39;proxy-authenticate&#39;</span><span class="p">,</span><span class="s1">&#39;transfer-encoding&#39;</span><span class="p">,</span><span class="s1">&#39;upgrade&#39;</span><span class="p">)</span>
     <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">headers</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
     <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hop_by_hop_headers</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
@@ -1210,65 +1214,81 @@ You can set </p>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     
-    <span class="n">mime</span> <span class="o">=</span> <span class="s">&#39;text/plain&#39;</span>
+    <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/plain&#39;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">output_format</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;output_format&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;html&#39;</span><span class="p">]:</span>
-            <span class="n">mime</span> <span class="o">=</span> <span class="s">&#39;text/html&#39;</span>
-        <span class="k">elif</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;markdown&#39;</span><span class="p">]:</span>
-            <span class="n">mime</span> <span class="o">=</span> <span class="s">&#39;text/plain&#39;</span>
+        <span class="n">output_format</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;output_format&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;html&#39;</span><span class="p">]:</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/html&#39;</span>
+        <span class="k">elif</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;markdown&#39;</span><span class="p">]:</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/plain&#39;</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="n">output_format</span> <span class="o">=</span> <span class="s">&#39;markdown&#39;</span>
+        <span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;markdown&#39;</span>
 
-    <span class="n">response_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="n">mime</span><span class="p">}</span>
-    <span class="n">status</span> <span class="o">=</span> <span class="s">&#39;400 Bad Request&#39;</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">subject</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;subject&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Could not parse subject with error: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s">&quot;Could not parse subject with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-
-    <span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;rule_set_file&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">base_name</span><span class="p">,</span><span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">)</span>
-
-    <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">yaml_loader</span>
-    <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s">&#39;.json&#39;</span><span class="p">:</span>
-        <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">json_loader</span>
-
-    <span class="k">if</span> <span class="n">ENABLE_NON_LOCAL_RULE_SET_FILES</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span> 
-            <span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;protocol&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;://&#39;</span> <span class="o">+</span> <span class="n">rule_set_file</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">geoDSS</span><span class="o">.</span><span class="n">rules_set</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">,</span> <span class="n">loader_module</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Could not load rule_set with error: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s">&quot;Could not load rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">response_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="n">mime</span><span class="p">}</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;400 Bad Request&#39;</span>
     
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Could not evaluate rule_set with error: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s">&quot;Could not evaluate rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;form&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>        
+        <span class="n">form_definition</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;form&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="s1">&#39;template&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">geoDSS</span><span class="o">.</span><span class="n">ui_generators</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">form_yaml</span> <span class="o">=</span> <span class="n">form_definition</span><span class="p">,</span> <span class="n">template</span> <span class="o">=</span> <span class="n">template</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not parse generate form with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not generate form with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            
+    <span class="k">elif</span> <span class="s1">&#39;rule_set_file&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subject</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not parse subject with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not parse subject with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">output_format</span> <span class="o">=</span> <span class="n">output_format</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Could not report on rule_set with error: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s">&quot;Could not report on rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;rule_set_file&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">base_name</span><span class="p">,</span><span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">)</span>
 
-    <span class="n">status</span> <span class="o">=</span> <span class="s">&#39;200 OK&#39;</span>
-    <span class="n">response_headers</span><span class="p">[</span><span class="s">&quot;Content-Length&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">yaml_loader</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+            <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">json_loader</span>
+
+        <span class="k">if</span> <span class="n">ENABLE_NON_LOCAL_RULE_SET_FILES</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span> 
+                <span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;protocol&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;://&#39;</span> <span class="o">+</span> <span class="n">rule_set_file</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">geoDSS</span><span class="o">.</span><span class="n">rules_set</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">,</span> <span class="n">loader_module</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not load rule_set with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not load rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not evaluate rule_set with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not evaluate rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">output_format</span> <span class="o">=</span> <span class="n">output_format</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not report on rule_set with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not report on rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;You are almost there... Please specify a form to load or a rule_set to proces.&quot;</span>
+
+    <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;200 OK&#39;</span>
+    <span class="n">response_headers</span><span class="p">[</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="n">data</span>
 
@@ -1281,19 +1301,19 @@ You can set </p>
     <span class="k">if</span> <span class="n">ENABLE_CGTIB</span><span class="p">:</span>
         <span class="n">cgitb</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: enabling cgitb. </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: enabling cgitb. </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;geoDSS: WSGI environ=</span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">environ</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;geoDSS: WSGI environ=</span><span class="si">%s</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">environ</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="s">&quot;REQUEST_METHOD&quot;</span> <span class="ow">in</span> <span class="n">environ</span> <span class="ow">and</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
-        <span class="n">query_string</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;wsgi.input&#39;</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="s">&quot;REQUEST_METHOD&quot;</span> <span class="ow">in</span> <span class="n">environ</span> <span class="ow">and</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;GET&#39;</span><span class="p">:</span>
-        <span class="n">query_string</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;QUERY_STRING&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s2">&quot;REQUEST_METHOD&quot;</span> <span class="ow">in</span> <span class="n">environ</span> <span class="ow">and</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">query_string</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;wsgi.input&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="s2">&quot;REQUEST_METHOD&quot;</span> <span class="ow">in</span> <span class="n">environ</span> <span class="ow">and</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="n">query_string</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;QUERY_STRING&#39;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Only HTTP POST and GET are supported. </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span><span class="s">&#39;Only HTTP POST and GET are supported&#39;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Only HTTP POST and GET are supported. </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span><span class="s1">&#39;Only HTTP POST and GET are supported&#39;</span><span class="p">)</span>
     <span class="n">params</span> <span class="o">=</span> <span class="n">cgi</span><span class="o">.</span><span class="n">parse_qs</span><span class="p">(</span><span class="n">query_string</span><span class="p">,</span> <span class="n">keep_blank_values</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
     <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">load_execute_report</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
@@ -1310,43 +1330,43 @@ You can set </p>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">load_execute_report</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">response_headers</span> <span class="o">=</span> <span class="n">sanitize_headers</span><span class="p">(</span><span class="n">response_headers</span><span class="p">)</span>               <span class="c"># this one not necessary, but it keeps in line with the wsgi interface</span>
-    <span class="n">headers</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\r\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">[</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">response_headers</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span> <span class="p">)</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\r\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\r\n</span><span class="s">&#39;</span>
+    <span class="n">response_headers</span> <span class="o">=</span> <span class="n">sanitize_headers</span><span class="p">(</span><span class="n">response_headers</span><span class="p">)</span>               <span class="c1"># this one not necessary, but it keeps in line with the wsgi interface</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">response_headers</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span> <span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span>
      
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 
-<span class="c"># Get form/query params (CGI)</span>
+<span class="c1"># Get form/query params (CGI)</span>
 <span class="n">parameters</span> <span class="o">=</span> <span class="n">cgi</span><span class="o">.</span><span class="n">FieldStorage</span><span class="p">(</span><span class="n">keep_blank_values</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
 <span class="n">param_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-<span class="k">if</span> <span class="n">param_count</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="s">&#39;wsgi.version&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parameters</span> <span class="ow">and</span> <span class="s">&#39;REQUEST_METHOD&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">param_count</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="s1">&#39;wsgi.version&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parameters</span> <span class="ow">and</span> <span class="s1">&#39;REQUEST_METHOD&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
 
-    <span class="c"># We are called as CGI: handle with CGI function</span>
+    <span class="c1"># We are called as CGI: handle with CGI function</span>
 
     <span class="k">if</span> <span class="n">ENABLE_CGTIB</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: enabling cgitb. </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: enabling cgitb. </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">cgitb</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GET&quot;</span><span class="p">:</span>
-        <span class="n">query_string</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;QUERY_STRING&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GET&quot;</span><span class="p">:</span>
+        <span class="n">query_string</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;QUERY_STRING&#39;</span><span class="p">]</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">cgi</span><span class="o">.</span><span class="n">parse_qs</span><span class="p">(</span><span class="n">query_string</span><span class="p">,</span> <span class="n">keep_blank_values</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;POST&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">getList</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Received POST data in a way not supported yet. Doing a guess. </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Received POST data in a way not supported yet. Doing a guess. </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Only HTTP POST and GET are supported. </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span><span class="s">&#39;Only HTTP POST and GET are supported&#39;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Only HTTP POST and GET are supported. </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span><span class="s1">&#39;Only HTTP POST and GET are supported&#39;</span><span class="p">)</span>
     <span class="n">cgi_application</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
-<span class="k">elif</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">elif</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    this script is invoked from command line</span>
 
@@ -1355,21 +1375,21 @@ You can set </p>
 <span class="sd">    &gt;           `./geoDSS examples/rule_sets/various.yaml &#39;{&quot;result&quot;: true, &quot;geometry&quot;: &quot;SRID=28992;POINT(125000 360000)&quot;, &quot;brzo&quot;: &quot;true&quot; }&#39;`</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s">&#39;Invoke geoDSS from command line using the default markdown reporter with output_format markdown.&#39;</span><span class="p">,</span>
-                                     <span class="n">epilog</span> <span class="o">=</span>      <span class="s">&#39;&#39;&#39;Example: ./geoDSS examples/rule_sets/unit_test.yaml &#39;{&quot;result&quot;: true, &quot;geometry&quot;: &quot;SRID=28992;POINT(125000 360000)&quot; }&#39; &#39;&#39;&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;rule_set_file&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s">&#39;The file containing the rule set&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;subject&quot;</span><span class="p">,</span>       <span class="n">help</span> <span class="o">=</span> <span class="s">&#39;Either a JSON-string defining a python dict containing a subject or a path to a file containing such a JSON-string&#39;</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Invoke geoDSS from command line using the default markdown reporter with output_format markdown.&#39;</span><span class="p">,</span>
+                                     <span class="n">epilog</span> <span class="o">=</span>      <span class="s1">&#39;&#39;&#39;Example: ./geoDSS examples/rule_sets/unit_test.yaml &#39;{&quot;result&quot;: true, &quot;geometry&quot;: &quot;SRID=28992;POINT(125000 360000)&quot; }&#39; &#39;&#39;&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;rule_set_file&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;The file containing the rule set&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span>       <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;Either a JSON-string defining a python dict containing a subject or a path to a file containing such a JSON-string&#39;</span><span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subject</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">subject_string</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">subject_string</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">subject</span>
 
-    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>  <span class="s">&#39;rule_set_file&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">rule_set_file</span><span class="p">],</span>
-                <span class="s">&#39;subject&#39;</span><span class="p">:</span>       <span class="p">[</span><span class="n">subject_string</span><span class="p">],</span>
-                <span class="s">&#39;output_format&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;markdown&#39;</span><span class="p">]}</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>  <span class="s1">&#39;rule_set_file&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">rule_set_file</span><span class="p">],</span>
+                <span class="s1">&#39;subject&#39;</span><span class="p">:</span>       <span class="p">[</span><span class="n">subject_string</span><span class="p">],</span>
+                <span class="s1">&#39;output_format&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;markdown&#39;</span><span class="p">]}</span>
 
     <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">load_execute_report</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="k">print</span>
@@ -1378,7 +1398,7 @@ You can set </p>
 
 <span class="k">else</span><span class="p">:</span>
 
-    <span class="c"># Standard WSGI: do nothing as WSGI entry-function &#39;application&#39; will be invoked</span>
+    <span class="c1"># Standard WSGI: do nothing as WSGI entry-function &#39;application&#39; will be invoked</span>
 
     <span class="k">pass</span>
 </pre></div>
@@ -1452,19 +1472,19 @@ You can set </p>
     <span class="k">if</span> <span class="n">ENABLE_CGTIB</span><span class="p">:</span>
         <span class="n">cgitb</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: enabling cgitb. </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: enabling cgitb. </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;geoDSS: WSGI environ=</span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">environ</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;geoDSS: WSGI environ=</span><span class="si">%s</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">environ</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="s">&quot;REQUEST_METHOD&quot;</span> <span class="ow">in</span> <span class="n">environ</span> <span class="ow">and</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
-        <span class="n">query_string</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;wsgi.input&#39;</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="s">&quot;REQUEST_METHOD&quot;</span> <span class="ow">in</span> <span class="n">environ</span> <span class="ow">and</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;GET&#39;</span><span class="p">:</span>
-        <span class="n">query_string</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;QUERY_STRING&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s2">&quot;REQUEST_METHOD&quot;</span> <span class="ow">in</span> <span class="n">environ</span> <span class="ow">and</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">query_string</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;wsgi.input&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="s2">&quot;REQUEST_METHOD&quot;</span> <span class="ow">in</span> <span class="n">environ</span> <span class="ow">and</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="n">query_string</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s1">&#39;QUERY_STRING&#39;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Only HTTP POST and GET are supported. </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span><span class="s">&#39;Only HTTP POST and GET are supported&#39;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Only HTTP POST and GET are supported. </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span><span class="s1">&#39;Only HTTP POST and GET are supported&#39;</span><span class="p">)</span>
     <span class="n">params</span> <span class="o">=</span> <span class="n">cgi</span><span class="o">.</span><span class="n">parse_qs</span><span class="p">(</span><span class="n">query_string</span><span class="p">,</span> <span class="n">keep_blank_values</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
     <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">load_execute_report</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
@@ -1500,8 +1520,8 @@ You can set </p>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">load_execute_report</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">response_headers</span> <span class="o">=</span> <span class="n">sanitize_headers</span><span class="p">(</span><span class="n">response_headers</span><span class="p">)</span>               <span class="c"># this one not necessary, but it keeps in line with the wsgi interface</span>
-    <span class="n">headers</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\r\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">[</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">response_headers</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span> <span class="p">)</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\r\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\r\n</span><span class="s">&#39;</span>
+    <span class="n">response_headers</span> <span class="o">=</span> <span class="n">sanitize_headers</span><span class="p">(</span><span class="n">response_headers</span><span class="p">)</span>               <span class="c1"># this one not necessary, but it keeps in line with the wsgi interface</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">response_headers</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span> <span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span>
      
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -1537,65 +1557,81 @@ You can set </p>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     
-    <span class="n">mime</span> <span class="o">=</span> <span class="s">&#39;text/plain&#39;</span>
+    <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/plain&#39;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">output_format</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;output_format&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;html&#39;</span><span class="p">]:</span>
-            <span class="n">mime</span> <span class="o">=</span> <span class="s">&#39;text/html&#39;</span>
-        <span class="k">elif</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;markdown&#39;</span><span class="p">]:</span>
-            <span class="n">mime</span> <span class="o">=</span> <span class="s">&#39;text/plain&#39;</span>
+        <span class="n">output_format</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;output_format&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;html&#39;</span><span class="p">]:</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/html&#39;</span>
+        <span class="k">elif</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;markdown&#39;</span><span class="p">]:</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/plain&#39;</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="n">output_format</span> <span class="o">=</span> <span class="s">&#39;markdown&#39;</span>
+        <span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;markdown&#39;</span>
 
-    <span class="n">response_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="n">mime</span><span class="p">}</span>
-    <span class="n">status</span> <span class="o">=</span> <span class="s">&#39;400 Bad Request&#39;</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">subject</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;subject&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Could not parse subject with error: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s">&quot;Could not parse subject with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-
-    <span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;rule_set_file&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">base_name</span><span class="p">,</span><span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">)</span>
-
-    <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">yaml_loader</span>
-    <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s">&#39;.json&#39;</span><span class="p">:</span>
-        <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">json_loader</span>
-
-    <span class="k">if</span> <span class="n">ENABLE_NON_LOCAL_RULE_SET_FILES</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span> 
-            <span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;protocol&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;://&#39;</span> <span class="o">+</span> <span class="n">rule_set_file</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">geoDSS</span><span class="o">.</span><span class="n">rules_set</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">,</span> <span class="n">loader_module</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Could not load rule_set with error: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s">&quot;Could not load rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">response_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="n">mime</span><span class="p">}</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;400 Bad Request&#39;</span>
     
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Could not evaluate rule_set with error: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s">&quot;Could not evaluate rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;form&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>        
+        <span class="n">form_definition</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;form&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="s1">&#39;template&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">geoDSS</span><span class="o">.</span><span class="n">ui_generators</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">form_yaml</span> <span class="o">=</span> <span class="n">form_definition</span><span class="p">,</span> <span class="n">template</span> <span class="o">=</span> <span class="n">template</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not parse generate form with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not generate form with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            
+    <span class="k">elif</span> <span class="s1">&#39;rule_set_file&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subject</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not parse subject with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not parse subject with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">output_format</span> <span class="o">=</span> <span class="n">output_format</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;geoDSS: Could not report on rule_set with error: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s">&quot;Could not report on rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;rule_set_file&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">base_name</span><span class="p">,</span><span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">)</span>
 
-    <span class="n">status</span> <span class="o">=</span> <span class="s">&#39;200 OK&#39;</span>
-    <span class="n">response_headers</span><span class="p">[</span><span class="s">&quot;Content-Length&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">yaml_loader</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+            <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">json_loader</span>
+
+        <span class="k">if</span> <span class="n">ENABLE_NON_LOCAL_RULE_SET_FILES</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span> 
+                <span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;protocol&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;://&#39;</span> <span class="o">+</span> <span class="n">rule_set_file</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">geoDSS</span><span class="o">.</span><span class="n">rules_set</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">,</span> <span class="n">loader_module</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not load rule_set with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not load rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not evaluate rule_set with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not evaluate rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">output_format</span> <span class="o">=</span> <span class="n">output_format</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not report on rule_set with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not report on rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;You are almost there... Please specify a form to load or a rule_set to proces.&quot;</span>
+
+    <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;200 OK&#39;</span>
+    <span class="n">response_headers</span><span class="p">[</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="n">data</span>
 </pre></div>
@@ -1623,7 +1659,7 @@ You can set </p>
 <span class="sd">    removes hop-by-hop headers as these are not supported by wsgi.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="n">hop_by_hop_headers</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;connection&#39;</span><span class="p">,</span><span class="s">&#39;keep-alive&#39;</span><span class="p">,</span><span class="s">&#39;public&#39;</span><span class="p">,</span><span class="s">&#39;proxy-authenticate&#39;</span><span class="p">,</span><span class="s">&#39;transfer-encoding&#39;</span><span class="p">,</span><span class="s">&#39;upgrade&#39;</span><span class="p">)</span>
+    <span class="n">hop_by_hop_headers</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span><span class="s1">&#39;keep-alive&#39;</span><span class="p">,</span><span class="s1">&#39;public&#39;</span><span class="p">,</span><span class="s1">&#39;proxy-authenticate&#39;</span><span class="p">,</span><span class="s1">&#39;transfer-encoding&#39;</span><span class="p">,</span><span class="s1">&#39;upgrade&#39;</span><span class="p">)</span>
     <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">headers</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
     <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hop_by_hop_headers</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>

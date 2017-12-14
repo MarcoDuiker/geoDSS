@@ -858,8 +858,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -894,6 +896,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1043,7 +1046,9 @@ table {
         <li class="mono"><a href="loaders/index.html">geoDSS.loaders</a></li>
         <li class="mono"><a href="processors/index.html">geoDSS.processors</a></li>
         <li class="mono"><a href="reporters/index.html">geoDSS.reporters</a></li>
+        <li class="mono"><a href="serve_cgi.m.html">geoDSS.serve_cgi</a></li>
         <li class="mono"><a href="tests/index.html">geoDSS.tests</a></li>
+        <li class="mono"><a href="ui_generators/index.html">geoDSS.ui_generators</a></li>
       </ul>
     </li>
     </ul>
@@ -1096,8 +1101,8 @@ table {
   
     <div class="desc"><p>The base module provides the rules_set class. This class is all you need to work with to run your testing.</p>
 <h2>Example</h2>
-<div class="codehilite"><pre>import geoDSS                                                        # be sure this is possible by installing geoDSS 
-                                                 ...
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">geoDSS</span>                                                        <span class="c1"># be sure this is possible by installing geoDSS </span>
+                                                 <span class="o">...</span>
 </pre></div></div>
 
       </div>
@@ -1153,6 +1158,19 @@ wil...</p></div>
 
       </div>
       <div class="item">
+      <p class="name"><a href="serve_cgi.m.html">geoDSS.serve_cgi</a></p>
+      
+  
+    <div class="desc"><p>With servi_cgi it is easy to bring up a webserver listening on port 8000
+to start using geoDSS via a webinterface. 
+Furthermore this serves as an example for how to include geoDSS in
+webinterfaces.</p>
+<h2>Warning</h2>
+<p><strong>serve.cgi is not meant for production use.</strong></p>
+<p>**Probably you don't want to expose ...</p></div>
+
+      </div>
+      <div class="item">
       <p class="name"><a href="tests/index.html">geoDSS.tests</a></p>
       
   
@@ -1160,6 +1178,13 @@ wil...</p></div>
 <p>When the rule is based on a test, this evaluation results in a decision being either True or False.</p>
 <p>When the decision is True the test reports according to the <code>report_template</code> given in the rule.</p>
 <p>The report_template can be a simple strin...</p></div>
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="ui_generators/index.html">geoDSS.ui_generators</a></p>
+      
+  
+    <div class="desc"><p>The ui_generators module is a provider for UI generators.</p></div>
 
       </div>
   </section>

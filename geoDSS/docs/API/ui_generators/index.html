@@ -3,10 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>geoDSS.reporters API documentation</title>
-    <meta name="description" content="The reporters module provides reporters for the rule_set and rules.
-
-The standard reporter is report..." />
+    <title>geoDSS.ui_generators API documentation</title>
+    <meta name="description" content="The ui_generators module is a provider for UI generators." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1043,8 +1041,7 @@ table {
 
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
-        <li class="mono"><a href="md.m.html">geoDSS.reporters.md</a></li>
-        <li class="mono"><a href="plain_text.m.html">geoDSS.reporters.plain_text</a></li>
+        <li class="mono"><a href="form.m.html">geoDSS.ui_generators.form</a></li>
       </ul>
     </li>
     </ul>
@@ -1058,41 +1055,17 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">geoDSS.reporters</span> module</h1>
-  <p>The reporters module provides reporters for the rule_set and rules.</p>
-<p>The standard reporter is reporters.md, providing a markdown reporter. This one can output html as well.</p>
-<p>Extending the reporters.md reporter or creating a new one can easily be done with pandoc.</p>
-<p>Of course, you can also convert via https://www.docverter.com/</p>
-<p>When extending mind the following:</p>
-<ul>
-<li>rules report via a list of strings. These strings can be added to the rport with something like:
-        for result in rule.result:
-            markdown = markdown + result + '
-'</li>
-<li>a subject is a dictionary containing lists, dictionaries, strings and numbers. Adding these to the report requires some pretty printing.</li>
-</ul>
+  <h1 class="title"><span class="name">geoDSS.ui_generators</span> module</h1>
+  <p>The ui_generators module is a provider for UI generators.</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.reporters', this);">Show source &equiv;</a></p>
-  <div id="source-geoDSS.reporters" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.ui_generators', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.ui_generators" class="source">
     <div class="codehilite"><pre><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">The reporters module provides reporters for the rule_set and rules.</span>
-
-<span class="sd">The standard reporter is reporters.md, providing a markdown reporter. This one can output html as well.</span>
-
-<span class="sd">Extending the reporters.md reporter or creating a new one can easily be done with pandoc.</span>
-
-<span class="sd">Of course, you can also convert via https://www.docverter.com/</span>
-
-<span class="sd">When extending mind the following:</span>
-
-<span class="sd">- rules report via a list of strings. These strings can be added to the rport with something like:</span>
-<span class="sd">        for result in rule.result:</span>
-<span class="sd">            markdown = markdown + result + &#39;\n&#39;</span>
-<span class="sd">- a subject is a dictionary containing lists, dictionaries, strings and numbers. Adding these to the report requires some pretty printing.</span>
+<span class="sd">The ui_generators module is a provider for UI generators.</span>
 
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">from</span> <span class="nn">..reporters</span> <span class="kn">import</span> <span class="n">md</span><span class="p">,</span> <span class="n">plain_text</span>
+<span class="kn">from</span> <span class="nn">..ui_generators</span> <span class="kn">import</span> <span class="n">form</span>
 </pre></div>
 
   </div>
@@ -1105,15 +1078,13 @@ table {
 
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
-      <p class="name"><a href="md.m.html">geoDSS.reporters.md</a></p>
+      <p class="name"><a href="form.m.html">geoDSS.ui_generators.form</a></p>
       
   
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="plain_text.m.html">geoDSS.reporters.plain_text</a></p>
-      
-  
+    <div class="desc"><p>The form generator generates a set of html form fields from a yaml definition.
+An optional template can be passed, in which the the form fields will be embedded.</p>
+<p>The form fields will be generated from the <code>form_fields</code> parameter in the yaml definition.</p>
+<p>All other parameters in the yaml definition w...</p></div>
 
       </div>
   </section>

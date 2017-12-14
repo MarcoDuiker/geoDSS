@@ -858,8 +858,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -894,6 +896,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1066,7 +1069,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.remark', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.tests.remark" class="source">
-    <div class="codehilite"><pre><span class="c"># -*- coding: utf-8 -*-</span>
+    <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">from</span> <span class="nn">..tests.test</span> <span class="kn">import</span> <span class="n">test</span>
 
@@ -1081,6 +1084,8 @@ table {
 <span class="sd">    `definition`     is expected to be a dict having at least:</span>
 
 <span class="sd">    `report_template` (string):           String  to be reported when the test is True (which is always the case).</span>
+<span class="sd">                                          In this string every {parameter} written like this, and is defined in</span>
+<span class="sd">                                          the subject will be replaced by the value of that parameter.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1106,22 +1111,26 @@ table {
         <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">        Executes the test.</span>
 
-<span class="sd">        `subject`    is expected a dict </span>
+<span class="sd">        `subject`    is expected to be a dict.</span>
 <span class="sd">                     (contents doesn&#39;t matter)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Adding to the report: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">])</span>  <span class="c"># you have a logger available to log some messages</span>
-                                                                                            <span class="c"># the loggers properties are set up in the rule_set definition</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span>                                         <span class="c1"># we have the report_template available to manipulate</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">subject</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>                                                  <span class="c1"># in this case we replace place holders by values in the subject</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.decision to True,</span>
-                                                                                            <span class="c"># otherwise &quot;Test decision is: False&quot; is added to the report instead of the following:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Adding to the report: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span> <span class="p">)</span>                             <span class="c1"># you have a logger available to log some messages</span>
+                                                                                            <span class="c1"># the loggers properties are set up in the rule_set definition</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">])</span>                              <span class="c"># in this way we add the report_template to the report</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.executed to True, </span>
-                                                                                            <span class="c"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c1"># don&#39;t forget to set self.decision to True,</span>
+                                                                                            <span class="c1"># otherwise &quot;Test decision is: False&quot; is added to the report instead of the following:</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                              <span class="c"># Returns False to end execution or the subject to continue to the next test </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>                                                          <span class="c1"># in this way we add a string to the report</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c1"># don&#39;t forget to set self.executed to True, </span>
+                                                                                            <span class="c1"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                              <span class="c1"># Returns False to end execution or the subject to continue to the next test </span>
 </pre></div>
 
   </div>
@@ -1141,15 +1150,17 @@ table {
 This is usefull for adding comments or remarks to the report </p>
 <h2>Definition</h2>
 <p><code>definition</code>     is expected to be a dict having at least:</p>
-<p><code>report_template</code> (string):           String  to be reported when the test is True (which is always the case).</p>
+<p><code>report_template</code> (string):           String  to be reported when the test is True (which is always the case).
+                                      In this string every {parameter} written like this, and is defined in
+                                      the subject will be replaced by the value of that parameter.</p>
 <h2>Rule example</h2>
 <p>a useful yaml snippet for this test would be:</p>
-<div class="codehilite"><pre>rules:
-    unit_test:
-        type: tests.remark
-        title: Remember
-        description: Remember
-        report_template: Remember the milk
+<div class="codehilite"><pre><span class="n">rules</span><span class="o">:</span>
+    <span class="n">unit_test</span><span class="o">:</span>
+        <span class="n">type</span><span class="o">:</span> <span class="n">tests</span><span class="o">.</span><span class="na">remark</span>
+        <span class="n">title</span><span class="o">:</span> <span class="n">Remember</span>
+        <span class="n">description</span><span class="o">:</span> <span class="n">Remember</span>
+        <span class="n">report_template</span><span class="o">:</span> <span class="n">Remember</span> <span class="n">the</span> <span class="n">milk</span>
 </pre></div>
 
 
@@ -1171,6 +1182,8 @@ This is usefull for adding comments or remarks to the report </p>
 <span class="sd">    `definition`     is expected to be a dict having at least:</span>
 
 <span class="sd">    `report_template` (string):           String  to be reported when the test is True (which is always the case).</span>
+<span class="sd">                                          In this string every {parameter} written like this, and is defined in</span>
+<span class="sd">                                          the subject will be replaced by the value of that parameter.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1196,22 +1209,26 @@ This is usefull for adding comments or remarks to the report </p>
         <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">        Executes the test.</span>
 
-<span class="sd">        `subject`    is expected a dict </span>
+<span class="sd">        `subject`    is expected to be a dict.</span>
 <span class="sd">                     (contents doesn&#39;t matter)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Adding to the report: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">])</span>  <span class="c"># you have a logger available to log some messages</span>
-                                                                                            <span class="c"># the loggers properties are set up in the rule_set definition</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span>                                         <span class="c1"># we have the report_template available to manipulate</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">subject</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>                                                  <span class="c1"># in this case we replace place holders by values in the subject</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.decision to True,</span>
-                                                                                            <span class="c"># otherwise &quot;Test decision is: False&quot; is added to the report instead of the following:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Adding to the report: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span> <span class="p">)</span>                             <span class="c1"># you have a logger available to log some messages</span>
+                                                                                            <span class="c1"># the loggers properties are set up in the rule_set definition</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">])</span>                              <span class="c"># in this way we add the report_template to the report</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.executed to True, </span>
-                                                                                            <span class="c"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c1"># don&#39;t forget to set self.decision to True,</span>
+                                                                                            <span class="c1"># otherwise &quot;Test decision is: False&quot; is added to the report instead of the following:</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                              <span class="c"># Returns False to end execution or the subject to continue to the next test </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>                                                          <span class="c1"># in this way we add a string to the report</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c1"># don&#39;t forget to set self.executed to True, </span>
+                                                                                            <span class="c1"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                              <span class="c1"># Returns False to end execution or the subject to continue to the next test </span>
 </pre></div>
 
   </div>
@@ -1245,11 +1262,11 @@ This is usefull for adding comments or remarks to the report </p>
     <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="n">rules</span>                                              <span class="c"># this is an object with references to executed rules eg. self.rules.rule_1</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;break_on_error&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;break_on_error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;report&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rules</span> <span class="o">=</span> <span class="n">rules</span>                                              <span class="c1"># this is an object with references to executed rules eg. self.rules.rule_1</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;break_on_error&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;report&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">if</span> <span class="n">settings</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
@@ -1271,7 +1288,7 @@ This is usefull for adding comments or remarks to the report </p>
     
   
     <div class="desc"><p>Executes the test.</p>
-<p><code>subject</code>    is expected a dict 
+<p><code>subject</code>    is expected to be a dict.
              (contents doesn't matter)</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.remark.remark.execute', this);">Show source &equiv;</a></p>
@@ -1279,18 +1296,20 @@ This is usefull for adding comments or remarks to the report </p>
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">    Executes the test.</span>
-<span class="sd">    `subject`    is expected a dict </span>
+<span class="sd">    `subject`    is expected to be a dict.</span>
 <span class="sd">                 (contents doesn&#39;t matter)</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Adding to the report: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">])</span>  <span class="c"># you have a logger available to log some messages</span>
-                                                                                        <span class="c"># the loggers properties are set up in the rule_set definition</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.decision to True,</span>
-                                                                                        <span class="c"># otherwise &quot;Test decision is: False&quot; is added to the report instead of the following:</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&quot;report_template&quot;</span><span class="p">])</span>                              <span class="c"># in this way we add the report_template to the report</span>
-    
-    <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c"># don&#39;t forget to set self.executed to True, </span>
-                                                                                        <span class="c"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                              <span class="c"># Returns False to end execution or the subject to continue to the next test </span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span>                                         <span class="c1"># we have the report_template available to manipulate</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">subject</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>                                                  <span class="c1"># in this case we replace place holders by values in the subject</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Adding to the report: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span> <span class="p">)</span>                             <span class="c1"># you have a logger available to log some messages</span>
+                                                                                        <span class="c1"># the loggers properties are set up in the rule_set definition</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c1"># don&#39;t forget to set self.decision to True,</span>
+                                                                                        <span class="c1"># otherwise &quot;Test decision is: False&quot; is added to the report instead of the following:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>                                                          <span class="c1"># in this way we add a string to the report</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c1"># don&#39;t forget to set self.executed to True, </span>
+                                                                                        <span class="c1"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                              <span class="c1"># Returns False to end execution or the subject to continue to the next test </span>
 </pre></div>
 
   </div>

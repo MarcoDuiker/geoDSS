@@ -859,8 +859,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -895,6 +897,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1061,7 +1064,7 @@ if rule_set_file starts with http(s):// rule_Set_file is regarded as an url and 
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.loaders.json_loader', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.loaders.json_loader" class="source">
-    <div class="codehilite"><pre><span class="c"># -*- coding: utf-8 -*-</span>
+    <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">This rule_set loader loads a rule_set from a json file from the local file system.</span>
 <span class="sd">if rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.</span>
@@ -1111,8 +1114,8 @@ if rule_set_file starts with http(s):// rule_Set_file is regarded as an url and 
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
-    <span class="k">if</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;http://&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;https://&#39;</span><span class="p">):</span>
+    <span class="c1"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
+    <span class="k">if</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">):</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
@@ -1212,8 +1215,8 @@ if rule_set_file starts with http(s):// rule_Set_file is regarded as an url and 
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
-    <span class="k">if</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;http://&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;https://&#39;</span><span class="p">):</span>
+    <span class="c1"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
+    <span class="k">if</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">):</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>

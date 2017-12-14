@@ -858,8 +858,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -894,6 +896,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1060,10 +1063,10 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.reporters.plain_text', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.reporters.plain_text" class="source">
-    <div class="codehilite"><pre><span class="c"># -*- coding: utf-8 -*-</span>
+    <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 
 
-<span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="s">&#39;plain_text&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;plain_text&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Reports on a rule set using plain text.</span>
 
@@ -1074,9 +1077,9 @@ table {
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule_set</span>
 
-    <span class="n">txt</span> <span class="o">=</span> <span class="s">u&#39;&#39;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]):</span>
-        <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+    <span class="n">txt</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_set</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
         <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>
@@ -1090,14 +1093,14 @@ table {
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule</span>
 
-    <span class="n">txt</span> <span class="o">=</span> <span class="s">u&#39;&#39;</span>
+    <span class="n">txt</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
 
-    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]):</span>
-            <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">executed</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;decision&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span> <span class="ow">or</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span> <span class="p">:</span>
-                <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;decision&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span> <span class="ow">or</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span> <span class="p">:</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
     <span class="k">return</span> <span class="n">txt</span>
 </pre></div>
@@ -1129,14 +1132,14 @@ table {
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule</span>
 
-    <span class="n">txt</span> <span class="o">=</span> <span class="s">u&#39;&#39;</span>
+    <span class="n">txt</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
 
-    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]):</span>
-            <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">executed</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;decision&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span> <span class="ow">or</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span> <span class="p">:</span>
-                <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;decision&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span> <span class="ow">or</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span> <span class="p">:</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
     <span class="k">return</span> <span class="n">txt</span>
 </pre></div>
@@ -1161,7 +1164,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.reporters.plain_text.rule_set_reporter', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.reporters.plain_text.rule_set_reporter" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="s">&#39;plain_text&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;plain_text&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Reports on a rule set using plain text.</span>
 
@@ -1172,9 +1175,9 @@ table {
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule_set</span>
 
-    <span class="n">txt</span> <span class="o">=</span> <span class="s">u&#39;&#39;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]):</span>
-        <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+    <span class="n">txt</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_set</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
         <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>
