@@ -1,0 +1,30 @@
+title: geoDSS example form
+url: "http://localhost:8000/cgi-bin/interfaces.py"
+rule_set_file: "../geoDSS/examples/rule_sets/bag_geocoder_test.yaml"
+description: "By processing this form you'll etc etc ... "
+subtitle: "Subject"
+form_fields:
+- identificatie: 
+    name: identfificatie
+    label: Identificatie
+    type: text
+- huisnummer:
+    name: huisnummer
+    label: Huisnummer
+    type: text
+- postcode:
+    name: postcode
+    label: Postcode
+    type: text
+- brzo:
+    name: brzo
+    label: BRZO-bedrijf
+    type: checkbox
+- prioriteit:
+    name: prio
+    label: Prioriteit
+    type: radio
+    values:
+    - Laag: laag
+    - Midden: midden
+    - Hoog: hoog

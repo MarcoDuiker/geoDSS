@@ -6,9 +6,8 @@ except:
     import pymarkdown as md_lib
 import yaml
 
-# todo: less naive implementations
 
-def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
+def rule_set_reporter(rule_set, output_format='markdown', **kwargs):
     '''
     reports on a rule set using markdown or html
 
@@ -43,7 +42,8 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
                 p, figure {margin: 1em 0; }
                 a img {border: none;}
                 sup, sub {line-height: 0;}
-                .tagline {margin-top: 50px; padding-top:10px; text-align: right;font-size: 70%; color: gray; border-top-style: solid; border-color: gray; border-width: 1px;}
+                .tagline {margin-top: 50px; padding-top:10px; text-align: right;font-size: 70%; color: gray;
+                          border-top-style: solid; border-color: gray; border-width: 1px;}
                 .content {background-color: rgba(250,250,250,50);}
                 img {border: 2px solid gray;}
                 img[alt='Centered_map_small'] {outline-width: 5px; outline-style: solid; outline-color: rgba(200,0,0,.5); outline-offset: -90px; }
@@ -70,7 +70,7 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
     markdown = markdown + 'Subject' + '\n'
     markdown = markdown + '-------' + '\n'
     markdown = markdown + 'Started processing with subject: ' + '\n\n'
-    markdown = markdown + '\t' + yaml.safe_dump(obj.result[0],default_flow_style=False).replace('\n','\n\t') + '\n'
+    markdown = markdown + '\t' + yaml.safe_dump(obj.result[0], default_flow_style=False).replace('\n', '\n\t') + '\n'
     markdown = markdown + '\n'
     markdown = markdown + 'Results' + '\n'
     markdown = markdown + '=======' + '\n'
@@ -80,9 +80,10 @@ def rule_set_reporter(rule_set, output_format = 'markdown', **kwargs):
         markdown = markdown + rule_reporter(rule, **kwargs) + '\n'
 
     if output_format == 'html':
-        return html_wrapper.replace('___content_goes_here___',md_lib.markdown(markdown))
+        return html_wrapper.replace('___content_goes_here___', md_lib.markdown(markdown))
     else:
         return markdown
+
 
 def rule_reporter(rule, **kwargs):
     '''
@@ -105,11 +106,11 @@ def rule_reporter(rule, **kwargs):
         markdown = markdown + '-' * len(obj.definition['title']) + '\n'
         markdown = markdown + '\n'
         if len(obj.definition['description']):
-            markdown = markdown + '_' + obj.definition['description'] + '_' +  '\n'
+            markdown = markdown + '_' + obj.definition['description'] + '_' + '\n'
             markdown = markdown + '\n'
         if obj.executed:
-            if hasattr(obj,'decision'):
-                if obj.decision:   
+            if hasattr(obj, 'decision'):
+                if obj.decision:
                     for row in obj.result:
                         markdown = markdown + '- ' + row + '\n'
                 else:

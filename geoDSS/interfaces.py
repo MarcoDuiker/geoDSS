@@ -73,6 +73,7 @@ if __name__ == '__main__' and __package__ is None:
 
 import geoDSS 
 from geoDSS import loaders
+from geoDSS import ui_generators
 
 def sanitize_headers(headers):
     '''
@@ -108,50 +109,66 @@ def load_execute_report(params):
 
     response_headers = {'Content-Type': mime}
     status = '400 Bad Request'
-
-    try:
-        subject = json.loads(params['subject'][0])
-    except Exception as e:
-        if DEBUG_LEVEL:
-            sys.stderr.write("geoDSS: Could not parse subject with error: %s \n" % str(e))
-        return status, response_headers, "Could not parse subject with error: " + str(e)
-
-    rule_set_file = params['rule_set_file'][0]
-    base_name,extension = os.path.splitext(rule_set_file)
-
-    loader_module = loaders.yaml_loader
-    if extension == '.json':
-        loader_module = loaders.json_loader
-
-    if ENABLE_NON_LOCAL_RULE_SET_FILES:
-        try: 
-            rule_set_file = params['protocol'][0] + '://' + rule_set_file
-        except:
-            pass
-
-    try:
-        r = geoDSS.rules_set(rule_set_file, loader_module)
-    except Exception as e:
-        if DEBUG_LEVEL:
-            sys.stderr.write("geoDSS: Could not load rule_set with error: %s \n" % str(e))
-            sys.stderr.write(traceback.format_exc())
-        return status, response_headers, "Could not load rule_set with error: " + str(e)
     
-    try:
-        r.execute(subject)
-    except Exception as e:
-        if DEBUG_LEVEL:
-            sys.stderr.write("geoDSS: Could not evaluate rule_set with error: %s \n" % str(e))
-            sys.stderr.write(traceback.format_exc())
-        return status, response_headers, "Could not evaluate rule_set with error: " + str(e)
+    if 'form' in params:        
+        form_definition = params['form'][0]
+        template = None
+        if 'template' in params:
+            template = params['template'][0]
+        try:
+            data = geoDSS.ui_generators.form.generate(form_yaml = form_definition, template = template)
+        except Exception as e:
+            if DEBUG_LEVEL:
+                sys.stderr.write("geoDSS: Could not parse generate form with error: %s \n" % str(e))
+            return status, response_headers, "Could not generate form with error: " + str(e)
+            
+    elif 'rule_set_file' in params:
+        try:
+            subject = json.loads(params['subject'][0])
+        except Exception as e:
+            if DEBUG_LEVEL:
+                sys.stderr.write("geoDSS: Could not parse subject with error: %s \n" % str(e))
+            return status, response_headers, "Could not parse subject with error: " + str(e)
 
-    try:
-        data = r.report(output_format = output_format)
-    except Exception as e:
-        if DEBUG_LEVEL:
-            sys.stderr.write("geoDSS: Could not report on rule_set with error: %s \n" % str(e))
-            sys.stderr.write(traceback.format_exc())
-        return status, response_headers, "Could not report on rule_set with error: " + str(e)
+        rule_set_file = params['rule_set_file'][0]
+        base_name,extension = os.path.splitext(rule_set_file)
+
+        loader_module = loaders.yaml_loader
+        if extension == '.json':
+            loader_module = loaders.json_loader
+
+        if ENABLE_NON_LOCAL_RULE_SET_FILES:
+            try: 
+                rule_set_file = params['protocol'][0] + '://' + rule_set_file
+            except:
+                pass
+
+        try:
+            r = geoDSS.rules_set(rule_set_file, loader_module)
+        except Exception as e:
+            if DEBUG_LEVEL:
+                sys.stderr.write("geoDSS: Could not load rule_set with error: %s \n" % str(e))
+                sys.stderr.write(traceback.format_exc())
+            return status, response_headers, "Could not load rule_set with error: " + str(e)
+        
+        try:
+            r.execute(subject)
+        except Exception as e:
+            if DEBUG_LEVEL:
+                sys.stderr.write("geoDSS: Could not evaluate rule_set with error: %s \n" % str(e))
+                sys.stderr.write(traceback.format_exc())
+            return status, response_headers, "Could not evaluate rule_set with error: " + str(e)
+
+        try:
+            data = r.report(output_format = output_format)
+        except Exception as e:
+            if DEBUG_LEVEL:
+                sys.stderr.write("geoDSS: Could not report on rule_set with error: %s \n" % str(e))
+                sys.stderr.write(traceback.format_exc())
+            return status, response_headers, "Could not report on rule_set with error: " + str(e)
+            
+    else:
+        data = "You are almost there... Please specify a form to load or a rule_set to proces."
 
     status = '200 OK'
     response_headers["Content-Length"] = str(len(data))
