@@ -1,0 +1,33 @@
+name: test_pdok_locatieserver
+title: Test the PDOK Locatieserver geocoder
+description: Test the PDOK locatieserver geocoder by geocoding an address and report the result
+logging:
+  level: DEBUG
+  file: "/home/marco/bag_geocoder_cgi.log"
+reporter: reporters.md
+reporter_args:
+  output_format: html
+  decision_false_report: "Uitkomst test: **negatief**"
+  decision_error_report: "**Fout**: test kwam niet tot een beslissing of rapportage"
+rules:
+- test:
+    type: processors.pdok_locatieserver
+    title: Test geocoder
+    description: Test the PDOK locatieserver geocoder. Deze neemt de eerste hit!
+    url: "https://geodata.nationaalgeoregister.nl/locatieserver/v3/free?q="
+    report_template: "Found _{address}_ on location: ['subject.geometry'](https://bagviewer.kadaster.nl/lvbag/bag-viewer/index.html#?geometry.x={x}&geometry.y={y}&zoomlevel=7)"
+    break_on_error: True
+- BAG map:
+    type: tests.get_map
+    title: A map from the BAG
+    description: ""
+    url: "https://geodata.nationaalgeoregister.nl/bag/wms/"
+    params:
+      layers: pand
+      styles: ""
+      width: 300
+      height: 200
+      format: "image/png"
+      version: "1.1.0"
+    buffer: 75
+    report_template: "![Centered_map_small]({url})"

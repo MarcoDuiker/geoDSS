@@ -1,3 +1,4 @@
 pdoc --html geoDSS
-mv ./geoDSS ./API
+rm -rf ./API/*
+mv ./geoDSS/* ./API
 
