@@ -1,5 +1,5 @@
 '''
-Upon execution a tests evaluates a subject against a rule.
+Upon execution a tests evaluates a subject against a rule..
 
 When the rule is based on a processor, the processor returns modified subject. 
 Optionally processor reports according to the `report_template` given in the rule.

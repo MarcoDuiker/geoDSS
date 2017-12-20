@@ -5,7 +5,7 @@
 
     <title>geoDSS.loaders.json_loader API documentation</title>
     <meta name="description" content="This rule_set loader loads a rule_set from a json file from the local file system.
-if rule_set_file ..." />
+If rule_set_file ..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1060,14 +1060,14 @@ table {
   <header id="section-intro">
   <h1 class="title"><span class="name">geoDSS.loaders.json_loader</span> module</h1>
   <p>This rule_set loader loads a rule_set from a json file from the local file system.
-if rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.</p>
+If rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.loaders.json_loader', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.loaders.json_loader" class="source">
     <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">This rule_set loader loads a rule_set from a json file from the local file system.</span>
-<span class="sd">if rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.</span>
+<span class="sd">If rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="kn">import</span> <span class="nn">json</span>
@@ -1075,42 +1075,42 @@ if rule_set_file starts with http(s):// rule_Set_file is regarded as an url and 
 
 <span class="k">def</span> <span class="nf">load_rule_set</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    load rules set from json</span>
+<span class="sd">    Load rules set from json.</span>
 
 <span class="sd">    rules_set_file is expected to be a file name of a file containing a rules set definition in json format.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
 
-<span class="sd">    { &quot;name&quot;: &quot;set 1 json&quot;</span>
-<span class="sd">      &quot;title&quot;: &quot;Rule set doing a unit like test&quot;,</span>
-<span class="sd">      &quot;description&quot;: &quot;use the unit test to test the framework, demonstrating the json loader on the go.&quot;,</span>
-<span class="sd">      &quot;logging&quot;: {</span>
-<span class="sd">        &quot;level&quot;: &quot;DEBUG&quot;</span>
-<span class="sd">      },</span>
-<span class="sd">      &quot;rules&quot;: [</span>
-<span class="sd">        {</span>
-<span class="sd">          &quot;unit_test&quot;: {</span>
-<span class="sd">            &quot;report_template&quot;: &quot;Action should be taken&quot;,</span>
-<span class="sd">            &quot;type&quot;: &quot;tests.unit_test&quot;,</span>
-<span class="sd">            &quot;description&quot;: &quot;unit test testing&quot;,</span>
-<span class="sd">            &quot;title&quot;: &quot;unit test&quot;</span>
-<span class="sd">          }</span>
-<span class="sd">        },</span>
-<span class="sd">        {</span>
-<span class="sd">          &quot;postgis_unit_test&quot;: {</span>
-<span class="sd">            &quot;type&quot;: &quot;processors.postgis_unit_test&quot;,</span>
-<span class="sd">            &quot;db&quot;: {</span>
-<span class="sd">              &quot;dbname&quot;: &quot;gisdefault&quot;</span>
+<span class="sd">        { &quot;name&quot;: &quot;set 1 json&quot;</span>
+<span class="sd">          &quot;title&quot;: &quot;Rule set doing a unit like test&quot;,</span>
+<span class="sd">          &quot;description&quot;: &quot;use the unit test to test the framework, demonstrating the json loader on the go.&quot;,</span>
+<span class="sd">          &quot;logging&quot;: {</span>
+<span class="sd">            &quot;level&quot;: &quot;DEBUG&quot;</span>
+<span class="sd">          },</span>
+<span class="sd">          &quot;rules&quot;: [</span>
+<span class="sd">            {</span>
+<span class="sd">              &quot;unit_test&quot;: {</span>
+<span class="sd">                &quot;report_template&quot;: &quot;Action should be taken&quot;,</span>
+<span class="sd">                &quot;type&quot;: &quot;tests.unit_test&quot;,</span>
+<span class="sd">                &quot;description&quot;: &quot;unit test testing&quot;,</span>
+<span class="sd">                &quot;title&quot;: &quot;unit test&quot;</span>
+<span class="sd">              }</span>
 <span class="sd">            },</span>
-<span class="sd">            &quot;description&quot;: &quot;unit test by buffering subject geometry with distance 1&quot;,</span>
-<span class="sd">            &quot;title&quot;: &quot;processor unit test&quot;</span>
-<span class="sd">          }</span>
+<span class="sd">            {</span>
+<span class="sd">              &quot;postgis_unit_test&quot;: {</span>
+<span class="sd">                &quot;type&quot;: &quot;processors.postgis_unit_test&quot;,</span>
+<span class="sd">                &quot;db&quot;: {</span>
+<span class="sd">                  &quot;dbname&quot;: &quot;gisdefault&quot;</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;description&quot;: &quot;unit test by buffering subject geometry with distance 1&quot;,</span>
+<span class="sd">                &quot;title&quot;: &quot;processor unit test&quot;</span>
+<span class="sd">              }</span>
+<span class="sd">            }</span>
+<span class="sd">          ]</span>
 <span class="sd">        }</span>
-<span class="sd">      ]</span>
-<span class="sd">    }</span>
 
-<span class="sd">    **kwargs is not used in this loader and only inserted here as an example for extending the loaders</span>
+<span class="sd">    **kwargs is not used in this loader and only inserted here as an example for extending the loaders.</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -1140,78 +1140,81 @@ if rule_set_file starts with http(s):// rule_Set_file is regarded as an url and 
 
     
   
-    <div class="desc"><p>load rules set from json</p>
+    <div class="desc"><p>Load rules set from json.</p>
 <p>rules_set_file is expected to be a file name of a file containing a rules set definition in json format.</p>
 <h2>Example</h2>
-<p>{ "name": "set 1 json"
-  "title": "Rule set doing a unit like test",
-  "description": "use the unit test to test the framework, demonstrating the json loader on the go.",
-  "logging": {
-    "level": "DEBUG"
+<div class="codehilite"><pre>{ &quot;name&quot;: &quot;set 1 json&quot;
+  &quot;title&quot;: &quot;Rule set doing a unit like test&quot;,
+  &quot;description&quot;: &quot;use the unit test to test the framework, demonstrating the json loader on the go.&quot;,
+  &quot;logging&quot;: {
+    &quot;level&quot;: &quot;DEBUG&quot;
   },
-  "rules": [
+  &quot;rules&quot;: [
     {
-      "unit_test": {
-        "report_template": "Action should be taken",
-        "type": "tests.unit_test",
-        "description": "unit test testing",
-        "title": "unit test"
+      &quot;unit_test&quot;: {
+        &quot;report_template&quot;: &quot;Action should be taken&quot;,
+        &quot;type&quot;: &quot;tests.unit_test&quot;,
+        &quot;description&quot;: &quot;unit test testing&quot;,
+        &quot;title&quot;: &quot;unit test&quot;
       }
     },
     {
-      "postgis_unit_test": {
-        "type": "processors.postgis_unit_test",
-        "db": {
-          "dbname": "gisdefault"
+      &quot;postgis_unit_test&quot;: {
+        &quot;type&quot;: &quot;processors.postgis_unit_test&quot;,
+        &quot;db&quot;: {
+          &quot;dbname&quot;: &quot;gisdefault&quot;
         },
-        "description": "unit test by buffering subject geometry with distance 1",
-        "title": "processor unit test"
+        &quot;description&quot;: &quot;unit test by buffering subject geometry with distance 1&quot;,
+        &quot;title&quot;: &quot;processor unit test&quot;
       }
     }
   ]
-}</p>
-<p>**kwargs is not used in this loader and only inserted here as an example for extending the loaders</p></div>
+}
+</pre></div>
+
+
+<p>**kwargs is not used in this loader and only inserted here as an example for extending the loaders.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.loaders.json_loader.load_rule_set', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.loaders.json_loader.load_rule_set" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">load_rule_set</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    load rules set from json</span>
+<span class="sd">    Load rules set from json.</span>
 
 <span class="sd">    rules_set_file is expected to be a file name of a file containing a rules set definition in json format.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
 
-<span class="sd">    { &quot;name&quot;: &quot;set 1 json&quot;</span>
-<span class="sd">      &quot;title&quot;: &quot;Rule set doing a unit like test&quot;,</span>
-<span class="sd">      &quot;description&quot;: &quot;use the unit test to test the framework, demonstrating the json loader on the go.&quot;,</span>
-<span class="sd">      &quot;logging&quot;: {</span>
-<span class="sd">        &quot;level&quot;: &quot;DEBUG&quot;</span>
-<span class="sd">      },</span>
-<span class="sd">      &quot;rules&quot;: [</span>
-<span class="sd">        {</span>
-<span class="sd">          &quot;unit_test&quot;: {</span>
-<span class="sd">            &quot;report_template&quot;: &quot;Action should be taken&quot;,</span>
-<span class="sd">            &quot;type&quot;: &quot;tests.unit_test&quot;,</span>
-<span class="sd">            &quot;description&quot;: &quot;unit test testing&quot;,</span>
-<span class="sd">            &quot;title&quot;: &quot;unit test&quot;</span>
-<span class="sd">          }</span>
-<span class="sd">        },</span>
-<span class="sd">        {</span>
-<span class="sd">          &quot;postgis_unit_test&quot;: {</span>
-<span class="sd">            &quot;type&quot;: &quot;processors.postgis_unit_test&quot;,</span>
-<span class="sd">            &quot;db&quot;: {</span>
-<span class="sd">              &quot;dbname&quot;: &quot;gisdefault&quot;</span>
+<span class="sd">        { &quot;name&quot;: &quot;set 1 json&quot;</span>
+<span class="sd">          &quot;title&quot;: &quot;Rule set doing a unit like test&quot;,</span>
+<span class="sd">          &quot;description&quot;: &quot;use the unit test to test the framework, demonstrating the json loader on the go.&quot;,</span>
+<span class="sd">          &quot;logging&quot;: {</span>
+<span class="sd">            &quot;level&quot;: &quot;DEBUG&quot;</span>
+<span class="sd">          },</span>
+<span class="sd">          &quot;rules&quot;: [</span>
+<span class="sd">            {</span>
+<span class="sd">              &quot;unit_test&quot;: {</span>
+<span class="sd">                &quot;report_template&quot;: &quot;Action should be taken&quot;,</span>
+<span class="sd">                &quot;type&quot;: &quot;tests.unit_test&quot;,</span>
+<span class="sd">                &quot;description&quot;: &quot;unit test testing&quot;,</span>
+<span class="sd">                &quot;title&quot;: &quot;unit test&quot;</span>
+<span class="sd">              }</span>
 <span class="sd">            },</span>
-<span class="sd">            &quot;description&quot;: &quot;unit test by buffering subject geometry with distance 1&quot;,</span>
-<span class="sd">            &quot;title&quot;: &quot;processor unit test&quot;</span>
-<span class="sd">          }</span>
+<span class="sd">            {</span>
+<span class="sd">              &quot;postgis_unit_test&quot;: {</span>
+<span class="sd">                &quot;type&quot;: &quot;processors.postgis_unit_test&quot;,</span>
+<span class="sd">                &quot;db&quot;: {</span>
+<span class="sd">                  &quot;dbname&quot;: &quot;gisdefault&quot;</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;description&quot;: &quot;unit test by buffering subject geometry with distance 1&quot;,</span>
+<span class="sd">                &quot;title&quot;: &quot;processor unit test&quot;</span>
+<span class="sd">              }</span>
+<span class="sd">            }</span>
+<span class="sd">          ]</span>
 <span class="sd">        }</span>
-<span class="sd">      ]</span>
-<span class="sd">    }</span>
 
-<span class="sd">    **kwargs is not used in this loader and only inserted here as an example for extending the loaders</span>
+<span class="sd">    **kwargs is not used in this loader and only inserted here as an example for extending the loaders.</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
 

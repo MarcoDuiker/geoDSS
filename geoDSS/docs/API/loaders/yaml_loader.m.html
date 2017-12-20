@@ -5,7 +5,6 @@
 
     <title>geoDSS.loaders.yaml_loader API documentation</title>
     <meta name="description" content="This is the default rule_set loader.
-
 It loads a rule_set from a yaml file." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1060,15 +1059,14 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">geoDSS.loaders.yaml_loader</span> module</h1>
-  <p>This is the default rule_set loader.</p>
-<p>It loads a rule_set from a yaml file.</p>
+  <p>This is the default rule_set loader.
+It loads a rule_set from a yaml file.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.loaders.yaml_loader', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.loaders.yaml_loader" class="source">
     <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">This is the default rule_set loader.</span>
-
 <span class="sd">It loads a rule_set from a yaml file.</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
@@ -1076,28 +1074,28 @@ table {
 
 <span class="k">def</span> <span class="nf">load_rule_set</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    load rules set from yaml</span>
+<span class="sd">    Loads a rule set from yaml.</span>
 
 <span class="sd">    rules_set_file is expected to be a file name of a file containing a rules set definition in yaml format.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
 
-<span class="sd">    name: set 1</span>
-<span class="sd">    title: Rule set doing the unit test</span>
-<span class="sd">    description: use the unit test to test the framework</span>
-<span class="sd">    rules:</span>
-<span class="sd">    - unit_test:</span>
-<span class="sd">        type: tests.unit_test</span>
-<span class="sd">        title: unit test</span>
-<span class="sd">        description: unit test testing</span>
-<span class="sd">        report_template: Action should be taken</span>
-<span class="sd">    - postgis_unit_test:</span>
-<span class="sd">        type: processors.postgis_unit_test</span>
-<span class="sd">        title: processor unit test</span>
-<span class="sd">        description: unit test by buffering subject geometry with distance 1</span>
-<span class="sd">        db:</span>
-<span class="sd">            dbname: gisdefault</span>
+<span class="sd">        name: set 1</span>
+<span class="sd">        title: Rule set doing the unit test</span>
+<span class="sd">        description: use the unit test to test the framework</span>
+<span class="sd">        rules:</span>
+<span class="sd">        - unit_test:</span>
+<span class="sd">            type: tests.unit_test</span>
+<span class="sd">            title: unit test</span>
+<span class="sd">            description: unit test testing</span>
+<span class="sd">            report_template: Action should be taken</span>
+<span class="sd">        - postgis_unit_test:</span>
+<span class="sd">            type: processors.postgis_unit_test</span>
+<span class="sd">            title: processor unit test</span>
+<span class="sd">            description: unit test by buffering subject geometry with distance 1</span>
+<span class="sd">            db:</span>
+<span class="sd">                dbname: gisdefault</span>
 
 <span class="sd">    **kwargs is not used in this loader and only inserted here as an example for extending the loaders</span>
 
@@ -1125,52 +1123,55 @@ table {
 
     
   
-    <div class="desc"><p>load rules set from yaml</p>
+    <div class="desc"><p>Loads a rule set from yaml.</p>
 <p>rules_set_file is expected to be a file name of a file containing a rules set definition in yaml format.</p>
 <h2>Example</h2>
-<p>name: set 1
-title: Rule set doing the unit test
-description: use the unit test to test the framework
-rules:
-- unit_test:
-    type: tests.unit_test
-    title: unit test
-    description: unit test testing
-    report_template: Action should be taken
-- postgis_unit_test:
-    type: processors.postgis_unit_test
-    title: processor unit test
-    description: unit test by buffering subject geometry with distance 1
-    db:
-        dbname: gisdefault</p>
+<div class="codehilite"><pre><span class="n">name</span><span class="o">:</span> <span class="kd">set</span> <span class="mi">1</span>
+<span class="n">title</span><span class="o">:</span> <span class="n">Rule</span> <span class="kd">set</span> <span class="n">doing</span> <span class="n">the</span> <span class="n">unit</span> <span class="n">test</span>
+<span class="n">description</span><span class="o">:</span> <span class="n">use</span> <span class="n">the</span> <span class="n">unit</span> <span class="n">test</span> <span class="n">to</span> <span class="n">test</span> <span class="n">the</span> <span class="n">framework</span>
+<span class="n">rules</span><span class="o">:</span>
+<span class="o">-</span> <span class="n">unit_test</span><span class="o">:</span>
+    <span class="n">type</span><span class="o">:</span> <span class="n">tests</span><span class="o">.</span><span class="na">unit_test</span>
+    <span class="n">title</span><span class="o">:</span> <span class="n">unit</span> <span class="n">test</span>
+    <span class="n">description</span><span class="o">:</span> <span class="n">unit</span> <span class="n">test</span> <span class="n">testing</span>
+    <span class="n">report_template</span><span class="o">:</span> <span class="n">Action</span> <span class="n">should</span> <span class="n">be</span> <span class="n">taken</span>
+<span class="o">-</span> <span class="n">postgis_unit_test</span><span class="o">:</span>
+    <span class="n">type</span><span class="o">:</span> <span class="n">processors</span><span class="o">.</span><span class="na">postgis_unit_test</span>
+    <span class="n">title</span><span class="o">:</span> <span class="n">processor</span> <span class="n">unit</span> <span class="n">test</span>
+    <span class="n">description</span><span class="o">:</span> <span class="n">unit</span> <span class="n">test</span> <span class="n">by</span> <span class="n">buffering</span> <span class="n">subject</span> <span class="n">geometry</span> <span class="k">with</span> <span class="n">distance</span> <span class="mi">1</span>
+    <span class="n">db</span><span class="o">:</span>
+        <span class="n">dbname</span><span class="o">:</span> <span class="n">gisdefault</span>
+</pre></div>
+
+
 <p>**kwargs is not used in this loader and only inserted here as an example for extending the loaders</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.loaders.yaml_loader.load_rule_set', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.loaders.yaml_loader.load_rule_set" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">load_rule_set</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    load rules set from yaml</span>
+<span class="sd">    Loads a rule set from yaml.</span>
 
 <span class="sd">    rules_set_file is expected to be a file name of a file containing a rules set definition in yaml format.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
 
-<span class="sd">    name: set 1</span>
-<span class="sd">    title: Rule set doing the unit test</span>
-<span class="sd">    description: use the unit test to test the framework</span>
-<span class="sd">    rules:</span>
-<span class="sd">    - unit_test:</span>
-<span class="sd">        type: tests.unit_test</span>
-<span class="sd">        title: unit test</span>
-<span class="sd">        description: unit test testing</span>
-<span class="sd">        report_template: Action should be taken</span>
-<span class="sd">    - postgis_unit_test:</span>
-<span class="sd">        type: processors.postgis_unit_test</span>
-<span class="sd">        title: processor unit test</span>
-<span class="sd">        description: unit test by buffering subject geometry with distance 1</span>
-<span class="sd">        db:</span>
-<span class="sd">            dbname: gisdefault</span>
+<span class="sd">        name: set 1</span>
+<span class="sd">        title: Rule set doing the unit test</span>
+<span class="sd">        description: use the unit test to test the framework</span>
+<span class="sd">        rules:</span>
+<span class="sd">        - unit_test:</span>
+<span class="sd">            type: tests.unit_test</span>
+<span class="sd">            title: unit test</span>
+<span class="sd">            description: unit test testing</span>
+<span class="sd">            report_template: Action should be taken</span>
+<span class="sd">        - postgis_unit_test:</span>
+<span class="sd">            type: processors.postgis_unit_test</span>
+<span class="sd">            title: processor unit test</span>
+<span class="sd">            description: unit test by buffering subject geometry with distance 1</span>
+<span class="sd">            db:</span>
+<span class="sd">                dbname: gisdefault</span>
 
 <span class="sd">    **kwargs is not used in this loader and only inserted here as an example for extending the loaders</span>
 

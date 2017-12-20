@@ -1061,6 +1061,90 @@ table {
   <h1 class="title"><span class="name">geoDSS.loaders</span> module</h1>
   <p>The loaders module is a provider for rule_set loaders.</p>
 <p>The default loader is yaml_loader which loads a rule_set from a yaml file.</p>
+<p>A rule set is a simple object with some generic properties and some rules. </p>
+<h2>Definition</h2>
+<p><code>definition</code> is expected to be a dict having generic properties and a list of rules.</p>
+<p>The generic properties of a rule set contain at least the following:</p>
+<ul>
+<li><code>name</code> (string)                   A name for the rule set.</li>
+<li><code>title</code> (string)                  A title for the rule set. If not given in the defintion,
+                                    the name is used as a title as well.</li>
+<li><code>description</code> (string)            A description of the rule set. If not given, it is set
+                                    to an empty string.</li>
+<li><code>logging</code> (dict)                  A defintion for a logger. If not given a default logger is used.</li>
+<li><code>level</code>                             Python log level. Usually one of: DEBUG, INFO, ERROR (defaults to INFO)</li>
+<li><code>format</code>                            Python logging format string. Default: '%(asctime)s %(name)-12s %(levelname)-7s  %(message)s'</li>
+<li><code>file</code>                              A writeable file to write the log. This file will be log-rotated.</li>
+<li><code>reporter</code> (string)               The reporter module to be used. If not given, the reporters.md
+                                    markdown reporter is used.</li>
+<li><code>reporter_args</code> (dict)            Arguments to pass to the reporter. Which are accepted you'll find in the API docs of the reporter.
+                                    The default markdown reporter accepts the following optional parameters:</li>
+<li><code>output_format</code> (string)            <code>markdown</code> or <code>html</code>. Defaults to <code>markdown</code>.</li>
+<li><code>decision_false_report</code> (string)    The string to report when a test is evaluates to False.</li>
+<li><code>decision_error_report</code> (string)    The string to report when a test did not evaluate but encounterd an error.</li>
+</ul>
+<p>Optionally the generic properties can contain:</p>
+<ul>
+<li><code>settings</code> (dict)                 A settings object passed to all the rule. Al properties defined
+                                    in the settings are available as if they were defined in the rule.
+                                    If a property of <code>settings</code> is defined in a rule, then that 
+                                    property is used, and not the property of this settings object.</li>
+</ul>
+<p>The rule set contains a list of rules. The properties of these rules depend on the processors and tests
+used. Please refer to the docs of those.</p>
+<p>The definition of a rule is a dict having at least the following properties:</p>
+<ul>
+<li><code>name</code>  (string)                  A name for the rule. </li>
+<li><code>title</code>  (string)                 A title for the rule. If not given in the defintion,
+                                    the name is used as a title as well.</li>
+<li><code>description</code> (string)            A description of the rule set. Do not leave empty.
+                                    An empty string (<code>""</code>) is allowed.</li>
+</ul>
+<p>The defintion of a test can contain at least the following properties:</p>
+<ul>
+<li><code>report_template</code> (string)        The string which will be reported when the test evaluates to True.
+                                    Most tests will support some form of parameter substitution to allow
+                                    more detailed reporting on the test result. Please refer to the documentation
+                                    of the tests for more info on this.</li>
+</ul>
+<p>The defintion of rules can have the following optional properties:</p>
+<ul>
+<li><code>break_on_error</code> (bool)           Defaults to <code>False</code>. If set <code>True</code>, and the test or processor does not return a result at all,
+                                    the processing will stop after this rule. When set to <code>False</code> geoDSS tries to continue after
+                                    errors.</li>
+<li><code>report</code> (bool)                   Defaults to <code>True</code>. If set to <code>False</code>, the rule will not report when the test evaluates to True.</li>
+</ul>
+<h2>Example</h2>
+<p>A Rule set example in yaml format (more examples can be found in the examples folder):</p>
+<div class="codehilite"><pre><span class="err">#</span> <span class="nt">a</span> <span class="nt">collection</span> <span class="nt">of</span> <span class="nt">different</span> <span class="nt">rules</span>
+<span class="nt">name</span><span class="o">:</span> <span class="nt">various_rules_test</span>
+<span class="nt">title</span><span class="o">:</span> <span class="nt">Doing</span> <span class="nt">some</span> <span class="nt">different</span> <span class="nt">tests</span>
+<span class="nt">description</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
+<span class="nt">logging</span><span class="o">:</span>
+  <span class="nt">level</span><span class="o">:</span> <span class="nt">DEBUG</span>
+  <span class="nt">file</span><span class="o">:</span> <span class="s2">&quot;/home/marco/bag_geocoder_cgi.log&quot;</span>
+<span class="nt">settings</span><span class="o">:</span>
+    <span class="nt">db</span><span class="o">:</span>
+        <span class="nt">dbname</span><span class="o">:</span> <span class="nt">gisdefault</span>
+<span class="nt">rules</span><span class="o">:</span>
+<span class="nt">-</span> <span class="nt">remark</span><span class="o">:</span>
+    <span class="nt">type</span><span class="o">:</span> <span class="nt">tests</span><span class="nc">.remark</span>
+    <span class="nt">title</span><span class="o">:</span> <span class="nt">Be</span> <span class="nt">aware</span><span class="o">!</span>
+    <span class="nt">description</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="nt">report_template</span><span class="o">:</span> <span class="nt">don</span><span class="s1">&#39;t forget a description cannot be empty; use quotes if you don&#39;</span><span class="nt">t</span> <span class="nt">want</span> <span class="nt">a</span> <span class="nt">description</span>
+<span class="nt">-</span> <span class="nt">select_gemeente</span><span class="o">:</span>
+    <span class="nt">type</span><span class="o">:</span> <span class="nt">tests</span><span class="nc">.postgis_spatial_select</span>
+    <span class="nt">title</span><span class="o">:</span> <span class="nt">Gemeenten</span> <span class="nt">binnen</span> <span class="nt">40</span> <span class="nt">km</span> <span class="nt">van</span> <span class="nt">de</span> <span class="nt">aanvraag</span>
+    <span class="nt">description</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="nt">schema</span><span class="o">:</span> <span class="nt">public</span>
+    <span class="nt">table</span><span class="o">:</span> <span class="nt">gem_2009_gen</span>
+    <span class="nt">relationship</span><span class="o">:</span> <span class="nt">ST_DWithin</span>
+    <span class="nt">parameters</span><span class="o">:</span> 
+    <span class="nt">-</span> <span class="s2">&quot;subject.geometry&quot;</span>
+    <span class="nt">-</span> <span class="s2">&quot;wkb_geometry&quot;</span>
+    <span class="nt">-</span> <span class="s2">&quot;40000&quot;</span>
+    <span class="nt">report_template</span><span class="o">:</span> <span class="nt">Doorsturen</span> <span class="nt">naar</span> <span class="nt">B</span><span class="o">&amp;</span><span class="nt">W</span> <span class="nt">van</span> <span class="nt">gemeente</span> <span class="p">{</span><span class="n">gm_naam</span><span class="p">}</span>
+</pre></div>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.loaders', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.loaders" class="source">
@@ -1068,6 +1152,99 @@ table {
 <span class="sd">The loaders module is a provider for rule_set loaders.</span>
 
 <span class="sd">The default loader is yaml_loader which loads a rule_set from a yaml file.</span>
+
+<span class="sd">A rule set is a simple object with some generic properties and some rules. </span>
+
+<span class="sd">Definition</span>
+<span class="sd">----------</span>
+
+<span class="sd">`definition` is expected to be a dict having generic properties and a list of rules.</span>
+
+<span class="sd">The generic properties of a rule set contain at least the following:</span>
+
+<span class="sd">- `name` (string)                   A name for the rule set.</span>
+<span class="sd">- `title` (string)                  A title for the rule set. If not given in the defintion,</span>
+<span class="sd">                                    the name is used as a title as well.</span>
+<span class="sd">- `description` (string)            A description of the rule set. If not given, it is set</span>
+<span class="sd">                                    to an empty string.</span>
+<span class="sd">- `logging` (dict)                  A defintion for a logger. If not given a default logger is used.</span>
+<span class="sd">  - `level`                             Python log level. Usually one of: DEBUG, INFO, ERROR (defaults to INFO)</span>
+<span class="sd">  - `format`                            Python logging format string. Default: &#39;%(asctime)s %(name)-12s %(levelname)-7s  %(message)s&#39;</span>
+<span class="sd">  - `file`                              A writeable file to write the log. This file will be log-rotated.</span>
+<span class="sd">- `reporter` (string)               The reporter module to be used. If not given, the reporters.md</span>
+<span class="sd">                                    markdown reporter is used.</span>
+<span class="sd">- `reporter_args` (dict)            Arguments to pass to the reporter. Which are accepted you&#39;ll find in the API docs of the reporter.</span>
+<span class="sd">                                    The default markdown reporter accepts the following optional parameters:</span>
+<span class="sd">  - `output_format` (string)            `markdown` or `html`. Defaults to `markdown`.</span>
+<span class="sd">  - `decision_false_report` (string)    The string to report when a test is evaluates to False.</span>
+<span class="sd">  - `decision_error_report` (string)    The string to report when a test did not evaluate but encounterd an error.</span>
+<span class="sd">                            </span>
+<span class="sd">Optionally the generic properties can contain:</span>
+
+<span class="sd">- `settings` (dict)                 A settings object passed to all the rule. Al properties defined</span>
+<span class="sd">                                    in the settings are available as if they were defined in the rule.</span>
+<span class="sd">                                    If a property of `settings` is defined in a rule, then that </span>
+<span class="sd">                                    property is used, and not the property of this settings object.</span>
+
+<span class="sd">                          </span>
+<span class="sd">The rule set contains a list of rules. The properties of these rules depend on the processors and tests</span>
+<span class="sd">used. Please refer to the docs of those.</span>
+
+<span class="sd">The definition of a rule is a dict having at least the following properties:</span>
+
+<span class="sd">- `name`  (string)                  A name for the rule. </span>
+<span class="sd">- `title`  (string)                 A title for the rule. If not given in the defintion,</span>
+<span class="sd">                                    the name is used as a title as well.</span>
+<span class="sd">- `description` (string)            A description of the rule set. Do not leave empty.</span>
+<span class="sd">                                    An empty string (`&quot;&quot;`) is allowed.</span>
+<span class="sd">                            </span>
+<span class="sd">The defintion of a test can contain at least the following properties:</span>
+
+<span class="sd">- `report_template` (string)        The string which will be reported when the test evaluates to True.</span>
+<span class="sd">                                    Most tests will support some form of parameter substitution to allow</span>
+<span class="sd">                                    more detailed reporting on the test result. Please refer to the documentation</span>
+<span class="sd">                                    of the tests for more info on this.</span>
+<span class="sd">                            </span>
+<span class="sd">The defintion of rules can have the following optional properties:</span>
+
+<span class="sd">- `break_on_error` (bool)           Defaults to `False`. If set `True`, and the test or processor does not return a result at all,</span>
+<span class="sd">                                    the processing will stop after this rule. When set to `False` geoDSS tries to continue after</span>
+<span class="sd">                                    errors.</span>
+<span class="sd">- `report` (bool)                   Defaults to `True`. If set to `False`, the rule will not report when the test evaluates to True.</span>
+
+<span class="sd">Example</span>
+<span class="sd">-------</span>
+
+<span class="sd">A Rule set example in yaml format (more examples can be found in the examples folder):</span>
+
+<span class="sd">    # a collection of different rules</span>
+<span class="sd">    name: various_rules_test</span>
+<span class="sd">    title: Doing some different tests</span>
+<span class="sd">    description: &quot;&quot;</span>
+<span class="sd">    logging:</span>
+<span class="sd">      level: DEBUG</span>
+<span class="sd">      file: &quot;/home/marco/bag_geocoder_cgi.log&quot;</span>
+<span class="sd">    settings:</span>
+<span class="sd">        db:</span>
+<span class="sd">            dbname: gisdefault</span>
+<span class="sd">    rules:</span>
+<span class="sd">    - remark:</span>
+<span class="sd">        type: tests.remark</span>
+<span class="sd">        title: Be aware!</span>
+<span class="sd">        description: &quot;&quot;</span>
+<span class="sd">        report_template: don&#39;t forget a description cannot be empty; use quotes if you don&#39;t want a description</span>
+<span class="sd">    - select_gemeente:</span>
+<span class="sd">        type: tests.postgis_spatial_select</span>
+<span class="sd">        title: Gemeenten binnen 40 km van de aanvraag</span>
+<span class="sd">        description: &quot;&quot;</span>
+<span class="sd">        schema: public</span>
+<span class="sd">        table: gem_2009_gen</span>
+<span class="sd">        relationship: ST_DWithin</span>
+<span class="sd">        parameters: </span>
+<span class="sd">        - &quot;subject.geometry&quot;</span>
+<span class="sd">        - &quot;wkb_geometry&quot;</span>
+<span class="sd">        - &quot;40000&quot;</span>
+<span class="sd">        report_template: Doorsturen naar B&amp;W van gemeente {gm_naam}</span>
 
 <span class="sd">&#39;&#39;&#39;</span>
 
@@ -1088,15 +1265,15 @@ table {
       
   
     <div class="desc"><p>This rule_set loader loads a rule_set from a json file from the local file system.
-if rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.</p></div>
+If rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.</p></div>
 
       </div>
       <div class="item">
       <p class="name"><a href="yaml_loader.m.html">geoDSS.loaders.yaml_loader</a></p>
       
   
-    <div class="desc"><p>This is the default rule_set loader.</p>
-<p>It loads a rule_set from a yaml file.</p></div>
+    <div class="desc"><p>This is the default rule_set loader.
+It loads a rule_set from a yaml file.</p></div>
 
       </div>
   </section>
