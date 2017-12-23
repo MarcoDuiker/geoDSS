@@ -1086,6 +1086,8 @@ table {
 <span class="k">class</span> <span class="nc">bag_geocoder</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This processor provides geocoder using the Dutch BAG geocoding service.</span>
+<span class="sd">    </span>
+<span class="sd">    ** This processor is deprecated from 01-01-2018. Use `processors.pdok_locatieserver`. **</span>
 
 <span class="sd">    Geocoding is done on zip-code and house_number of the subject. </span>
 <span class="sd">    This geocoder takes the first hit as a result</span>
@@ -1097,7 +1099,7 @@ table {
 
 <span class="sd">     `url` (string):                    base url for the geocoder</span>
 
-<span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.</span>
+<span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported on success.</span>
 
 <span class="sd">                                        If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.</span>
 
@@ -1130,7 +1132,7 @@ table {
 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        executes the geoocder</span>
+<span class="sd">        Executes the geocoder</span>
 
 <span class="sd">        `subject` is expected to be a dict having:</span>
 
@@ -1206,12 +1208,13 @@ table {
       
   
     <div class="desc"><p>This processor provides geocoder using the Dutch BAG geocoding service.</p>
+<p><strong> This processor is deprecated from 01-01-2018. Use <code>processors.pdok_locatieserver</code>. </strong></p>
 <p>Geocoding is done on zip-code and house_number of the subject. 
 This geocoder takes the first hit as a result</p>
 <h2>Definition</h2>
 <p><code>definition</code> is expected to be a dict having:</p>
 <p><code>url</code> (string):                    base url for the geocoder</p>
-<p><code>report_template</code> (string):        (optional) String (with markdown support) to be reported when the test is True.</p>
+<p><code>report_template</code> (string):        (optional) String (with markdown support) to be reported on success.</p>
 <div class="codehilite"><pre>                                If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.
 
                                 if the format string contains {address} it will be replaced by the found address.
@@ -1244,6 +1247,8 @@ This geocoder takes the first hit as a result</p>
     <div class="codehilite"><pre><span class="k">class</span> <span class="nc">bag_geocoder</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This processor provides geocoder using the Dutch BAG geocoding service.</span>
+<span class="sd">    </span>
+<span class="sd">    ** This processor is deprecated from 01-01-2018. Use `processors.pdok_locatieserver`. **</span>
 
 <span class="sd">    Geocoding is done on zip-code and house_number of the subject. </span>
 <span class="sd">    This geocoder takes the first hit as a result</span>
@@ -1255,7 +1260,7 @@ This geocoder takes the first hit as a result</p>
 
 <span class="sd">     `url` (string):                    base url for the geocoder</span>
 
-<span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.</span>
+<span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported on success.</span>
 
 <span class="sd">                                        If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.</span>
 
@@ -1288,7 +1293,7 @@ This geocoder takes the first hit as a result</p>
 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        executes the geoocder</span>
+<span class="sd">        Executes the geocoder</span>
 
 <span class="sd">        `subject` is expected to be a dict having:</span>
 
@@ -1405,7 +1410,7 @@ This geocoder takes the first hit as a result</p>
 
     
   
-    <div class="desc"><p>executes the geoocder</p>
+    <div class="desc"><p>Executes the geocoder</p>
 <p><code>subject</code> is expected to be a dict having:</p>
 <p><code>postcode</code> (string):              zip-code or postal code</p>
 <p><code>huisnummer</code> (string)             house number</p></div>
@@ -1414,7 +1419,7 @@ This geocoder takes the first hit as a result</p>
   <div id="source-geoDSS.processors.bag_geocoder.bag_geocoder.execute" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    executes the geoocder</span>
+<span class="sd">    Executes the geocoder</span>
 <span class="sd">    `subject` is expected to be a dict having:</span>
 <span class="sd">    `postcode` (string):              zip-code or postal code</span>
 <span class="sd">    `huisnummer` (string)             house number</span>

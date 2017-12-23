@@ -1378,8 +1378,12 @@ You can set </p>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Invoke geoDSS from command line using the default markdown reporter with output_format markdown.&#39;</span><span class="p">,</span>
                                      <span class="n">epilog</span> <span class="o">=</span>      <span class="s1">&#39;&#39;&#39;Example: ./geoDSS examples/rule_sets/unit_test.yaml &#39;{&quot;result&quot;: true, &quot;geometry&quot;: &quot;SRID=28992;POINT(125000 360000)&quot; }&#39; &#39;&#39;&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;rule_set_file&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;The file containing the rule set&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span>       <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;Either a JSON-string defining a python dict containing a subject or a path to a file containing such a JSON-string&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;rule_set_file&quot;</span><span class="p">,</span>                            <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;The file containing the rule set.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span>                                  <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;Either a JSON-string defining a python dict containing a subject or a path to a file containing such a JSON-string.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--output_file&quot;</span><span class="p">,</span>                            <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;An output file to write the results to. If not given, output is to stdout.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--file_mode&quot;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="s2">&quot;wb&quot;</span> <span class="p">,</span> 
+                                       <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;wb&#39;</span><span class="p">,</span> <span class="s1">&#39;wt&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="s1">&#39;at&#39;</span><span class="p">),</span> 
+                                                                    <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;Python file mode. mode starting with &quot;a&quot; will append, starting with &quot;w&quot; will overwrite.&#39;</span> <span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subject</span><span class="p">):</span>
@@ -1393,9 +1397,11 @@ You can set </p>
                 <span class="s1">&#39;output_format&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;markdown&#39;</span><span class="p">]}</span>
 
     <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">load_execute_report</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="k">print</span>
-    <span class="k">print</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span><span class="n">args</span><span class="o">.</span><span class="n">file_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
 

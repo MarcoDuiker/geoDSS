@@ -20,4 +20,4 @@ In real life more parameters will be present in a subject.
 
 '''
 
-from ..processors import bag_geocoder, pdok_locatieserver, postgis_processing, postgis_unit_test
+from ..processors import bag_geocoder, pdok_locatieserver, postgis_processing, postgis_unit_test, random_point_geometry, random_value

@@ -20,6 +20,13 @@ class pdok_locatieserver(processor):
 
     Geocoding is done on zip-code and house_number of the subject.
     This geocoder takes the first hit as a result.
+    
+    Result
+    ------
+    
+    Keys added to the subject on success:
+    
+    `geometry`                          The EWKT geometry obtained by geocoding the subject
 
     Definition
     ----------
@@ -28,7 +35,7 @@ class pdok_locatieserver(processor):
 
      `url` (string):                    base url for the geocoder
 
-     `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.
+     `report_template` (string):        (optional) String (with markdown support) to be reported on success.
 
                                         If the format string contains subject.geometry it will be replaced by
                                         the geometry which resulted from the geocoding process.
@@ -117,13 +124,21 @@ class pdok_locatieserver(processor):
 
     def execute(self, subject):
         '''
-        executes the geoocder
+        Executes the geocoder.
 
         `subject` is expected to be a dict having:
 
         `postcode` (string):              zip-code or postal code
 
         `huisnummer` (string)             house number
+        
+            
+        Result
+        ------
+    
+        Keys added to the subject on success:
+    
+        `geometry`                          The EWKT geometry obtained by geocoding the subject.
         '''
 
         try:

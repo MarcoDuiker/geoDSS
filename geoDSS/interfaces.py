@@ -261,8 +261,12 @@ elif __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description = 'Invoke geoDSS from command line using the default markdown reporter with output_format markdown.',
                                      epilog =      '''Example: ./geoDSS examples/rule_sets/unit_test.yaml '{"result": true, "geometry": "SRID=28992;POINT(125000 360000)" }' ''')
-    parser.add_argument("rule_set_file", help = 'The file containing the rule set')
-    parser.add_argument("subject",       help = 'Either a JSON-string defining a python dict containing a subject or a path to a file containing such a JSON-string')
+    parser.add_argument("rule_set_file",                            help = 'The file containing the rule set.')
+    parser.add_argument("subject",                                  help = 'Either a JSON-string defining a python dict containing a subject or a path to a file containing such a JSON-string.')
+    parser.add_argument("--output_file",                            help = 'An output file to write the results to. If not given, output is to stdout.')
+    parser.add_argument("--file_mode", default = "wb" , 
+                                       choices=('wb', 'wt', 'ab', 'at'), 
+                                                                    help = 'Python file mode. mode starting with "a" will append, starting with "w" will overwrite.' )
     args = parser.parse_args()
 
     if os.path.exists(args.subject):
@@ -276,9 +280,11 @@ elif __name__ == '__main__':
                 'output_format': ['markdown']}
 
     status, response_headers, data = load_execute_report(params)
-    print
-    print
-    print(data)
+    if args.output_file:
+        with open(args.output_file,args.file_mode) as f:
+            f.write(data)
+    else:
+        print(data)
 
 else:
 

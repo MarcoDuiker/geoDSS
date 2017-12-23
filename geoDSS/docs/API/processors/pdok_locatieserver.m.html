@@ -1091,6 +1091,13 @@ table {
 
 <span class="sd">    Geocoding is done on zip-code and house_number of the subject.</span>
 <span class="sd">    This geocoder takes the first hit as a result.</span>
+<span class="sd">    </span>
+<span class="sd">    Result</span>
+<span class="sd">    ------</span>
+<span class="sd">    </span>
+<span class="sd">    Keys added to the subject on success:</span>
+<span class="sd">    </span>
+<span class="sd">    `geometry`                          The EWKT geometry obtained by geocoding the subject</span>
 
 <span class="sd">    Definition</span>
 <span class="sd">    ----------</span>
@@ -1099,7 +1106,7 @@ table {
 
 <span class="sd">     `url` (string):                    base url for the geocoder</span>
 
-<span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.</span>
+<span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported on success.</span>
 
 <span class="sd">                                        If the format string contains subject.geometry it will be replaced by</span>
 <span class="sd">                                        the geometry which resulted from the geocoding process.</span>
@@ -1188,13 +1195,21 @@ table {
 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        executes the geoocder</span>
+<span class="sd">        Executes the geocoder.</span>
 
 <span class="sd">        `subject` is expected to be a dict having:</span>
 
 <span class="sd">        `postcode` (string):              zip-code or postal code</span>
 
 <span class="sd">        `huisnummer` (string)             house number</span>
+<span class="sd">        </span>
+<span class="sd">            </span>
+<span class="sd">        Result</span>
+<span class="sd">        ------</span>
+<span class="sd">    </span>
+<span class="sd">        Keys added to the subject on success:</span>
+<span class="sd">    </span>
+<span class="sd">        `geometry`                          The EWKT geometry obtained by geocoding the subject.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -1258,10 +1273,13 @@ table {
     <div class="desc"><p>This processor provides a geocoder using the Dutch PDOK locatieserver.</p>
 <p>Geocoding is done on zip-code and house_number of the subject.
 This geocoder takes the first hit as a result.</p>
+<h2>Result</h2>
+<p>Keys added to the subject on success:</p>
+<p><code>geometry</code>                          The EWKT geometry obtained by geocoding the subject</p>
 <h2>Definition</h2>
 <p><code>definition</code> is expected to be a dict having:</p>
 <p><code>url</code> (string):                    base url for the geocoder</p>
-<p><code>report_template</code> (string):        (optional) String (with markdown support) to be reported when the test is True.</p>
+<p><code>report_template</code> (string):        (optional) String (with markdown support) to be reported on success.</p>
 <div class="codehilite"><pre>                                If the format string contains subject.geometry it will be replaced by
                                 the geometry which resulted from the geocoding process.
 
@@ -1298,6 +1316,13 @@ This geocoder takes the first hit as a result.</p>
 
 <span class="sd">    Geocoding is done on zip-code and house_number of the subject.</span>
 <span class="sd">    This geocoder takes the first hit as a result.</span>
+<span class="sd">    </span>
+<span class="sd">    Result</span>
+<span class="sd">    ------</span>
+<span class="sd">    </span>
+<span class="sd">    Keys added to the subject on success:</span>
+<span class="sd">    </span>
+<span class="sd">    `geometry`                          The EWKT geometry obtained by geocoding the subject</span>
 
 <span class="sd">    Definition</span>
 <span class="sd">    ----------</span>
@@ -1306,7 +1331,7 @@ This geocoder takes the first hit as a result.</p>
 
 <span class="sd">     `url` (string):                    base url for the geocoder</span>
 
-<span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.</span>
+<span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported on success.</span>
 
 <span class="sd">                                        If the format string contains subject.geometry it will be replaced by</span>
 <span class="sd">                                        the geometry which resulted from the geocoding process.</span>
@@ -1395,13 +1420,21 @@ This geocoder takes the first hit as a result.</p>
 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        executes the geoocder</span>
+<span class="sd">        Executes the geocoder.</span>
 
 <span class="sd">        `subject` is expected to be a dict having:</span>
 
 <span class="sd">        `postcode` (string):              zip-code or postal code</span>
 
 <span class="sd">        `huisnummer` (string)             house number</span>
+<span class="sd">        </span>
+<span class="sd">            </span>
+<span class="sd">        Result</span>
+<span class="sd">        ------</span>
+<span class="sd">    </span>
+<span class="sd">        Keys added to the subject on success:</span>
+<span class="sd">    </span>
+<span class="sd">        `geometry`                          The EWKT geometry obtained by geocoding the subject.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -1504,19 +1537,30 @@ This geocoder takes the first hit as a result.</p>
 
     
   
-    <div class="desc"><p>executes the geoocder</p>
+    <div class="desc"><p>Executes the geocoder.</p>
 <p><code>subject</code> is expected to be a dict having:</p>
 <p><code>postcode</code> (string):              zip-code or postal code</p>
-<p><code>huisnummer</code> (string)             house number</p></div>
+<p><code>huisnummer</code> (string)             house number</p>
+<h2>Result</h2>
+<p>Keys added to the subject on success:</p>
+<p><code>geometry</code>                          The EWKT geometry obtained by geocoding the subject.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.pdok_locatieserver.pdok_locatieserver.execute', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.processors.pdok_locatieserver.pdok_locatieserver.execute" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    executes the geoocder</span>
+<span class="sd">    Executes the geocoder.</span>
 <span class="sd">    `subject` is expected to be a dict having:</span>
 <span class="sd">    `postcode` (string):              zip-code or postal code</span>
 <span class="sd">    `huisnummer` (string)             house number</span>
+<span class="sd">    </span>
+<span class="sd">        </span>
+<span class="sd">    Result</span>
+<span class="sd">    ------</span>
+
+<span class="sd">    Keys added to the subject on success:</span>
+
+<span class="sd">    `geometry`                          The EWKT geometry obtained by geocoding the subject.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;postcode&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;huisnummer&#39;</span><span class="p">])</span>

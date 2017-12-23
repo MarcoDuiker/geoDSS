@@ -1,0 +1,19 @@
+# a simple rule set demonstrating the 'random_value' processor
+name: random_point
+title: Test the random_point_geometry processor
+description: ""
+logging:
+  level: DEBUG
+rules:
+- random_point:
+    type: processors.random_point_geometry
+    title: Random point geometry in EWKT
+    description: ""
+    format: ewkt
+    srid: 28992 
+    bbox:
+    - 125000
+    - 350000
+    - 250000
+    - 550000
+    report_template: "Generated the geometry: {geometry}"

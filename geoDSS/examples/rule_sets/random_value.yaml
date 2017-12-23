@@ -1,0 +1,23 @@
+# a simple rule set demonstrating the 'random_value' processor
+name: random_value
+title: Test the random_value processor
+description: ""
+logging:
+  level: DEBUG
+rules:
+- x_coordinate:
+    type: processors.random_value
+    title: Random x-coordinate
+    description: ""
+    random_value_key: x
+    min: 25000
+    max: 30000
+    report_template: "Generated the x-coordinate: {random_value}"
+- y_coordinate:
+    type: processors.random_value
+    title: Random y-coordinate
+    description: ""
+    random_value_key: y
+    min: 125000
+    max: 130000
+    report_template: "Generated the y-coordinate: {random_value}"

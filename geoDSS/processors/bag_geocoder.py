@@ -15,6 +15,8 @@ from ..processors.processor import processor
 class bag_geocoder(processor):
     '''
     This processor provides geocoder using the Dutch BAG geocoding service.
+    
+    ** This processor is deprecated from 01-01-2018. Use `processors.pdok_locatieserver`. **
 
     Geocoding is done on zip-code and house_number of the subject. 
     This geocoder takes the first hit as a result
@@ -26,7 +28,7 @@ class bag_geocoder(processor):
 
      `url` (string):                    base url for the geocoder
 
-     `report_template` (string):        (optional) String (with markdown support) to be reported when the test is True.
+     `report_template` (string):        (optional) String (with markdown support) to be reported on success.
 
                                         If the format string contains subject.geometry it will be replaced by the geometry which resulted from the geocoding process.
 
@@ -59,7 +61,7 @@ class bag_geocoder(processor):
 
     def execute(self, subject):
         '''
-        executes the geoocder
+        Executes the geocoder
 
         `subject` is expected to be a dict having:
 
