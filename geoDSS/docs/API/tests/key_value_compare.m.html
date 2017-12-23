@@ -1087,7 +1087,8 @@ table {
 <span class="sd">    `value` (string|number):              The value to compare with</span>
 
 <span class="sd">    `operator` (string):                  The operator used in the comparison. Supported are</span>
-<span class="sd">                                          &#39;==&#39;, &#39;&gt;&#39;, &#39;&lt;&#39;, &#39;&lt;=&#39;, &#39;&gt;=&#39;</span>
+<span class="sd">                                          &#39;==&#39;, &#39;&gt;&#39;, &#39;&lt;&#39;, &#39;&lt;=&#39;, &#39;&gt;=&#39; and &quot;in&quot;. This last one is for strings only and </span>
+<span class="sd">                                          evaluates to True if the value in the definition contains the value in the subject.</span>
 
 <span class="sd">    `report_template` (string):           String to be reported when the test is True.</span>
 
@@ -1144,6 +1145,9 @@ table {
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">subject_value</span> <span class="o">&lt;</span> <span class="n">definition_value</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">subject_value</span> <span class="ow">in</span> <span class="n">definition_value</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Operator </span><span class="si">%s</span><span class="s2"> as given in the rule is not supported.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span> <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1175,7 +1179,8 @@ table {
 <p><code>key</code> (string):                       The name of the key in the subject</p>
 <p><code>value</code> (string|number):              The value to compare with</p>
 <p><code>operator</code> (string):                  The operator used in the comparison. Supported are
-                                      '==', '&gt;', '&lt;', '&lt;=', '&gt;='</p>
+                                      '==', '&gt;', '&lt;', '&lt;=', '&gt;=' and "in". This last one is for strings only and 
+                                      evaluates to True if the value in the definition contains the value in the subject.</p>
 <p><code>report_template</code> (string):           String to be reported when the test is True.</p>
 <h2>Rule example</h2>
 <p>a useful yaml snippet for this test would be:</p>
@@ -1212,7 +1217,8 @@ table {
 <span class="sd">    `value` (string|number):              The value to compare with</span>
 
 <span class="sd">    `operator` (string):                  The operator used in the comparison. Supported are</span>
-<span class="sd">                                          &#39;==&#39;, &#39;&gt;&#39;, &#39;&lt;&#39;, &#39;&lt;=&#39;, &#39;&gt;=&#39;</span>
+<span class="sd">                                          &#39;==&#39;, &#39;&gt;&#39;, &#39;&lt;&#39;, &#39;&lt;=&#39;, &#39;&gt;=&#39; and &quot;in&quot;. This last one is for strings only and </span>
+<span class="sd">                                          evaluates to True if the value in the definition contains the value in the subject.</span>
 
 <span class="sd">    `report_template` (string):           String to be reported when the test is True.</span>
 
@@ -1268,6 +1274,9 @@ table {
                     <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">subject_value</span> <span class="o">&lt;</span> <span class="n">definition_value</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">subject_value</span> <span class="ow">in</span> <span class="n">definition_value</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Operator </span><span class="si">%s</span><span class="s2"> as given in the rule is not supported.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span> <span class="p">)</span>
@@ -1368,6 +1377,9 @@ table {
                 <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">subject_value</span> <span class="o">&lt;</span> <span class="n">definition_value</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">subject_value</span> <span class="ow">in</span> <span class="n">definition_value</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Operator </span><span class="si">%s</span><span class="s2"> as given in the rule is not supported.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span> <span class="p">)</span>

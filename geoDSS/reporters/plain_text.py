@@ -23,7 +23,7 @@ def rule_set_reporter(rule_set, output_format = 'plain_text', **kwargs):
 
 def rule_reporter(rule):
     '''
-    reports on a rule using markdown
+    Reports on a rule using plain text
     '''
 
     obj = rule

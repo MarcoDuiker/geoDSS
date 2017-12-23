@@ -13,6 +13,11 @@ import os
 
 import yaml
 
+try:
+    import exceptions
+except:
+    pass
+
 
 def _getStringFromTemplate(template, subst, prefix='%', postfix='%'):
     '''
@@ -129,12 +134,17 @@ def generate(form_yaml, template=None, prefix='%', postfix='%'):
         with open(form_yaml) as stream:
             y = yaml.load(stream)
     else:
-        y = yaml.load(form_yaml)
-
-    if os.path.exists(template):
+            y = yaml.load(form_yaml)
+            
+    if template and os.path.exists(template):
         with open(template) as stream:
             template = stream.read()
-
+    
+    try:
+        keys = y.keys()
+    except Exception as e:
+        raise ValueError("Parsed yaml has no keys. Did you parse a non existing path instead of a yaml file?")
+            
     form = u''
     for field in y['form_fields']:
         fid = field.keys()[0]

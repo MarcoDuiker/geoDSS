@@ -21,7 +21,4 @@ In real life more parameters will be present in a subject.
 
 '''
 
-from ..tests import evaluate, get_map, key_value_compare, postgis_spatial_select, remark, unit_test
-
-
-
+from ..tests import evaluate, get_map, key_value_compare, postgis_spatial_select, remark, request, unit_test

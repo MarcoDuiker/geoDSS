@@ -1081,6 +1081,11 @@ An optional template can be passed, in which the the form fields will be embedde
 
 <span class="kn">import</span> <span class="nn">yaml</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">exceptions</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
 
 <span class="k">def</span> <span class="nf">_getStringFromTemplate</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">subst</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">postfix</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
@@ -1197,12 +1202,17 @@ An optional template can be passed, in which the the form fields will be embedde
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">form_yaml</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">form_yaml</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">form_yaml</span><span class="p">)</span>
+            
+    <span class="k">if</span> <span class="n">template</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">template</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
             <span class="n">template</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parsed yaml has no keys. Did you parse a non existing path instead of a yaml file?&quot;</span><span class="p">)</span>
+            
     <span class="n">form</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
     <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">y</span><span class="p">[</span><span class="s1">&#39;form_fields&#39;</span><span class="p">]:</span>
         <span class="n">fid</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
@@ -1434,12 +1444,17 @@ the form as a subject to a rule_set.</p>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">form_yaml</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">form_yaml</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">form_yaml</span><span class="p">)</span>
+            
+    <span class="k">if</span> <span class="n">template</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">template</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
             <span class="n">template</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parsed yaml has no keys. Did you parse a non existing path instead of a yaml file?&quot;</span><span class="p">)</span>
+            
     <span class="n">form</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
     <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">y</span><span class="p">[</span><span class="s1">&#39;form_fields&#39;</span><span class="p">]:</span>
         <span class="n">fid</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>

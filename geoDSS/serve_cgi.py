@@ -23,7 +23,7 @@ On windows start serve_cgi by running `serve_cgi.bat`.
 On Linux start serve_cgi by running `serve_cgi.sh` or `serve_cgi.py`.
 
 Once you've started serve_cgi you can open a browser and browse to one of the examples:
->http://localhost:8000/cgi-bin/interfaces.py?form=../geoDSS/examples/forms/basic.yaml&template=../geoDSS/examples/forms/basic_template.html&output_format=html
+>http://localhost:8000/cgi-bin/interfaces.py?form=geoDSS/examples/forms/basic.yaml&template=geoDSS/examples/forms/basic_template.html&output_format=html
 
 '''
 

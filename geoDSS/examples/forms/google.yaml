@@ -1,0 +1,11 @@
+title: geoDSS example form
+url: "http://localhost:8000/cgi-bin/interfaces.py"
+rule_set_file: "../geoDSS/examples/rule_sets/request.yaml"
+description: "Test google search by doing a search "
+subtitle: "Subject"
+form_fields:
+- search_string: 
+    name: q
+    label: Google search string
+    value: "github+geoDSS"
+    type: text

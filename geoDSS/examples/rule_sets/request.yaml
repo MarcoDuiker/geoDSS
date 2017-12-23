@@ -1,0 +1,16 @@
+name: request
+title: Test request test
+description: "Test if the request test is working by doing a search on google"
+logging:
+  level: DEBUG
+rules:
+- google:
+    type: tests.request
+    title: Test google search
+    description: ""
+    url: "https://google.com/search"
+    verb: GET
+    status_codes:
+    - 200
+    report_template: "It's alive cause it returned status code {status_code} in {response_time} seconds."
+

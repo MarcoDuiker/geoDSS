@@ -120,6 +120,7 @@ def load_execute_report(params):
         except Exception as e:
             if DEBUG_LEVEL:
                 sys.stderr.write("geoDSS: Could not parse generate form with error: %s \n" % str(e))
+                sys.stderr.write(traceback.format_exc())
             return status, response_headers, "Could not generate form with error: " + str(e)
             
     elif 'rule_set_file' in params:
