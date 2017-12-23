@@ -16,7 +16,8 @@ class key_value_compare(test):
     `value` (string|number):              The value to compare with
 
     `operator` (string):                  The operator used in the comparison. Supported are
-                                          '==', '>', '<', '<=', '>='
+                                          '==', '>', '<', '<=', '>=' and "in". This last one is for strings only and 
+                                          evaluates to True if the value in the definition contains the value in the subject.
 
     `report_template` (string):           String to be reported when the test is True.
 
@@ -72,6 +73,9 @@ class key_value_compare(test):
                     self.decision = True
             elif self.definition['operator'] == '<':
                 if subject_value < definition_value:
+                    self.decision = True
+            elif self.definition['operator'] == 'in':
+                if subject_value in definition_value:
                     self.decision = True
             else:
                 self.result.append("Operator %s as given in the rule is not supported." % self.definition['operator'] )
