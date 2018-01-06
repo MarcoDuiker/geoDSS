@@ -3,11 +3,14 @@
 # -*- coding: utf-8 -*-
 
 '''
-This provides several interfaces to geoDSS:
+This example code provides several interfaces to geoDSS:
 
 - command line
 - cgi
 - wsgi
+
+Of course this example is functional, but might be improved on with eg. better cgi handling,
+more error checking, logging and communication with the user.
 
 Enable citg (cgi)
 -----------------
@@ -28,11 +31,11 @@ Fetch remote rule_set files
 Adapt the global variable ENABLE_NON_LOCAL_RULE_SET_FILES to enable fetching of rule_set files from a remote host.
 
 **WARNING**    
->Do not enable this in a production environment with the standard geoDSS processors and tests
+>Do not enable this in a production environment with the standard geoDSS processors and tests.
 
->You allow the execution of arbitrary SQL commands in your database
+>You allow the execution of arbitrary SQL commands in your database.
 
->And probably some more ugly stuff as allowing the user to create an open proxy 
+>And probably some more ugly stuff as allowing the user to create an open proxy. 
 
 
 Logging
@@ -46,7 +49,7 @@ You can set
 >DEBUG_LEVEL = {False | "DEBUG"}
 '''
 
-ENABLE_CGTIB = True
+ENABLE_CGTIB = False
 ENABLE_NON_LOCAL_RULE_SET_FILES = False
 DEBUG_LEVEL = "DEBUG"
 

@@ -1042,10 +1042,12 @@ table {
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
         <li class="mono"><a href="base.m.html">geoDSS.base</a></li>
+        <li class="mono"><a href="batch.m.html">geoDSS.batch</a></li>
         <li class="mono"><a href="interfaces.m.html">geoDSS.interfaces</a></li>
         <li class="mono"><a href="loaders/index.html">geoDSS.loaders</a></li>
         <li class="mono"><a href="processors/index.html">geoDSS.processors</a></li>
         <li class="mono"><a href="reporters/index.html">geoDSS.reporters</a></li>
+        <li class="mono"><a href="scheduled.m.html">geoDSS.scheduled</a></li>
         <li class="mono"><a href="serve_cgi.m.html">geoDSS.serve_cgi</a></li>
         <li class="mono"><a href="tests/index.html">geoDSS.tests</a></li>
         <li class="mono"><a href="ui_generators/index.html">geoDSS.ui_generators</a></li>
@@ -1107,25 +1109,29 @@ table {
 
       </div>
       <div class="item">
+      <p class="name"><a href="batch.m.html">geoDSS.batch</a></p>
+      
+  
+    <div class="desc"><p>This example code shows how easy it is to run geoDSS against multiple subjects loaded from a csv file. 
+Of course this example is functional, but might be improved on with eg. more error checking, logging and communication
+with the user.</p>
+<p>eg. ./batch.py examples/rule_sets/batch_geocode_tab.yaml exam...</p></div>
+
+      </div>
+      <div class="item">
       <p class="name"><a href="interfaces.m.html">geoDSS.interfaces</a></p>
       
   
-    <div class="desc"><p>This provides several interfaces to geoDSS:</p>
+    <div class="desc"><p>This example code provides several interfaces to geoDSS:</p>
 <ul>
 <li>command line</li>
 <li>cgi</li>
 <li>wsgi</li>
 </ul>
+<p>Of course this example is functional, but might be improved on with eg. better cgi handling,
+more error checking, logging and communication with the user.</p>
 <h2>Enable citg (cgi)</h2>
-<p>Adapt the global variable ENABLE_CGTIB to enable cgitb.</p>
-<p><strong>NOTICE</strong></p>
-<blockquote>
-<p>cgitb doesn't always play nice with apache: (https://bugs.python.org/issue8704)</p>
-</blockquote>
-<p><strong>WARNING</strong></p>
-<blockquote>
-<p>don't enable cgitb in a pr...</p>
-</blockquote></div>
+<p>Adapt the global var...</p></div>
 
       </div>
       <div class="item">
@@ -1158,6 +1164,16 @@ wi...</p></div>
 <p>The standard reporter is reporters.md, providing a markdown reporter. This one can output html as well.</p>
 <p>Extending the reporters.md reporter or creating a new one can easily be done with pandoc.</p>
 <p>Of course, you can also convert via...</p></div>
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="scheduled.m.html">geoDSS.scheduled</a></p>
+      
+  
+    <div class="desc"><p>This example code shows how easy it is to run geoDSS in a scheduled manner. 
+Of course this example is functional, but might be improved on with eg. more error checking, logging and communication
+with the user.</p>
+<p>eg. ./schedule.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_req...</p></div>
 
       </div>
       <div class="item">

@@ -1,15 +1,24 @@
 # -*- coding: utf-8 -*-
 
-try:
-    import markdown as md_lib
-except:
-    import pymarkdown as md_lib
-import yaml
+import datetime
 
+try:
+    try:
+        import markdown as md_lib
+    except:
+        import pymarkdown as md_lib
+    import yaml
+except:
+    pass
+    
+try:
+    import exceptions
+except:
+    pass
 
 def rule_set_reporter(rule_set, output_format='markdown', **kwargs):
     '''
-    reports on a rule set using markdown or html
+    Reports on a rule set using markdown or html.
 
     output format is expected to be one of:
 
@@ -18,9 +27,14 @@ def rule_set_reporter(rule_set, output_format='markdown', **kwargs):
 
     Furthermore the following optional parameters can be passed:
 
-    - decision_false_report (string):           The string to report when the test evaluated to the decision False
-    - decision_error_report (string):           The string to report when the test could not be evaluated due to an error
-
+    - `decision_false_report` (string):           The string to report when the test evaluated to the decision False
+    - `decision_error_report` (string):           The string to report when the test could not be evaluated due to an error
+    - `html_wrapper` (string):                    A string to wrap around the generated html. The wrapper needs to contain
+                                                  `___content_goes_here___` which will be replaced by the generated html.
+                                                  
+    The following parameters in the rule_set report will be replaced:
+    
+    - `{timestamp}`                               The ISO timestamp
     '''
 
     if 'html_wrapper' in kwargs:
@@ -75,6 +89,7 @@ def rule_set_reporter(rule_set, output_format='markdown', **kwargs):
     markdown = markdown + 'Results' + '\n'
     markdown = markdown + '=======' + '\n'
     markdown = markdown + '\n'
+    markdown = markdown.replace('{timestamp}', datetime.datetime.now().isoformat())
 
     for rule in rule_set.rules:
         markdown = markdown + rule_reporter(rule, **kwargs) + '\n'

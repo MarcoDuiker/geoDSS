@@ -5,8 +5,11 @@ If rule_set_file starts with http(s):// rule_Set_file is regarded as an url and 
 '''
 
 import json
-import requests
-
+try:
+    import requests
+except:
+    pass
+    
 def load_rule_set(rules_set_file, **kwargs):
     '''
     Load rules set from json.

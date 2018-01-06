@@ -1071,12 +1071,20 @@ table {
   <div id="source-geoDSS.tests.remark" class="source">
     <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">exceptions</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
 <span class="kn">from</span> <span class="nn">..tests.test</span> <span class="kn">import</span> <span class="n">test</span>
 
 <span class="k">class</span> <span class="nc">remark</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This test always evaluates to True, regardless of the subject.</span>
-<span class="sd">    This is usefull for adding comments or remarks to the report </span>
+<span class="sd">    This is usefull for adding comments or remarks to the report.</span>
+<span class="sd">    </span>
+<span class="sd">    The keys of the subject can be reported via parameter substitution as well</span>
+<span class="sd">    as a timestamp.</span>
 
 <span class="sd">    Definition</span>
 <span class="sd">    ----------</span>
@@ -1084,8 +1092,13 @@ table {
 <span class="sd">    `definition`     is expected to be a dict having at least:</span>
 
 <span class="sd">    `report_template` (string):           String  to be reported when the test is True (which is always the case).</span>
-<span class="sd">                                          In this string every {parameter} written like this, and is defined in</span>
-<span class="sd">                                          the subject will be replaced by the value of that parameter.</span>
+<span class="sd">                                          The following placeholders will be replaced:</span>
+
+<span class="sd">    - `{parameter}`                         where `parameter` is a key in the subject will be replaced by the string representation</span>
+<span class="sd">                                            of the value.</span>
+<span class="sd">                                            </span>
+<span class="sd">    - `{timestamp}`                         will be replaced by the ISO timestamp. </span>
+<span class="sd">                                          </span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1118,7 +1131,8 @@ table {
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span>                                         <span class="c1"># we have the report_template available to manipulate</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">subject</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>                                                  <span class="c1"># in this case we replace place holders by values in the subject</span>
             <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-
+        <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Adding to the report: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span> <span class="p">)</span>                             <span class="c1"># you have a logger available to log some messages</span>
                                                                                             <span class="c1"># the loggers properties are set up in the rule_set definition</span>
 
@@ -1147,12 +1161,22 @@ table {
       
   
     <div class="desc"><p>This test always evaluates to True, regardless of the subject.
-This is usefull for adding comments or remarks to the report </p>
+This is usefull for adding comments or remarks to the report.</p>
+<p>The keys of the subject can be reported via parameter substitution as well
+as a timestamp.</p>
 <h2>Definition</h2>
 <p><code>definition</code>     is expected to be a dict having at least:</p>
 <p><code>report_template</code> (string):           String  to be reported when the test is True (which is always the case).
-                                      In this string every {parameter} written like this, and is defined in
-                                      the subject will be replaced by the value of that parameter.</p>
+                                      The following placeholders will be replaced:</p>
+<ul>
+<li>
+<p><code>{parameter}</code>                         where <code>parameter</code> is a key in the subject will be replaced by the string representation
+                                        of the value.</p>
+</li>
+<li>
+<p><code>{timestamp}</code>                         will be replaced by the ISO timestamp. </p>
+</li>
+</ul>
 <h2>Rule example</h2>
 <p>a useful yaml snippet for this test would be:</p>
 <div class="codehilite"><pre><span class="n">rules</span><span class="o">:</span>
@@ -1174,7 +1198,10 @@ This is usefull for adding comments or remarks to the report </p>
     <div class="codehilite"><pre><span class="k">class</span> <span class="nc">remark</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This test always evaluates to True, regardless of the subject.</span>
-<span class="sd">    This is usefull for adding comments or remarks to the report </span>
+<span class="sd">    This is usefull for adding comments or remarks to the report.</span>
+<span class="sd">    </span>
+<span class="sd">    The keys of the subject can be reported via parameter substitution as well</span>
+<span class="sd">    as a timestamp.</span>
 
 <span class="sd">    Definition</span>
 <span class="sd">    ----------</span>
@@ -1182,8 +1209,13 @@ This is usefull for adding comments or remarks to the report </p>
 <span class="sd">    `definition`     is expected to be a dict having at least:</span>
 
 <span class="sd">    `report_template` (string):           String  to be reported when the test is True (which is always the case).</span>
-<span class="sd">                                          In this string every {parameter} written like this, and is defined in</span>
-<span class="sd">                                          the subject will be replaced by the value of that parameter.</span>
+<span class="sd">                                          The following placeholders will be replaced:</span>
+
+<span class="sd">    - `{parameter}`                         where `parameter` is a key in the subject will be replaced by the string representation</span>
+<span class="sd">                                            of the value.</span>
+<span class="sd">                                            </span>
+<span class="sd">    - `{timestamp}`                         will be replaced by the ISO timestamp. </span>
+<span class="sd">                                          </span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1216,7 +1248,8 @@ This is usefull for adding comments or remarks to the report </p>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span>                                         <span class="c1"># we have the report_template available to manipulate</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">subject</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>                                                  <span class="c1"># in this case we replace place holders by values in the subject</span>
             <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-
+        <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Adding to the report: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span> <span class="p">)</span>                             <span class="c1"># you have a logger available to log some messages</span>
                                                                                             <span class="c1"># the loggers properties are set up in the rule_set definition</span>
 
@@ -1302,6 +1335,8 @@ This is usefull for adding comments or remarks to the report </p>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span>                                         <span class="c1"># we have the report_template available to manipulate</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">subject</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>                                                  <span class="c1"># in this case we replace place holders by values in the subject</span>
         <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+    
     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Adding to the report: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span> <span class="p">)</span>                             <span class="c1"># you have a logger available to log some messages</span>
                                                                                         <span class="c1"># the loggers properties are set up in the rule_set definition</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c1"># don&#39;t forget to set self.decision to True,</span>

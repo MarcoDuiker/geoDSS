@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import psycopg2
+try:
+    import psycopg2
+except:
+    pass
+
 try:
     import exceptions
 except:

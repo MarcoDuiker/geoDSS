@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import requests
-from xml.dom import minidom
-from xml.dom.minidom import parseString
-
+try:
+    import requests
+    from xml.dom import minidom
+    from xml.dom.minidom import parseString
+except:
+    pass
+    
 try:
     import exceptions
 except:
     pass
+
 
 from ..processors.processor import processor
 

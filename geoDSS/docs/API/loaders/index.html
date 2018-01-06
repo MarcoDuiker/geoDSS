@@ -1044,6 +1044,7 @@ table {
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
         <li class="mono"><a href="json_loader.m.html">geoDSS.loaders.json_loader</a></li>
+        <li class="mono"><a href="python_loader.m.html">geoDSS.loaders.python_loader</a></li>
         <li class="mono"><a href="yaml_loader.m.html">geoDSS.loaders.yaml_loader</a></li>
       </ul>
     </li>
@@ -1248,7 +1249,7 @@ used. Please refer to the docs of those.</p>
 
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">from</span> <span class="nn">..loaders</span> <span class="kn">import</span> <span class="n">json_loader</span><span class="p">,</span> <span class="n">yaml_loader</span> 
+<span class="kn">from</span> <span class="nn">..loaders</span> <span class="kn">import</span> <span class="n">json_loader</span><span class="p">,</span> <span class="n">yaml_loader</span><span class="p">,</span> <span class="n">python_loader</span>
 </pre></div>
 
   </div>
@@ -1266,6 +1267,14 @@ used. Please refer to the docs of those.</p>
   
     <div class="desc"><p>This rule_set loader loads a rule_set from a json file from the local file system.
 If rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.</p></div>
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="python_loader.m.html">geoDSS.loaders.python_loader</a></p>
+      
+  
+    <div class="desc"><p>This is a rule_set loader.
+It loads a rule_set from a python file.</p></div>
 
       </div>
       <div class="item">

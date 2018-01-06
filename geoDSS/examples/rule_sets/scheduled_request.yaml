@@ -1,0 +1,18 @@
+name: scheduled_request
+title: Test scheduled requests
+description: "time,status_code,response_time"
+reporter: reporters.plain_text
+logging:
+  level: DEBUG
+  file: "/home/marco/scheduled_request.log"
+rules:
+- google:
+    type: tests.request
+    title: Test google search
+    description: ""
+    url: "https://google.com/search"
+    verb: GET
+    status_codes:
+    - 200
+    report_template: "{timestamp},{status_code},{response_time}"
+

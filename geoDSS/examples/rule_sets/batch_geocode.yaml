@@ -1,0 +1,17 @@
+# With this rule set we can generate a CSV file by batch geocoding subjects
+name: batch_geocoder
+title: Batch geocode using the PDOK Locatieserver geocoder
+# using the plain_text reporter we can use the description to generate the header 
+description: wkt_geom,address,x,y
+reporter: reporters.plain_text
+logging:
+  level: DEBUG
+  file: "/home/marco/batch_geocoder.log"
+rules:
+- batch:
+    type: processors.pdok_locatieserver
+    title: geocoder
+    description: ""
+    url: "https://geodata.nationaalgeoregister.nl/locatieserver/v3/free?q="
+# the report template should match the header we created using the description
+    report_template: '{wkt_geometry},"{address}",{x},{y}'

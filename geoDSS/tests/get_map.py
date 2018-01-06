@@ -4,13 +4,17 @@ import re
 import traceback
 
 try:
-    #python2
+    # python2
     from urllib import urlencode
 except ImportError:
-    #python3
+    # python3
     from urllib.parse import urlencode
 
-
+try:
+    import exceptions
+except:
+    pass
+    
 from ..tests.test import test
 
 class get_map(test):

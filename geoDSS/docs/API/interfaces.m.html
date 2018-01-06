@@ -4,14 +4,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>geoDSS.interfaces API documentation</title>
-    <meta name="description" content="This provides several interfaces to geoDSS:
+    <meta name="description" content="This example code provides several interfaces to geoDSS:
 
 - command line
 - cgi
 - wsgi
 
-Enable citg (cgi)
---------..." />
+Of course thi..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1079,12 +1078,14 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">geoDSS.interfaces</span> module</h1>
-  <p>This provides several interfaces to geoDSS:</p>
+  <p>This example code provides several interfaces to geoDSS:</p>
 <ul>
 <li>command line</li>
 <li>cgi</li>
 <li>wsgi</li>
 </ul>
+<p>Of course this example is functional, but might be improved on with eg. better cgi handling,
+more error checking, logging and communication with the user.</p>
 <h2>Enable citg (cgi)</h2>
 <p>Adapt the global variable ENABLE_CGTIB to enable cgitb.</p>
 <p><strong>NOTICE</strong></p>
@@ -1100,9 +1101,9 @@ table {
 <p>Adapt the global variable ENABLE_NON_LOCAL_RULE_SET_FILES to enable fetching of rule_set files from a remote host.</p>
 <p><strong>WARNING</strong>    </p>
 <blockquote>
-<p>Do not enable this in a production environment with the standard geoDSS processors and tests</p>
-<p>You allow the execution of arbitrary SQL commands in your database</p>
-<p>And probably some more ugly stuff as allowing the user to create an open proxy </p>
+<p>Do not enable this in a production environment with the standard geoDSS processors and tests.</p>
+<p>You allow the execution of arbitrary SQL commands in your database.</p>
+<p>And probably some more ugly stuff as allowing the user to create an open proxy. </p>
 </blockquote>
 <h2>Logging</h2>
 <p>Adapt the global variable DEBUG_LEVEL to control what's written to stderr. </p>
@@ -1120,11 +1121,14 @@ You can set </p>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">This provides several interfaces to geoDSS:</span>
+<span class="sd">This example code provides several interfaces to geoDSS:</span>
 
 <span class="sd">- command line</span>
 <span class="sd">- cgi</span>
 <span class="sd">- wsgi</span>
+
+<span class="sd">Of course this example is functional, but might be improved on with eg. better cgi handling,</span>
+<span class="sd">more error checking, logging and communication with the user.</span>
 
 <span class="sd">Enable citg (cgi)</span>
 <span class="sd">-----------------</span>
@@ -1145,11 +1149,11 @@ You can set </p>
 <span class="sd">Adapt the global variable ENABLE_NON_LOCAL_RULE_SET_FILES to enable fetching of rule_set files from a remote host.</span>
 
 <span class="sd">**WARNING**    </span>
-<span class="sd">&gt;Do not enable this in a production environment with the standard geoDSS processors and tests</span>
+<span class="sd">&gt;Do not enable this in a production environment with the standard geoDSS processors and tests.</span>
 
-<span class="sd">&gt;You allow the execution of arbitrary SQL commands in your database</span>
+<span class="sd">&gt;You allow the execution of arbitrary SQL commands in your database.</span>
 
-<span class="sd">&gt;And probably some more ugly stuff as allowing the user to create an open proxy </span>
+<span class="sd">&gt;And probably some more ugly stuff as allowing the user to create an open proxy. </span>
 
 
 <span class="sd">Logging</span>
@@ -1163,7 +1167,7 @@ You can set </p>
 <span class="sd">&gt;DEBUG_LEVEL = {False | &quot;DEBUG&quot;}</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="n">ENABLE_CGTIB</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">ENABLE_CGTIB</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="n">ENABLE_NON_LOCAL_RULE_SET_FILES</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="n">DEBUG_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;DEBUG&quot;</span>
 

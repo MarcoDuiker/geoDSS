@@ -1071,18 +1071,28 @@ table {
   <div id="source-geoDSS.tests.request" class="source">
     <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
-<span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPDigestAuth</span>
-
+<span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">requests</span>
+    <span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+    <span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPDigestAuth</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+    
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># python2</span>
     <span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">urlencode</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="c1"># python3</span>
     <span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlencode</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">exceptions</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
 
 <span class="kn">from</span> <span class="nn">..tests.test</span> <span class="kn">import</span> <span class="n">test</span>
 
@@ -1098,7 +1108,8 @@ table {
 
 <span class="sd">    `definition`     is expected to be a dict having at least:</span>
 
-<span class="sd">    `url`            service endpoint for the request</span>
+<span class="sd">    `url`            Service endpoint for the request. You may also give a string. </span>
+<span class="sd">                     If this string is a key in the subject the url will be taken from subject. </span>
 
 <span class="sd">    `verb`           supported html verb. `GET`, `POST` and `HEAD` are supported.</span>
 
@@ -1121,7 +1132,7 @@ table {
 
 
 <span class="sd">    `status_codes`   A list of status codes. If the returned status code is NOT in this list, this test evaluates to False.</span>
-<span class="sd">                     Defaults to `200`.</span>
+<span class="sd">                     If `None` or not given the test will NOT eveluate to False based on the returned status_code.</span>
 
 <span class="sd">    `return_value`   When given the test will evaluate to True if the return value is in the response content.</span>
 <span class="sd">                     If not given, only the returned status code will determine if the test evaluates to True.</span>
@@ -1132,6 +1143,7 @@ table {
 <span class="sd">    - `{text}`                      will be replaced by the text of the response.</span>
 <span class="sd">    - `{status_code}`               will be replaced by the status code of the response.</span>
 <span class="sd">    - `{response_time}`             will be replaced with the response time.</span>
+<span class="sd">    - `{timestamp}`                 will be replaced by the ISO timestamp. </span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1163,13 +1175,16 @@ table {
 
 <span class="sd">        `subject`       is expected a dict which can optionally have:</span>
 
-<span class="sd">        - `request_data`   Either a dict or string to POST or GET.</span>
+<span class="sd">        - `request_data`   Either a dict or string to POST or GET. If the string</span>
+<span class="sd">                           is a path to a file this file is read to get a string.</span>
 <span class="sd">                           In case of a GET or HEAD request, the string will be</span>
 <span class="sd">                           urlencoded before being appended to the url.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">auth</span> <span class="o">=</span> <span class="bp">None</span>
@@ -1188,13 +1203,16 @@ table {
         <span class="k">if</span> <span class="s1">&#39;headers&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">headers</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;headers&#39;</span><span class="p">]</span>
 
-        <span class="n">status_codes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;200&#39;</span><span class="p">]</span>
+        <span class="n">status_codes</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s1">&#39;status_codes&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">status_codes</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;status_codes&#39;</span><span class="p">]</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s1">&#39;request_data&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;request_data&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;verb&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
             <span class="c1"># append the string to the url</span>
             <span class="k">if</span> <span class="s1">&#39;?&#39;</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
@@ -1219,12 +1237,12 @@ table {
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="n">verify</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not &#39;POST&#39; on url &#39;</span><span class="si">%s</span><span class="s2">&#39; with error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)))</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not &#39;HEAD&#39; url &#39;</span><span class="si">%s</span><span class="s2">&#39; with error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;HTML verb &#39;</span><span class="si">%s</span><span class="s2">&#39; not supported.&quot;</span> <span class="o">%</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;verb&quot;</span><span class="p">])</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;status_codes&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">status_codes</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">status_codes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="s1">&#39;return_value&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
@@ -1235,11 +1253,13 @@ table {
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
-        <span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
 </pre></div>
@@ -1262,7 +1282,8 @@ The test can be configured to evaluate to True depending on status codes
 and/ or the response containing a specific string.</p>
 <h2>Definition</h2>
 <p><code>definition</code>     is expected to be a dict having at least:</p>
-<p><code>url</code>            service endpoint for the request</p>
+<p><code>url</code>            Service endpoint for the request. You may also give a string. 
+                 If this string is a key in the subject the url will be taken from subject. </p>
 <p><code>verb</code>           supported html verb. <code>GET</code>, <code>POST</code> and <code>HEAD</code> are supported.</p>
 <p><code>params</code>         a dict with al params for the request. The following optional parameters are supported:</p>
 <ul>
@@ -1280,7 +1301,7 @@ and/ or the response containing a specific string.</p>
 <li><code>verify</code>          Defaults to <code>True</code>. Set to <code>False</code> to ignore verifying the SSL certificate.</li>
 </ul>
 <p><code>status_codes</code>   A list of status codes. If the returned status code is NOT in this list, this test evaluates to False.
-                 Defaults to <code>200</code>.</p>
+                 If <code>None</code> or not given the test will NOT eveluate to False based on the returned status_code.</p>
 <p><code>return_value</code>   When given the test will evaluate to True if the return value is in the response content.
                  If not given, only the returned status code will determine if the test evaluates to True.</p>
 <p><code>report_template</code> (string):     The string to report when the test evaluated to True.
@@ -1289,6 +1310,7 @@ and/ or the response containing a specific string.</p>
 <li><code>{text}</code>                      will be replaced by the text of the response.</li>
 <li><code>{status_code}</code>               will be replaced by the status code of the response.</li>
 <li><code>{response_time}</code>             will be replaced with the response time.</li>
+<li><code>{timestamp}</code>                 will be replaced by the ISO timestamp. </li>
 </ul>
 <h2>Rule example</h2>
 <p>a useful yaml snippet for this test would be:</p>
@@ -1323,7 +1345,8 @@ and/ or the response containing a specific string.</p>
 
 <span class="sd">    `definition`     is expected to be a dict having at least:</span>
 
-<span class="sd">    `url`            service endpoint for the request</span>
+<span class="sd">    `url`            Service endpoint for the request. You may also give a string. </span>
+<span class="sd">                     If this string is a key in the subject the url will be taken from subject. </span>
 
 <span class="sd">    `verb`           supported html verb. `GET`, `POST` and `HEAD` are supported.</span>
 
@@ -1346,7 +1369,7 @@ and/ or the response containing a specific string.</p>
 
 
 <span class="sd">    `status_codes`   A list of status codes. If the returned status code is NOT in this list, this test evaluates to False.</span>
-<span class="sd">                     Defaults to `200`.</span>
+<span class="sd">                     If `None` or not given the test will NOT eveluate to False based on the returned status_code.</span>
 
 <span class="sd">    `return_value`   When given the test will evaluate to True if the return value is in the response content.</span>
 <span class="sd">                     If not given, only the returned status code will determine if the test evaluates to True.</span>
@@ -1357,6 +1380,7 @@ and/ or the response containing a specific string.</p>
 <span class="sd">    - `{text}`                      will be replaced by the text of the response.</span>
 <span class="sd">    - `{status_code}`               will be replaced by the status code of the response.</span>
 <span class="sd">    - `{response_time}`             will be replaced with the response time.</span>
+<span class="sd">    - `{timestamp}`                 will be replaced by the ISO timestamp. </span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1388,13 +1412,16 @@ and/ or the response containing a specific string.</p>
 
 <span class="sd">        `subject`       is expected a dict which can optionally have:</span>
 
-<span class="sd">        - `request_data`   Either a dict or string to POST or GET.</span>
+<span class="sd">        - `request_data`   Either a dict or string to POST or GET. If the string</span>
+<span class="sd">                           is a path to a file this file is read to get a string.</span>
 <span class="sd">                           In case of a GET or HEAD request, the string will be</span>
 <span class="sd">                           urlencoded before being appended to the url.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">auth</span> <span class="o">=</span> <span class="bp">None</span>
@@ -1413,13 +1440,16 @@ and/ or the response containing a specific string.</p>
         <span class="k">if</span> <span class="s1">&#39;headers&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">headers</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;headers&#39;</span><span class="p">]</span>
 
-        <span class="n">status_codes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;200&#39;</span><span class="p">]</span>
+        <span class="n">status_codes</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s1">&#39;status_codes&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">status_codes</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;status_codes&#39;</span><span class="p">]</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s1">&#39;request_data&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;request_data&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;verb&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
             <span class="c1"># append the string to the url</span>
             <span class="k">if</span> <span class="s1">&#39;?&#39;</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
@@ -1444,12 +1474,12 @@ and/ or the response containing a specific string.</p>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="n">verify</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not &#39;POST&#39; on url &#39;</span><span class="si">%s</span><span class="s2">&#39; with error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)))</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not &#39;HEAD&#39; url &#39;</span><span class="si">%s</span><span class="s2">&#39; with error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;HTML verb &#39;</span><span class="si">%s</span><span class="s2">&#39; not supported.&quot;</span> <span class="o">%</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;verb&quot;</span><span class="p">])</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;status_codes&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">status_codes</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">status_codes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="s1">&#39;return_value&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
@@ -1460,11 +1490,13 @@ and/ or the response containing a specific string.</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
-        <span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
 </pre></div>
@@ -1528,7 +1560,8 @@ and/ or the response containing a specific string.</p>
     <div class="desc"><p>Executes the test.</p>
 <p><code>subject</code>       is expected a dict which can optionally have:</p>
 <ul>
-<li><code>request_data</code>   Either a dict or string to POST or GET.
+<li><code>request_data</code>   Either a dict or string to POST or GET. If the string
+                   is a path to a file this file is read to get a string.
                    In case of a GET or HEAD request, the string will be
                    urlencoded before being appended to the url.</li>
 </ul></div>
@@ -1539,12 +1572,15 @@ and/ or the response containing a specific string.</p>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Executes the test.</span>
 <span class="sd">    `subject`       is expected a dict which can optionally have:</span>
-<span class="sd">    - `request_data`   Either a dict or string to POST or GET.</span>
+<span class="sd">    - `request_data`   Either a dict or string to POST or GET. If the string</span>
+<span class="sd">                       is a path to a file this file is read to get a string.</span>
 <span class="sd">                       In case of a GET or HEAD request, the string will be</span>
 <span class="sd">                       urlencoded before being appended to the url.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span>
     <span class="n">url</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">auth</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s1">&#39;basicAuth&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
@@ -1559,12 +1595,15 @@ and/ or the response containing a specific string.</p>
     <span class="n">headers</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="s1">&#39;headers&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;headers&#39;</span><span class="p">]</span>
-    <span class="n">status_codes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;200&#39;</span><span class="p">]</span>
+    <span class="n">status_codes</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="s1">&#39;status_codes&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
         <span class="n">status_codes</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;status_codes&#39;</span><span class="p">]</span>
     <span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="s1">&#39;request_data&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;request_data&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;verb&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
         <span class="c1"># append the string to the url</span>
         <span class="k">if</span> <span class="s1">&#39;?&#39;</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
@@ -1588,12 +1627,12 @@ and/ or the response containing a specific string.</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="n">verify</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not &#39;POST&#39; on url &#39;</span><span class="si">%s</span><span class="s2">&#39; with error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not &#39;HEAD&#39; url &#39;</span><span class="si">%s</span><span class="s2">&#39; with error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;HTML verb &#39;</span><span class="si">%s</span><span class="s2">&#39; not supported.&quot;</span> <span class="o">%</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;verb&quot;</span><span class="p">])</span>
     
     <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;status_codes&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">status_codes</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">status_codes</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="s1">&#39;return_value&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
@@ -1603,11 +1642,13 @@ and/ or the response containing a specific string.</p>
                 <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-        <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-        <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-        <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
-    <span class="p">))</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+        <span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
 </pre></div>
 

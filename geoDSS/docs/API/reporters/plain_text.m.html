@@ -1065,21 +1065,35 @@ table {
   <div id="source-geoDSS.reporters.plain_text" class="source">
     <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">exceptions</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
 
 <span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;plain_text&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Reports on a rule set using plain text.</span>
 
 <span class="sd">    Only descriptions and results are reported. No titles, no subject, no failed tests!</span>
+<span class="sd">    </span>
+<span class="sd">    The following optional parameters can be passed:</span>
 
-<span class="sd">    **kwargs is not used in this reporter and only inserted here as an example for extending the reporters</span>
+<span class="sd">    - `rules_only` (bool):           If set to `True` only the rules will be reported. Defaults to `False`.</span>
+
+<span class="sd">    - **kwargs                       Is not used in this reporter and only inserted here as an example for extending the reporters.</span>
+<span class="sd">    </span>
+<span class="sd">    The following parameters in the rule_set report will be replaced:</span>
+<span class="sd">    </span>
+<span class="sd">    - `{timestamp}`                               The ISO timestamp</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule_set</span>
-
+    
     <span class="n">txt</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
-        <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_set</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
         <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>
@@ -1088,7 +1102,7 @@ table {
 
 <span class="k">def</span> <span class="nf">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Reports on a rule using plain text</span>
+<span class="sd">    Reports on a rule using plain text.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule</span>
@@ -1099,8 +1113,9 @@ table {
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
             <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">executed</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;decision&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span> <span class="ow">or</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span> <span class="p">:</span>
-                <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;decision&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span> <span class="ow">or</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
     <span class="k">return</span> <span class="n">txt</span>
 </pre></div>
@@ -1121,13 +1136,13 @@ table {
 
     
   
-    <div class="desc"><p>Reports on a rule using plain text</p></div>
+    <div class="desc"><p>Reports on a rule using plain text.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.reporters.plain_text.rule_reporter', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.reporters.plain_text.rule_reporter" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Reports on a rule using plain text</span>
+<span class="sd">    Reports on a rule using plain text.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule</span>
@@ -1138,8 +1153,9 @@ table {
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
             <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">executed</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;decision&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span> <span class="ow">or</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span> <span class="p">:</span>
-                <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;decision&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span> <span class="ow">or</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">row</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
     <span class="k">return</span> <span class="n">txt</span>
 </pre></div>
@@ -1160,7 +1176,19 @@ table {
   
     <div class="desc"><p>Reports on a rule set using plain text.</p>
 <p>Only descriptions and results are reported. No titles, no subject, no failed tests!</p>
-<p>**kwargs is not used in this reporter and only inserted here as an example for extending the reporters</p></div>
+<p>The following optional parameters can be passed:</p>
+<ul>
+<li>
+<p><code>rules_only</code> (bool):           If set to <code>True</code> only the rules will be reported. Defaults to <code>False</code>.</p>
+</li>
+<li>
+<p>**kwargs                       Is not used in this reporter and only inserted here as an example for extending the reporters.</p>
+</li>
+</ul>
+<p>The following parameters in the rule_set report will be replaced:</p>
+<ul>
+<li><code>{timestamp}</code>                               The ISO timestamp</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.reporters.plain_text.rule_set_reporter', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.reporters.plain_text.rule_set_reporter" class="source">
@@ -1169,15 +1197,23 @@ table {
 <span class="sd">    Reports on a rule set using plain text.</span>
 
 <span class="sd">    Only descriptions and results are reported. No titles, no subject, no failed tests!</span>
+<span class="sd">    </span>
+<span class="sd">    The following optional parameters can be passed:</span>
 
-<span class="sd">    **kwargs is not used in this reporter and only inserted here as an example for extending the reporters</span>
+<span class="sd">    - `rules_only` (bool):           If set to `True` only the rules will be reported. Defaults to `False`.</span>
+
+<span class="sd">    - **kwargs                       Is not used in this reporter and only inserted here as an example for extending the reporters.</span>
+<span class="sd">    </span>
+<span class="sd">    The following parameters in the rule_set report will be replaced:</span>
+<span class="sd">    </span>
+<span class="sd">    - `{timestamp}`                               The ISO timestamp</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">rule_set</span>
-
+    
     <span class="n">txt</span> <span class="o">=</span> <span class="s1">u&#39;&#39;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]):</span>
-        <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_set</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
         <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>

@@ -1,17 +1,27 @@
 # -*- coding: utf-8 -*-
 
-import requests
-from requests.auth import HTTPBasicAuth
-from requests.auth import HTTPDigestAuth
-
+import datetime
 import traceback
+import os
 
+try:
+    import requests
+    from requests.auth import HTTPBasicAuth
+    from requests.auth import HTTPDigestAuth
+except:
+    pass
+    
 try:
     # python2
     from urllib import urlencode
 except ImportError:
     # python3
     from urllib.parse import urlencode
+
+try:
+    import exceptions
+except:
+    pass
 
 from ..tests.test import test
 
@@ -27,7 +37,8 @@ class request(test):
 
     `definition`     is expected to be a dict having at least:
 
-    `url`            service endpoint for the request
+    `url`            Service endpoint for the request. You may also give a string. 
+                     If this string is a key in the subject the url will be taken from subject. 
 
     `verb`           supported html verb. `GET`, `POST` and `HEAD` are supported.
 
@@ -50,7 +61,7 @@ class request(test):
 
 
     `status_codes`   A list of status codes. If the returned status code is NOT in this list, this test evaluates to False.
-                     Defaults to `200`.
+                     If `None` or not given the test will NOT eveluate to False based on the returned status_code.
 
     `return_value`   When given the test will evaluate to True if the return value is in the response content.
                      If not given, only the returned status code will determine if the test evaluates to True.
@@ -61,6 +72,7 @@ class request(test):
     - `{text}`                      will be replaced by the text of the response.
     - `{status_code}`               will be replaced by the status code of the response.
     - `{response_time}`             will be replaced with the response time.
+    - `{timestamp}`                 will be replaced by the ISO timestamp. 
 
     Rule example
     ------------
@@ -92,13 +104,16 @@ class request(test):
 
         `subject`       is expected a dict which can optionally have:
 
-        - `request_data`   Either a dict or string to POST or GET.
+        - `request_data`   Either a dict or string to POST or GET. If the string
+                           is a path to a file this file is read to get a string.
                            In case of a GET or HEAD request, the string will be
                            urlencoded before being appended to the url.
         '''
 
         params = self.definition
         url = params['url']
+        if url in subject:
+            url = subject[url]
 
         try:
             auth = None
@@ -117,13 +132,16 @@ class request(test):
         if 'headers' in params:
             headers = params['headers']
 
-        status_codes = ['200']
+        status_codes = None
         if 'status_codes' in params:
             status_codes = params['status_codes']
 
         data = None
         if 'request_data' in subject:
             data = subject['request_data']
+        if type(data) == str and os.path.exists(data):
+            with open(data,'rb') as stream:
+                data = stream.read()
         if type(data) == str and not params["verb"] == 'POST':
             # append the string to the url
             if '?' in url:
@@ -148,12 +166,12 @@ class request(test):
             try:
                 response = requests.head(url, params=data, headers=headers, verify=verify, auth=auth)
             except Exception as error:
-                return self._handle_execution_exception(subject, "Could not 'POST' on url '%s' with error: %s" % (url, str(error)))
+                return self._handle_execution_exception(subject, "Could not 'HEAD' url '%s' with error: %s" % (url, str(error)))
         else:
             return self._handle_execution_exception(subject, "HTML verb '%s' not supported." % params["verb"])
         
         self.executed = True
-        if response.status_code not in params['status_codes']:
+        if status_codes and response.status_code not in status_codes:
             self.decision = False
         else:
             if 'return_value' in params:
@@ -164,10 +182,12 @@ class request(test):
             else:
                 self.decision = True
 
-        self.result.append(self.definition["report_template"].replace(
-            '{text}', response.text).replace(
-            '{status_code}', str(response.status_code)).replace(
-            '{response_time}', str(response.elapsed.total_seconds())
-        ))
+        if self.decision:
+            self.result.append(self.definition["report_template"].replace(
+                '{text}', response.text).replace(
+                '{status_code}', str(response.status_code)).replace(
+                '{response_time}', str(response.elapsed.total_seconds())).replace(
+                '{timestamp}', datetime.datetime.now().isoformat())
+            )
 
         return self._finish_execution(subject)

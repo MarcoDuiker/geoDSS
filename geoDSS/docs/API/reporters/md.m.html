@@ -1065,16 +1065,25 @@ table {
   <div id="source-geoDSS.reporters.md" class="source">
     <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">markdown</span> <span class="kn">as</span> <span class="nn">md_lib</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pymarkdown</span> <span class="kn">as</span> <span class="nn">md_lib</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">markdown</span> <span class="kn">as</span> <span class="nn">md_lib</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pymarkdown</span> <span class="kn">as</span> <span class="nn">md_lib</span>
+    <span class="kn">import</span> <span class="nn">yaml</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+    
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">exceptions</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
 
 <span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;markdown&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    reports on a rule set using markdown or html</span>
+<span class="sd">    Reports on a rule set using markdown or html.</span>
 
 <span class="sd">    output format is expected to be one of:</span>
 
@@ -1083,9 +1092,14 @@ table {
 
 <span class="sd">    Furthermore the following optional parameters can be passed:</span>
 
-<span class="sd">    - decision_false_report (string):           The string to report when the test evaluated to the decision False</span>
-<span class="sd">    - decision_error_report (string):           The string to report when the test could not be evaluated due to an error</span>
-
+<span class="sd">    - `decision_false_report` (string):           The string to report when the test evaluated to the decision False</span>
+<span class="sd">    - `decision_error_report` (string):           The string to report when the test could not be evaluated due to an error</span>
+<span class="sd">    - `html_wrapper` (string):                    A string to wrap around the generated html. The wrapper needs to contain</span>
+<span class="sd">                                                  `___content_goes_here___` which will be replaced by the generated html.</span>
+<span class="sd">                                                  </span>
+<span class="sd">    The following parameters in the rule_set report will be replaced:</span>
+<span class="sd">    </span>
+<span class="sd">    - `{timestamp}`                               The ISO timestamp</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">if</span> <span class="s1">&#39;html_wrapper&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -1140,6 +1154,7 @@ table {
     <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;Results&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;=======&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
 
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_set</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
         <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
@@ -1272,7 +1287,7 @@ table {
 
     
   
-    <div class="desc"><p>reports on a rule set using markdown or html</p>
+    <div class="desc"><p>Reports on a rule set using markdown or html.</p>
 <p>output format is expected to be one of:</p>
 <ul>
 <li>'markdown' (default)</li>
@@ -1280,15 +1295,21 @@ table {
 </ul>
 <p>Furthermore the following optional parameters can be passed:</p>
 <ul>
-<li>decision_false_report (string):           The string to report when the test evaluated to the decision False</li>
-<li>decision_error_report (string):           The string to report when the test could not be evaluated due to an error</li>
+<li><code>decision_false_report</code> (string):           The string to report when the test evaluated to the decision False</li>
+<li><code>decision_error_report</code> (string):           The string to report when the test could not be evaluated due to an error</li>
+<li><code>html_wrapper</code> (string):                    A string to wrap around the generated html. The wrapper needs to contain
+                                              <code>___content_goes_here___</code> which will be replaced by the generated html.</li>
+</ul>
+<p>The following parameters in the rule_set report will be replaced:</p>
+<ul>
+<li><code>{timestamp}</code>                               The ISO timestamp</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.reporters.md.rule_set_reporter', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.reporters.md.rule_set_reporter" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">rule_set_reporter</span><span class="p">(</span><span class="n">rule_set</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;markdown&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    reports on a rule set using markdown or html</span>
+<span class="sd">    Reports on a rule set using markdown or html.</span>
 
 <span class="sd">    output format is expected to be one of:</span>
 
@@ -1297,9 +1318,14 @@ table {
 
 <span class="sd">    Furthermore the following optional parameters can be passed:</span>
 
-<span class="sd">    - decision_false_report (string):           The string to report when the test evaluated to the decision False</span>
-<span class="sd">    - decision_error_report (string):           The string to report when the test could not be evaluated due to an error</span>
-
+<span class="sd">    - `decision_false_report` (string):           The string to report when the test evaluated to the decision False</span>
+<span class="sd">    - `decision_error_report` (string):           The string to report when the test could not be evaluated due to an error</span>
+<span class="sd">    - `html_wrapper` (string):                    A string to wrap around the generated html. The wrapper needs to contain</span>
+<span class="sd">                                                  `___content_goes_here___` which will be replaced by the generated html.</span>
+<span class="sd">                                                  </span>
+<span class="sd">    The following parameters in the rule_set report will be replaced:</span>
+<span class="sd">    </span>
+<span class="sd">    - `{timestamp}`                               The ISO timestamp</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">if</span> <span class="s1">&#39;html_wrapper&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -1354,6 +1380,7 @@ table {
     <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;Results&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;=======&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
 
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_set</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
         <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>

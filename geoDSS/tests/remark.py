@@ -1,11 +1,19 @@
 # -*- coding: utf-8 -*-
 
+try:
+    import exceptions
+except:
+    pass
+
 from ..tests.test import test
 
 class remark(test):
     '''
     This test always evaluates to True, regardless of the subject.
-    This is usefull for adding comments or remarks to the report 
+    This is usefull for adding comments or remarks to the report.
+    
+    The keys of the subject can be reported via parameter substitution as well
+    as a timestamp.
 
     Definition
     ----------
@@ -13,8 +21,13 @@ class remark(test):
     `definition`     is expected to be a dict having at least:
 
     `report_template` (string):           String  to be reported when the test is True (which is always the case).
-                                          In this string every {parameter} written like this, and is defined in
-                                          the subject will be replaced by the value of that parameter.
+                                          The following placeholders will be replaced:
+
+    - `{parameter}`                         where `parameter` is a key in the subject will be replaced by the string representation
+                                            of the value.
+                                            
+    - `{timestamp}`                         will be replaced by the ISO timestamp. 
+                                          
 
     Rule example
     ------------
@@ -47,7 +60,8 @@ class remark(test):
         result = self.definition["report_template"]                                         # we have the report_template available to manipulate
         for key, value in subject.items():                                                  # in this case we replace place holders by values in the subject
             result.replace('{' + key + '}', str(value))
-
+        result.replace('{timestamp}', datetime.datetime.now().isoformat())
+        
         self.logger.debug('Adding to the report: %s' % result )                             # you have a logger available to log some messages
                                                                                             # the loggers properties are set up in the rule_set definition
 

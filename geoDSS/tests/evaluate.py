@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+try:
+    import exceptions
+except:
+    pass
+
 from ..tests.test import test
 
 class evaluate(test):

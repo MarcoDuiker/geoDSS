@@ -98,4 +98,4 @@ A Rule set example in yaml format (more examples can be found in the examples fo
 
 '''
 
-from ..loaders import json_loader, yaml_loader 
+from ..loaders import json_loader, yaml_loader, python_loader

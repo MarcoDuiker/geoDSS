@@ -1132,6 +1132,7 @@ table {
 
         <span class="c1"># todo: add an iterator or __getitem__ and use this class instead of the list (keep order!)</span>
 
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rules_set_file</span><span class="p">,</span> <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">yaml_loader</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Reads the rules_set with the load_rule_set method of the loader_moduler.</span>
@@ -1197,6 +1198,7 @@ table {
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;The type </span><span class="si">%s</span><span class="s1"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
                 <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;The type </span><span class="si">%s</span><span class="s1"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
 
+
     <span class="k">def</span> <span class="nf">_setup_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Sets up the logger.</span>
@@ -1229,6 +1231,7 @@ table {
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Logger is activated on level: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span> <span class="p">)</span>
         <span class="k">return</span> <span class="n">logger</span>
 
+
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Executes processors and tests in the rules_set.</span>
@@ -1255,6 +1258,7 @@ table {
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; returned False to end execution.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
                 <span class="k">break</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finished execution of rules&quot;</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1324,6 +1328,7 @@ table {
 
         <span class="c1"># todo: add an iterator or __getitem__ and use this class instead of the list (keep order!)</span>
 
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rules_set_file</span><span class="p">,</span> <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">yaml_loader</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Reads the rules_set with the load_rule_set method of the loader_moduler.</span>
@@ -1389,6 +1394,7 @@ table {
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;The type </span><span class="si">%s</span><span class="s1"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
                 <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;The type </span><span class="si">%s</span><span class="s1"> is not defined yet.&#39;</span> <span class="o">%</span> <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
 
+
     <span class="k">def</span> <span class="nf">_setup_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Sets up the logger.</span>
@@ -1421,6 +1427,7 @@ table {
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Logger is activated on level: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span> <span class="p">)</span>
         <span class="k">return</span> <span class="n">logger</span>
 
+
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Executes processors and tests in the rules_set.</span>
@@ -1447,6 +1454,7 @@ table {
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; returned False to end execution.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
                 <span class="k">break</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finished execution of rules&quot;</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>

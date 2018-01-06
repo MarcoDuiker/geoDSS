@@ -1071,14 +1071,18 @@ table {
   <div id="source-geoDSS.processors.bag_geocoder" class="source">
     <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">xml.dom</span> <span class="kn">import</span> <span class="n">minidom</span>
-<span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="kn">import</span> <span class="n">parseString</span>
-
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">requests</span>
+    <span class="kn">from</span> <span class="nn">xml.dom</span> <span class="kn">import</span> <span class="n">minidom</span>
+    <span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="kn">import</span> <span class="n">parseString</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+    
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">exceptions</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="k">pass</span>
+
 
 <span class="kn">from</span> <span class="nn">..processors.processor</span> <span class="kn">import</span> <span class="n">processor</span>
 

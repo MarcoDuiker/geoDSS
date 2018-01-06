@@ -1075,7 +1075,10 @@ table {
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">requests</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">exceptions</span>
@@ -1107,15 +1110,14 @@ table {
 <span class="sd">     `url` (string):                    base url for the geocoder</span>
 
 <span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported on success.</span>
+<span class="sd">                                        The following placeholders will be replaced</span>
 
-<span class="sd">                                        If the format string contains subject.geometry it will be replaced by</span>
-<span class="sd">                                        the geometry which resulted from the geocoding process.</span>
-
-<span class="sd">                                        if the format string contains {address} it will be replaced by the found address.</span>
-
-<span class="sd">                                        if the format string contains {x} it will be replaced by the x coordinate of the found location.</span>
-
-<span class="sd">                                        if the format string contains {y} it will be replaced by the x coordinate of the found location.</span>
+<span class="sd">     - `subject.geometry`               the geometry which resulted from the geocoding process.</span>
+<span class="sd">     - `{address}`                      the found address.</span>
+<span class="sd">     - `{x}`                            the x coordinate of the found location.</span>
+<span class="sd">     - `{y}`                            the y coordinate of the found location.</span>
+<span class="sd">     - `{wkt_geometry}`                 the WKT geometry presentation of the found location.</span>
+<span class="sd">     - `{ewkt_geometry}`                the EWKT geometry presentation of the found location.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1231,7 +1233,9 @@ table {
                         <span class="k">if</span> <span class="n">XY</span><span class="p">:</span>
                             <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">XY</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                             <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">XY</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-                            <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SRID=28992;POINT(</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                            <span class="n">wkt_geometry</span> <span class="o">=</span> <span class="s1">&#39;POINT(</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                            <span class="n">ewkt_geometry</span> <span class="o">=</span> <span class="s1">&#39;SRID=28992;&#39;</span> <span class="o">+</span> <span class="n">wkt_geometry</span>
+                            <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ewkt_geometry</span> 
                             <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not geocode address. The geocoder returned no matches.&quot;</span><span class="p">)</span>
@@ -1248,6 +1252,8 @@ table {
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;subject.geometry&#39;</span><span class="p">,</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">])</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{x}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{y}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{wkt_geometry}&#39;</span><span class="p">,</span> <span class="n">wkt_geometry</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{ewkt_geometry}&#39;</span><span class="p">,</span> <span class="n">ewkt_geometry</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">address</span><span class="p">:</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{address}&#39;</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1279,18 +1285,16 @@ This geocoder takes the first hit as a result.</p>
 <h2>Definition</h2>
 <p><code>definition</code> is expected to be a dict having:</p>
 <p><code>url</code> (string):                    base url for the geocoder</p>
-<p><code>report_template</code> (string):        (optional) String (with markdown support) to be reported on success.</p>
-<div class="codehilite"><pre>                                If the format string contains subject.geometry it will be replaced by
-                                the geometry which resulted from the geocoding process.
-
-                                if the format string contains {address} it will be replaced by the found address.
-
-                                if the format string contains {x} it will be replaced by the x coordinate of the found location.
-
-                                if the format string contains {y} it will be replaced by the x coordinate of the found location.
-</pre></div>
-
-
+<p><code>report_template</code> (string):        (optional) String (with markdown support) to be reported on success.
+                                    The following placeholders will be replaced</p>
+<ul>
+<li><code>subject.geometry</code>               the geometry which resulted from the geocoding process.</li>
+<li><code>{address}</code>                      the found address.</li>
+<li><code>{x}</code>                            the x coordinate of the found location.</li>
+<li><code>{y}</code>                            the y coordinate of the found location.</li>
+<li><code>{wkt_geometry}</code>                 the WKT geometry presentation of the found location.</li>
+<li><code>{ewkt_geometry}</code>                the EWKT geometry presentation of the found location.</li>
+</ul>
 <h2>Rule example</h2>
 <p>a suitable yaml snippet would be:</p>
 <div class="codehilite"><pre><span class="n">rules</span><span class="o">:</span>
@@ -1332,15 +1336,14 @@ This geocoder takes the first hit as a result.</p>
 <span class="sd">     `url` (string):                    base url for the geocoder</span>
 
 <span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported on success.</span>
+<span class="sd">                                        The following placeholders will be replaced</span>
 
-<span class="sd">                                        If the format string contains subject.geometry it will be replaced by</span>
-<span class="sd">                                        the geometry which resulted from the geocoding process.</span>
-
-<span class="sd">                                        if the format string contains {address} it will be replaced by the found address.</span>
-
-<span class="sd">                                        if the format string contains {x} it will be replaced by the x coordinate of the found location.</span>
-
-<span class="sd">                                        if the format string contains {y} it will be replaced by the x coordinate of the found location.</span>
+<span class="sd">     - `subject.geometry`               the geometry which resulted from the geocoding process.</span>
+<span class="sd">     - `{address}`                      the found address.</span>
+<span class="sd">     - `{x}`                            the x coordinate of the found location.</span>
+<span class="sd">     - `{y}`                            the y coordinate of the found location.</span>
+<span class="sd">     - `{wkt_geometry}`                 the WKT geometry presentation of the found location.</span>
+<span class="sd">     - `{ewkt_geometry}`                the EWKT geometry presentation of the found location.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1456,7 +1459,9 @@ This geocoder takes the first hit as a result.</p>
                         <span class="k">if</span> <span class="n">XY</span><span class="p">:</span>
                             <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">XY</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                             <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">XY</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-                            <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SRID=28992;POINT(</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                            <span class="n">wkt_geometry</span> <span class="o">=</span> <span class="s1">&#39;POINT(</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                            <span class="n">ewkt_geometry</span> <span class="o">=</span> <span class="s1">&#39;SRID=28992;&#39;</span> <span class="o">+</span> <span class="n">wkt_geometry</span>
+                            <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ewkt_geometry</span> 
                             <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not geocode address. The geocoder returned no matches.&quot;</span><span class="p">)</span>
@@ -1473,6 +1478,8 @@ This geocoder takes the first hit as a result.</p>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;subject.geometry&#39;</span><span class="p">,</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">])</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{x}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{y}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{wkt_geometry}&#39;</span><span class="p">,</span> <span class="n">wkt_geometry</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{ewkt_geometry}&#39;</span><span class="p">,</span> <span class="n">ewkt_geometry</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">address</span><span class="p">:</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{address}&#39;</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1581,7 +1588,9 @@ This geocoder takes the first hit as a result.</p>
                     <span class="k">if</span> <span class="n">XY</span><span class="p">:</span>
                         <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">XY</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                         <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">XY</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-                        <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SRID=28992;POINT(</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                        <span class="n">wkt_geometry</span> <span class="o">=</span> <span class="s1">&#39;POINT(</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                        <span class="n">ewkt_geometry</span> <span class="o">=</span> <span class="s1">&#39;SRID=28992;&#39;</span> <span class="o">+</span> <span class="n">wkt_geometry</span>
+                        <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ewkt_geometry</span> 
                         <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not geocode address. The geocoder returned no matches.&quot;</span><span class="p">)</span>
@@ -1597,6 +1606,8 @@ This geocoder takes the first hit as a result.</p>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;subject.geometry&#39;</span><span class="p">,</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">])</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{x}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{y}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{wkt_geometry}&#39;</span><span class="p">,</span> <span class="n">wkt_geometry</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{ewkt_geometry}&#39;</span><span class="p">,</span> <span class="n">ewkt_geometry</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">address</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{address}&#39;</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>

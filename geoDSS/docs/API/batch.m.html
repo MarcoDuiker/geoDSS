@@ -3,9 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>geoDSS.loaders.json_loader API documentation</title>
-    <meta name="description" content="This rule_set loader loads a rule_set from a json file from the local file system.
-If rule_set_file ..." />
+    <title>geoDSS.batch API documentation</title>
+    <meta name="description" content="This example code shows how easy it is to run geoDSS against multiple subjects loaded from a csv fil..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1041,7 +1040,7 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#geoDSS.loaders.json_loader.load_rule_set">load_rule_set</a></li>
+    <li class="mono"><a href="#geoDSS.batch.batch_execute">batch_execute</a></li>
   </ul>
 
     </li>
@@ -1058,73 +1057,93 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">geoDSS.loaders.json_loader</span> module</h1>
-  <p>This rule_set loader loads a rule_set from a json file from the local file system.
-If rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.</p>
+  <h1 class="title"><span class="name">geoDSS.batch</span> module</h1>
+  <p>This example code shows how easy it is to run geoDSS against multiple subjects loaded from a csv file. 
+Of course this example is functional, but might be improved on with eg. more error checking, logging and communication
+with the user.</p>
+<p>eg. ./batch.py examples/rule_sets/batch_geocode_tab.yaml examples/subjects/batch_geocode.csv ./batch_result.csv</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.loaders.json_loader', this);">Show source &equiv;</a></p>
-  <div id="source-geoDSS.loaders.json_loader" class="source">
-    <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.batch', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.batch" class="source">
+    <div class="codehilite"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!C:/Python27/python.exe -u</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
 <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">This rule_set loader loads a rule_set from a json file from the local file system.</span>
-<span class="sd">If rule_set_file starts with http(s):// rule_Set_file is regarded as an url and the json will be fetched from there.</span>
+<span class="sd">This example code shows how easy it is to run geoDSS against multiple subjects loaded from a csv file. </span>
+<span class="sd">Of course this example is functional, but might be improved on with eg. more error checking, logging and communication</span>
+<span class="sd">with the user.</span>
+
+<span class="sd">eg. ./batch.py examples/rule_sets/batch_geocode_tab.yaml examples/subjects/batch_geocode.csv ./batch_result.csv</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">requests</span>
+    <span class="kn">import</span> <span class="nn">exceptions</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="k">pass</span>
-    
-<span class="k">def</span> <span class="nf">load_rule_set</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<span class="c1"># make sure we can import the package when run as script</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span> <span class="ow">and</span> <span class="n">__package__</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">sys</span><span class="p">,</span> <span class="n">path</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))))</span>
+
+<span class="kn">import</span> <span class="nn">geoDSS</span>
+<span class="kn">from</span> <span class="nn">geoDSS</span> <span class="kn">import</span> <span class="n">reporters</span>
+<span class="kn">from</span> <span class="nn">geoDSS</span> <span class="kn">import</span> <span class="n">loaders</span>
+
+
+<span class="k">def</span> <span class="nf">batch_execute</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">,</span> <span class="n">subject_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Load rules set from json.</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">base_name</span><span class="p">,</span><span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">)</span>
 
-<span class="sd">    rules_set_file is expected to be a file name of a file containing a rules set definition in json format.</span>
+    <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">yaml_loader</span>
+    <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+        <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">json_loader</span>
 
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">geoDSS</span><span class="o">.</span><span class="n">rules_set</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">,</span> <span class="n">loader_module</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not load rule_set with error: </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+        <span class="k">return</span>
+       
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">subject_file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not evaluate rule_set with error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+                
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">of</span><span class="p">:</span> 
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">report</span><span class="p">())</span>                        <span class="c1"># reports accumulate as long as we don&#39;t re-initialize the geoDSS.rules_set</span>
+                
+                
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="sd">        { &quot;name&quot;: &quot;set 1 json&quot;</span>
-<span class="sd">          &quot;title&quot;: &quot;Rule set doing a unit like test&quot;,</span>
-<span class="sd">          &quot;description&quot;: &quot;use the unit test to test the framework, demonstrating the json loader on the go.&quot;,</span>
-<span class="sd">          &quot;logging&quot;: {</span>
-<span class="sd">            &quot;level&quot;: &quot;DEBUG&quot;</span>
-<span class="sd">          },</span>
-<span class="sd">          &quot;rules&quot;: [</span>
-<span class="sd">            {</span>
-<span class="sd">              &quot;unit_test&quot;: {</span>
-<span class="sd">                &quot;report_template&quot;: &quot;Action should be taken&quot;,</span>
-<span class="sd">                &quot;type&quot;: &quot;tests.unit_test&quot;,</span>
-<span class="sd">                &quot;description&quot;: &quot;unit test testing&quot;,</span>
-<span class="sd">                &quot;title&quot;: &quot;unit test&quot;</span>
-<span class="sd">              }</span>
-<span class="sd">            },</span>
-<span class="sd">            {</span>
-<span class="sd">              &quot;postgis_unit_test&quot;: {</span>
-<span class="sd">                &quot;type&quot;: &quot;processors.postgis_unit_test&quot;,</span>
-<span class="sd">                &quot;db&quot;: {</span>
-<span class="sd">                  &quot;dbname&quot;: &quot;gisdefault&quot;</span>
-<span class="sd">                },</span>
-<span class="sd">                &quot;description&quot;: &quot;unit test by buffering subject geometry with distance 1&quot;,</span>
-<span class="sd">                &quot;title&quot;: &quot;processor unit test&quot;</span>
-<span class="sd">              }</span>
-<span class="sd">            }</span>
-<span class="sd">          ]</span>
-<span class="sd">        }</span>
-
-<span class="sd">    **kwargs is not used in this loader and only inserted here as an example for extending the loaders.</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c1"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
-    <span class="k">if</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">):</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Invoke geoDSS in batch mode using the plain text reporter.&#39;</span><span class="p">,</span>
+                                     <span class="n">epilog</span> <span class="o">=</span>      <span class="s1">&#39;&#39;&#39;Example: ./batch.py examples/rule_sets/batch_geocoder_test.yaml batch_geocode.csv ./test_output.csv &#39;&#39;&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;rule_set_file&quot;</span><span class="p">,</span>                            <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;The file containing the rule set.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;subject_file&quot;</span><span class="p">,</span>                             <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;A csv file containing subjects.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;output_file&quot;</span><span class="p">,</span>                              <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;An output file to write the results to.&#39;</span><span class="p">)</span>
+    
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">batch_execute</span><span class="p">(</span><span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">rule_set_file</span><span class="p">,</span> <span class="n">subject_file</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">subject_file</span><span class="p">,</span> <span class="n">output_file</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1136,99 +1155,45 @@ If rule_set_file starts with http(s):// rule_Set_file is regarded as an url and 
     <h2 class="section-title" id="header-functions">Functions</h2>
       
   <div class="item">
-    <div class="name def" id="geoDSS.loaders.json_loader.load_rule_set">
-    <p>def <span class="ident">load_rule_set</span>(</p><p>rules_set_file, **kwargs)</p>
+    <div class="name def" id="geoDSS.batch.batch_execute">
+    <p>def <span class="ident">batch_execute</span>(</p><p>rule_set_file, subject_file, output_file)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Load rules set from json.</p>
-<p>rules_set_file is expected to be a file name of a file containing a rules set definition in json format.</p>
-<h2>Example</h2>
-<div class="codehilite"><pre>{ &quot;name&quot;: &quot;set 1 json&quot;
-  &quot;title&quot;: &quot;Rule set doing a unit like test&quot;,
-  &quot;description&quot;: &quot;use the unit test to test the framework, demonstrating the json loader on the go.&quot;,
-  &quot;logging&quot;: {
-    &quot;level&quot;: &quot;DEBUG&quot;
-  },
-  &quot;rules&quot;: [
-    {
-      &quot;unit_test&quot;: {
-        &quot;report_template&quot;: &quot;Action should be taken&quot;,
-        &quot;type&quot;: &quot;tests.unit_test&quot;,
-        &quot;description&quot;: &quot;unit test testing&quot;,
-        &quot;title&quot;: &quot;unit test&quot;
-      }
-    },
-    {
-      &quot;postgis_unit_test&quot;: {
-        &quot;type&quot;: &quot;processors.postgis_unit_test&quot;,
-        &quot;db&quot;: {
-          &quot;dbname&quot;: &quot;gisdefault&quot;
-        },
-        &quot;description&quot;: &quot;unit test by buffering subject geometry with distance 1&quot;,
-        &quot;title&quot;: &quot;processor unit test&quot;
-      }
-    }
-  ]
-}
-</pre></div>
-
-
-<p>**kwargs is not used in this loader and only inserted here as an example for extending the loaders.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.loaders.json_loader.load_rule_set', this);">Show source &equiv;</a></p>
-  <div id="source-geoDSS.loaders.json_loader.load_rule_set" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">load_rule_set</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.batch.batch_execute', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.batch.batch_execute" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">batch_execute</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">,</span> <span class="n">subject_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Load rules set from json.</span>
-
-<span class="sd">    rules_set_file is expected to be a file name of a file containing a rules set definition in json format.</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-
-<span class="sd">        { &quot;name&quot;: &quot;set 1 json&quot;</span>
-<span class="sd">          &quot;title&quot;: &quot;Rule set doing a unit like test&quot;,</span>
-<span class="sd">          &quot;description&quot;: &quot;use the unit test to test the framework, demonstrating the json loader on the go.&quot;,</span>
-<span class="sd">          &quot;logging&quot;: {</span>
-<span class="sd">            &quot;level&quot;: &quot;DEBUG&quot;</span>
-<span class="sd">          },</span>
-<span class="sd">          &quot;rules&quot;: [</span>
-<span class="sd">            {</span>
-<span class="sd">              &quot;unit_test&quot;: {</span>
-<span class="sd">                &quot;report_template&quot;: &quot;Action should be taken&quot;,</span>
-<span class="sd">                &quot;type&quot;: &quot;tests.unit_test&quot;,</span>
-<span class="sd">                &quot;description&quot;: &quot;unit test testing&quot;,</span>
-<span class="sd">                &quot;title&quot;: &quot;unit test&quot;</span>
-<span class="sd">              }</span>
-<span class="sd">            },</span>
-<span class="sd">            {</span>
-<span class="sd">              &quot;postgis_unit_test&quot;: {</span>
-<span class="sd">                &quot;type&quot;: &quot;processors.postgis_unit_test&quot;,</span>
-<span class="sd">                &quot;db&quot;: {</span>
-<span class="sd">                  &quot;dbname&quot;: &quot;gisdefault&quot;</span>
-<span class="sd">                },</span>
-<span class="sd">                &quot;description&quot;: &quot;unit test by buffering subject geometry with distance 1&quot;,</span>
-<span class="sd">                &quot;title&quot;: &quot;processor unit test&quot;</span>
-<span class="sd">              }</span>
-<span class="sd">            }</span>
-<span class="sd">          ]</span>
-<span class="sd">        }</span>
-
-<span class="sd">    **kwargs is not used in this loader and only inserted here as an example for extending the loaders.</span>
-
+<span class="sd">    </span>
 <span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">base_name</span><span class="p">,</span><span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">)</span>
 
-    <span class="c1"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
-    <span class="k">if</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">rules_set_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">):</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">yaml_loader</span>
+    <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+        <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">json_loader</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">geoDSS</span><span class="o">.</span><span class="n">rules_set</span><span class="p">(</span><span class="n">rule_set_file</span><span class="p">,</span> <span class="n">loader_module</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not load rule_set with error: </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+        <span class="k">return</span>
+       
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">subject_file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not evaluate rule_set with error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+                
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">of</span><span class="p">:</span> 
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">report</span><span class="p">())</span>                        <span class="c1"># reports accumulate as long as we don&#39;t re-initialize the geoDSS.rules_set</span>
 </pre></div>
 
   </div>

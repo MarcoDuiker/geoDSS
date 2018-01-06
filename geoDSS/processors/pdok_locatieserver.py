@@ -4,7 +4,10 @@
 import json
 import re
 
-import requests
+try:
+    import requests
+except:
+    pass
 
 try:
     import exceptions
@@ -36,15 +39,14 @@ class pdok_locatieserver(processor):
      `url` (string):                    base url for the geocoder
 
      `report_template` (string):        (optional) String (with markdown support) to be reported on success.
+                                        The following placeholders will be replaced
 
-                                        If the format string contains subject.geometry it will be replaced by
-                                        the geometry which resulted from the geocoding process.
-
-                                        if the format string contains {address} it will be replaced by the found address.
-
-                                        if the format string contains {x} it will be replaced by the x coordinate of the found location.
-
-                                        if the format string contains {y} it will be replaced by the x coordinate of the found location.
+     - `subject.geometry`               the geometry which resulted from the geocoding process.
+     - `{address}`                      the found address.
+     - `{x}`                            the x coordinate of the found location.
+     - `{y}`                            the y coordinate of the found location.
+     - `{wkt_geometry}`                 the WKT geometry presentation of the found location.
+     - `{ewkt_geometry}`                the EWKT geometry presentation of the found location.
 
     Rule example
     ------------
@@ -160,7 +162,9 @@ class pdok_locatieserver(processor):
                         if XY:
                             x = float(XY[0])
                             y = float(XY[1])
-                            subject['geometry'] = 'SRID=28992;POINT(%s %s)' % (x, y)
+                            wkt_geometry = 'POINT(%s %s)' % (x, y)
+                            ewkt_geometry = 'SRID=28992;' + wkt_geometry
+                            subject['geometry'] = ewkt_geometry 
                             self.executed = True
                     else:
                         return self._handle_execution_exception(subject, "Could not geocode address. The geocoder returned no matches.")
@@ -177,6 +181,8 @@ class pdok_locatieserver(processor):
         if self.executed and self.definition["report_template"]:
             result = self.definition["report_template"].replace('subject.geometry', subject['geometry'])
             result = result.replace('{x}', str(x)).replace('{y}', str(y))
+            result = result.replace('{wkt_geometry}', wkt_geometry)
+            result = result.replace('{ewkt_geometry}', ewkt_geometry)
             if address:
                 result = result.replace('{address}', address)
             else:

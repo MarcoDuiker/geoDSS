@@ -50,6 +50,7 @@ class rules_set(object):
 
         # todo: add an iterator or __getitem__ and use this class instead of the list (keep order!)
 
+
     def __init__(self, rules_set_file, loader_module = loaders.yaml_loader, **kwargs):
         '''
         Reads the rules_set with the load_rule_set method of the loader_moduler.
@@ -115,6 +116,7 @@ class rules_set(object):
                 self.logger.error('The type %s is not defined yet.' % definition['type'])
                 raise exceptions.NotImplementedError('The type %s is not defined yet.' % definition['type'])
 
+
     def _setup_logging(self):
         '''
         Sets up the logger.
@@ -147,6 +149,7 @@ class rules_set(object):
         logger.info("Logger is activated on level: %s" % logging.getLevelName(log_level) )
         return logger
 
+
     def execute(self, subject):
         '''
         Executes processors and tests in the rules_set.
@@ -173,6 +176,7 @@ class rules_set(object):
                 self.logger.info('Rule "%s" returned False to end execution.' % str(rule.name))
                 break
         self.logger.info("Finished execution of rules")
+
 
     def report(self, **kwargs):
         '''
@@ -207,5 +211,3 @@ class rules_set(object):
             return self.reporter_module.rule_set_reporter(self, **self.reporter_args)
         else:
             return self.reporter_module.rule_set_reporter(self, **kwargs)
-
-
