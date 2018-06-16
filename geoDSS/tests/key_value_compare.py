@@ -18,10 +18,11 @@ class key_value_compare(test):
 
     `key` (string):                       The name of the key in the subject
 
-    `value` (string|number):              The value to compare with
+    `value` (string|number):              The value to compare with. If a string and this string is a key in the subject then
+                                          the value is taken from the subject.
 
     `operator` (string):                  The operator used in the comparison. Supported are
-                                          '==', '>', '<', '<=', '>=' and "in". This last one is for strings only and 
+                                          '==', '!=', '>', '<', '<=', '>=' and "in". This last one is for strings only and 
                                           evaluates to True if the value in the definition contains the value in the subject.
 
     `report_template` (string):           String to be reported when the test is True.
@@ -60,12 +61,19 @@ class key_value_compare(test):
         '''
 
         self.decision = False
-        definition_value = self.definition['value']
+        
+        if self.definition['value'] in subject:
+            definition_value = subject[self.definition['value']]
+        else:
+            definition_value = self.definition['value']
         if self.definition['key'] in subject:
             subject_value = subject[self.definition['key']]
             self.logger.debug("Evaluating %s %s %s" % (str(subject_value),self.definition['operator'],str(definition_value)))
             if self.definition['operator'] == '==':
                 if subject_value == definition_value:
+                    self.decision = True
+            elif self.definition['operator'] == '!=':
+                if subject_value != definition_value:
                     self.decision = True
             elif self.definition['operator'] == '>=':
                 if subject_value >= definition_value:
@@ -92,5 +100,3 @@ class key_value_compare(test):
         self.executed = True
 
         return self._finish_execution(subject)
-
-

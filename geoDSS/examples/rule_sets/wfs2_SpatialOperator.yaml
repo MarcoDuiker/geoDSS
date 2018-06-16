@@ -1,0 +1,26 @@
+# a rule set to test the wfs_DWithin
+name: wfs2_SpatialOperator
+title: Rule set doing a wfs2_SpatialOperator
+description: Doing a spatial select on wfs service
+logging: 
+    level: DEBUG
+rules:
+- remark:
+    type: tests.remark
+    title: Let op!
+    description: ""
+    report_template: doing a wfs request with a SpatialOperator
+- select_gemeente:
+    type: tests.wfs2_SpatialOperator
+    title: Gemeenten binnen 40 km van de aanvraag
+    description: ""
+    url: https://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wfs?
+    typename: "bestuurlijkegrenzen:gemeenten"
+    geometryname: geom
+    namespace:
+        prefix: app
+        URI: "http://www.deegree.org/app"
+    spatial_operator: DWithin
+    distance: 40000
+    report_template: Doorsturen naar B&W van gemeente {gemeentenaam}
+

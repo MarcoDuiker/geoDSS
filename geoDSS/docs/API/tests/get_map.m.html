@@ -901,8 +901,10 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -913,9 +915,11 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1069,7 +1073,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.get_map', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.tests.get_map" class="source">
-    <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
+    <div class="codehilite"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
@@ -1114,12 +1118,13 @@ table {
 <span class="sd">    `flip_axes`      (optional) When using WMS 1.3.0 specify True if EPSG code and service requires the BBOX to be ymin,xmin,ymax,xmax</span>
 
 <span class="sd">    `report_template` (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url.</span>
-<span class="sd">                                    When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the </span>
-<span class="sd">                                    image can be added by providing an alt text like this:</span>
 <span class="sd">                                    </span>
-<span class="sd">                                    `report_template`: &quot;![Centered_map_small]({url})&quot;</span>
+<span class="sd">        When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the </span>
+<span class="sd">        image can be added by providing an alt text like this:</span>
+<span class="sd">                                    </span>
+<span class="sd">            `report_template`: &quot;![Centered_map_small]({url})&quot;</span>
 
-<span class="sd">                                    _small, _medium and _large refer to the image size. If no red box appears, go one size up.</span>
+<span class="sd">            _small, _medium and _large refer to the image size. If no red box appears, go one size up.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1157,7 +1162,7 @@ table {
                    <span class="s1">&#39;doubleParenComma&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\)\s*\)\s*,\s*\(\s*\(&#39;</span><span class="p">),</span>  <span class="c1"># can&#39;t use {2} here</span>
                    <span class="s1">&#39;trimParens&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^\s*\(?(.*?)\)?\s*$&#39;</span><span class="p">)}</span>
 
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">p</span><span class="p">[</span><span class="s1">&#39;point&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Point</span>
             <span class="n">p</span><span class="p">[</span><span class="s1">&#39;linestring&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LineString</span>
@@ -1194,7 +1199,7 @@ table {
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">None</span>
         
-        <span class="n">__call__</span> <span class="o">=</span> <span class="n">fromWKT</span>
+        <span class="fm">__call__</span> <span class="o">=</span> <span class="n">fromWKT</span>
 
     <span class="k">def</span> <span class="nf">_get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1337,18 +1342,19 @@ This is usefull for adding a map to the report </p>
 - <code>version</code>      WMS version</p>
 <p><code>buffer</code>         The buffer around the subjects geometry (in map units)</p>
 <p><code>flip_axes</code>      (optional) When using WMS 1.3.0 specify True if EPSG code and service requires the BBOX to be ymin,xmin,ymax,xmax</p>
-<p><code>report_template</code> (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url.
-                                When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the 
-                                image can be added by providing an alt text like this:</p>
-<div class="codehilite"><pre>                            `report_template`: &quot;![Centered_map_small]({url})&quot;
+<p><code>report_template</code> (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url.</p>
+<div class="codehilite"><pre><span></span>When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the 
+image can be added by providing an alt text like this:
 
-                            _small, _medium and _large refer to the image size. If no red box appears, go one size up.
+    `report_template`: &quot;![Centered_map_small]({url})&quot;
+
+    _small, _medium and _large refer to the image size. If no red box appears, go one size up.
 </pre></div>
 
 
 <h2>Rule example</h2>
 <p>a useful yaml snippet for this test would be:</p>
-<div class="codehilite"><pre><span class="n">rules</span><span class="o">:</span>
+<div class="codehilite"><pre><span></span><span class="n">rules</span><span class="o">:</span>
     <span class="n">unit_test</span><span class="o">:</span>
         <span class="n">type</span><span class="o">:</span> <span class="n">tests</span><span class="o">.</span><span class="na">get_map</span>
         <span class="n">title</span><span class="o">:</span> <span class="n">The</span> <span class="n">gelocated</span> <span class="n">location</span>
@@ -1359,12 +1365,12 @@ This is usefull for adding a map to the report </p>
 
 <h2>Subject Example</h2>
 <p>a useful subject for this would be:</p>
-<div class="codehilite"><pre>subject = { &quot;geometry&quot;: &quot;SRID=28992;POINT(138034.181 452694.342)&quot;}
+<div class="codehilite"><pre><span></span>subject = { &quot;geometry&quot;: &quot;SRID=28992;POINT(138034.181 452694.342)&quot;}
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.get_map.get_map', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.tests.get_map.get_map" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">get_map</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">get_map</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This test constructs a WMS GetMap request url to put in the report.</span>
 <span class="sd">    This is usefull for adding a map to the report </span>
@@ -1390,12 +1396,13 @@ This is usefull for adding a map to the report </p>
 <span class="sd">    `flip_axes`      (optional) When using WMS 1.3.0 specify True if EPSG code and service requires the BBOX to be ymin,xmin,ymax,xmax</span>
 
 <span class="sd">    `report_template` (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url.</span>
-<span class="sd">                                    When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the </span>
-<span class="sd">                                    image can be added by providing an alt text like this:</span>
 <span class="sd">                                    </span>
-<span class="sd">                                    `report_template`: &quot;![Centered_map_small]({url})&quot;</span>
+<span class="sd">        When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the </span>
+<span class="sd">        image can be added by providing an alt text like this:</span>
+<span class="sd">                                    </span>
+<span class="sd">            `report_template`: &quot;![Centered_map_small]({url})&quot;</span>
 
-<span class="sd">                                    _small, _medium and _large refer to the image size. If no red box appears, go one size up.</span>
+<span class="sd">            _small, _medium and _large refer to the image size. If no red box appears, go one size up.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
@@ -1433,7 +1440,7 @@ This is usefull for adding a map to the report </p>
                    <span class="s1">&#39;doubleParenComma&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\)\s*\)\s*,\s*\(\s*\(&#39;</span><span class="p">),</span>  <span class="c1"># can&#39;t use {2} here</span>
                    <span class="s1">&#39;trimParens&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^\s*\(?(.*?)\)?\s*$&#39;</span><span class="p">)}</span>
 
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">p</span><span class="p">[</span><span class="s1">&#39;point&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Point</span>
             <span class="n">p</span><span class="p">[</span><span class="s1">&#39;linestring&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LineString</span>
@@ -1470,7 +1477,7 @@ This is usefull for adding a map to the report </p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">None</span>
         
-        <span class="n">__call__</span> <span class="o">=</span> <span class="n">fromWKT</span>
+        <span class="fm">__call__</span> <span class="o">=</span> <span class="n">fromWKT</span>
 
     <span class="k">def</span> <span class="nf">_get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1609,7 +1616,7 @@ This is usefull for adding a map to the report </p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.get_map.get_map.__init__', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.tests.get_map.get_map.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">rules</span><span class="p">,</span> <span class="n">settings</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">rules</span><span class="p">,</span> <span class="n">settings</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">definition</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
@@ -1650,7 +1657,7 @@ This is usefull for adding a map to the report </p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.get_map.get_map.execute', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.tests.get_map.get_map.execute" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">    Executes the test.</span>
 <span class="sd">    `subject`       is expected a dict containing at least:</span>

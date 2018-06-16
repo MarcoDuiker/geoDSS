@@ -1,0 +1,198 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Defining a rule set &#8212; geoDSS 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Defining a subject" href="Defining a subject.html" />
+    <link rel="prev" title="Install" href="Install.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="defining-a-rule-set">
+<span id="ruleset"></span><h1>Defining a rule set<a class="headerlink" href="#defining-a-rule-set" title="Permalink to this headline">¶</a></h1>
+<p>A rule set is built on two structures:</p>
+<ul class="simple">
+<li>A collection of name/value pairs</li>
+<li>An ordered list of values</li>
+</ul>
+<p>Loading a rule set using a loader results in a Python dict, consisting of:</p>
+<ul class="simple">
+<li>dicts</li>
+<li>lists</li>
+<li>numbers</li>
+<li>strings</li>
+</ul>
+<p>combined in any way you like.</p>
+<p>Actually this is all very well described on the <a class="reference external" href="https://www.json.org/">json website</a>.</p>
+<p>Of course, this description is very generic. A rule set has to be defined in a specific way to be useful for geoDSS.</p>
+<p>A rule set contains of a heading and one or more rules.</p>
+<ul class="simple">
+<li>The heading defines some properties of the rule set and some properties which are ‘inherited’ by the rules.</li>
+<li>The rules are the tests and processors against which teh subject will be evaluated.</li>
+</ul>
+<div class="section" id="heading">
+<h2>Heading<a class="headerlink" href="#heading" title="Permalink to this headline">¶</a></h2>
+<p>The heading contains the following example (in <a class="reference external" href="http://yaml.org">yaml</a> format):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">:</span> <span class="n">test_bag_geocoder</span>
+<span class="n">title</span><span class="p">:</span> <span class="n">Test</span> <span class="n">the</span> <span class="n">BAG</span> <span class="n">geocoder</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Test</span> <span class="n">the</span> <span class="n">BAG</span> <span class="n">geocoder</span> <span class="n">by</span> <span class="n">geocoding</span> <span class="n">an</span> <span class="n">address</span> <span class="ow">and</span> <span class="n">report</span> <span class="n">the</span> <span class="n">result</span>
+<span class="n">logging</span><span class="p">:</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n">DEBUG</span>
+    <span class="n">file</span><span class="p">:</span> <span class="s2">&quot;/home/marco/bag_geocoder_cgi.log&quot;</span>
+<span class="n">reporter</span><span class="p">:</span> <span class="n">reporters</span><span class="o">.</span><span class="n">md</span>
+<span class="n">reporter_args</span><span class="p">:</span>
+    <span class="n">output_format</span><span class="p">:</span> <span class="n">html</span>
+    <span class="n">decision_false_report</span><span class="p">:</span> <span class="s2">&quot;Uitkomst test: **negatief**&quot;</span>
+    <span class="n">decision_error_report</span><span class="p">:</span> <span class="s2">&quot;**Fout**: test kwam niet tot een beslissing of rapportage&quot;</span>
+<span class="n">settings</span><span class="p">:</span>
+    <span class="n">db</span><span class="p">:</span>
+        <span class="n">host</span><span class="p">:</span> <span class="n">localhost</span>
+        <span class="n">port</span><span class="p">:</span> <span class="mi">5432</span>
+        <span class="n">user</span><span class="p">:</span> <span class="n">geoDSS</span>
+        <span class="n">password</span><span class="p">:</span> <span class="n">geoDSS</span>
+        <span class="n">dbname</span><span class="p">:</span> <span class="n">gisdefault</span>
+<span class="n">rules</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>Explanation (almost all arguments are optional):</p>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">name</span></code>: a useful identifier meant for computers to read.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">title</span></code>: a useful identifier for humans to read. Most reporters will put this in the report. If left empty, then the <code class="docutils literal"><span class="pre">name</span></code> will be used as a title.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">description</span></code>: a description of this rule set. Most reporters will put this in the report.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">logging</span></code>: sets the logging properties:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">level</span></code>:  Python log level. Usually one of: <code class="docutils literal"><span class="pre">DEBUG</span></code>, <code class="docutils literal"><span class="pre">INFO</span></code>, <code class="docutils literal"><span class="pre">ERROR</span></code> (defaults to <code class="docutils literal"><span class="pre">INFO</span></code>)</li>
+<li><code class="docutils literal"><span class="pre">format</span></code>: Python logging format string. Default: <code class="docutils literal"><span class="pre">'%(asctime)s</span> <span class="pre">%(name)-12s</span> <span class="pre">%(levelname)-7s</span>&#160; <span class="pre">%(message)s'</span></code></li>
+<li><code class="docutils literal"><span class="pre">file</span></code>:   A writeable file to write the log. This file will be log-rotated.</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">reporter</span></code>: one of the reporter modules available in geoDSS. Refer to the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/reporters/index.html">API documentation of the reporters</a> for a full list and accepted arguments.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">reporter_args</span></code>: arguments to pass to the reporter. These are explained in the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/reporters/index.html">API documentation of the reporters</a>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">output_format</span></code>: an argument accepted by the markdown reporter. This can be <code class="docutils literal"><span class="pre">markdown</span></code> or <code class="docutils literal"><span class="pre">html</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">decision_false_report</span></code>: an argument accepted by the markdown reporter. This sets the string which will be reported when a test evaluates to <cite>False</cite>.</li>
+<li><code class="docutils literal"><span class="pre">decision_error_report</span></code>: an argument accepted by the markdown reporter. This sets the string which will be reported when a test could not be evaluated due to an error.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">settings</span></code>: this provides a default for all rules. So each key under <code class="docutils literal"><span class="pre">settings</span></code> is added to the keys under the rules. If a rule has the same key defined then the definition in the rule is used.</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">db</span></code>: a key which servers as a default for the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/tests/postgis_spatial_select.m.html">tests.postgis_spatial_select</a> test.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">rules</span></code>: the rules as explained in the next section.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="rules">
+<span id="id2"></span><h2>Rules<a class="headerlink" href="#rules" title="Permalink to this headline">¶</a></h2>
+<p>The rules are executed one by one in order. Rules are based either on <a class="reference internal" href="Tests.html#tests"><span class="std std-ref">Tests</span></a> or <a class="reference internal" href="Processors.html#processors"><span class="std std-ref">Processors</span></a>.</p>
+<p>Of course, each test or processor needs its special configuration which is documented in the API documentation of <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/tests/index.html">tests</a> and <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/tests/processors.html">processors</a>.</p>
+<p>Some settings are supported by all rules and processors. These are illustrated in the following example (in <a class="reference external" href="http://yaml.org">yaml</a> format):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rules</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">a_unique_identifier_for_the_test</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">tests</span><span class="o">.</span><span class="n">request</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">a</span> <span class="n">title</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">to</span> <span class="n">explain</span> <span class="n">something</span> <span class="n">about</span> <span class="n">the</span> <span class="n">test</span>
+    <span class="n">report_template</span><span class="p">:</span> <span class="s2">&quot;Report this string when the test evaluates to True&quot;</span>
+    <span class="n">report</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="n">break_on_error</span><span class="p">:</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>Explanation:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">a_unique_identifier_for_the_test</span></code>: This serves as a unique identifier for the rule and must be unique within a rule set.</li>
+<li><code class="docutils literal"><span class="pre">type</span></code>: one of the <a class="reference internal" href="Tests.html#tests"><span class="std std-ref">Tests</span></a> or <a class="reference internal" href="Processors.html#processors"><span class="std std-ref">Processors</span></a> of geoDSS.</li>
+<li><code class="docutils literal"><span class="pre">title</span></code>: a human readable title for the rule. This will be reported by most reporters.</li>
+<li><code class="docutils literal"><span class="pre">description</span></code>: a description of the rule. This will be reported by most reporters.</li>
+<li><code class="docutils literal"><span class="pre">report_template</span></code>: The string to report when the test evaluates to True. Some processors are also able to report. This string is a template as most tests and reporters will replace a parameter like <code class="docutils literal"><span class="pre">{this}</span></code> by the value for this.</li>
+<li><code class="docutils literal"><span class="pre">report</span></code>: Optional, defaults to <code class="docutils literal"><span class="pre">True</span></code>. If set to <code class="docutils literal"><span class="pre">False</span></code> the test or processor won’t report. Useful for combining tests and report as one using the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/tests/evaluate.m.html">tests.evaluate</a> test.</li>
+<li><code class="docutils literal"><span class="pre">break_on_error</span></code>: Optional, defaults to <code class="docutils literal"><span class="pre">False</span></code>. geoDSS tries to execute all rules, even if one runs into an error. If <code class="docutils literal"><span class="pre">break_on_error</span></code> is set to <code class="docutils literal"><span class="pre">True</span></code> geoDSS will stop execution if the test or processor runs into an error.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Install.html" title="previous chapter">Install</a></li>
+      <li>Next: <a href="Defining a subject.html" title="next chapter">Defining a subject</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Marco Duiker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Defining a rule set.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

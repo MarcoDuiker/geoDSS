@@ -1,0 +1,121 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Scripts &#8212; geoDSS 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="UI_generators" href="UI_generators.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="scripts">
+<h1>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h1>
+<p>GeoDSS comes with a few scripts which use the geoDSS module to run geoDSS in several useful ways.</p>
+<div class="section" id="interfaces-py">
+<h2>interfaces.py<a class="headerlink" href="#interfaces-py" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">interfaces.py</span></code> provide a command line interface to geoDSS as well as cgi and wsgi interfaces.</p>
+<p>Typing <code class="docutils literal"><span class="pre">interfaces.py</span></code> without arguments gives some help. More help can be found in the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/index.html">API documentation</a>.</p>
+</div>
+<div class="section" id="scheduled-py">
+<h2>scheduled.py<a class="headerlink" href="#scheduled-py" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">scheduled.py</span></code> runs geoDSS on a schedule, optionally for a preset amount of time.</p>
+<p>Typing <code class="docutils literal"><span class="pre">scheduled.py</span></code> without arguments gives some help. More help can be found in the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/index.html">API documentation</a>.</p>
+</div>
+<div class="section" id="batch-py">
+<h2>batch.py<a class="headerlink" href="#batch-py" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">batch.py</span></code> runs several subjects provided in a .csv file against a rule set. Of course, this only works for subjects which can be defined by simple key-value pairs.</p>
+<p>The keys are taken from the column names, the values from the corresponding columns.</p>
+<p>Typing <code class="docutils literal"><span class="pre">batch.py</span></code> without arguments gives some help. More help can be found in the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/index.html">API documentation</a>.</p>
+</div>
+<div class="section" id="serve-cgi">
+<h2>serve_cgi<a class="headerlink" href="#serve-cgi" title="Permalink to this headline">¶</a></h2>
+<p>serve_cgi starts a webserver on localhost port 8000. This webserver demonstrates how to use geoDSS as a cgi application.</p>
+<p>Once the webserver is started you can run an example by browsing to:</p>
+<p><a class="reference external" href="http://localhost:8000/cgi-bin/interfaces.py?form=geoDSS/examples/forms/basic.yaml&amp;template=geoDSS/examples/forms/basic_template.html&amp;output_format=html">http://localhost:8000/cgi-bin/interfaces.py?form=geoDSS/examples/forms/basic.yaml&amp;template=geoDSS/examples/forms/basic_template.html&amp;output_format=html</a></p>
+<p>This actually executues interfaces.py. More information on the usage of interfaces.py is on this page and in the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/index.html">API documentation</a>.</p>
+<p>On windows you can start the webserver by executing:</p>
+<p><code class="docutils literal"><span class="pre">serve_cgi.bat</span></code></p>
+<p>On most other operating systems you can either run</p>
+<p><code class="docutils literal"><span class="pre">serve_cgi.sh</span></code></p>
+<p>or</p>
+<p><code class="docutils literal"><span class="pre">serve_cgi.py</span></code></p>
+<p>If that doesn’t work you probably need to do:</p>
+<p><code class="docutils literal"><span class="pre">python</span> <span class="pre">serve_cgi.py</span></code></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="UI_generators.html" title="previous chapter">UI_generators</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Marco Duiker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Scripts.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

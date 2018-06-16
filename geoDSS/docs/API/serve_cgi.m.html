@@ -902,8 +902,10 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -914,9 +916,11 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1125,7 +1129,7 @@ webinterfaces.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi" class="source">
-    <div class="codehilite"><pre><span class="ch">#!/usr/bin/env python</span>
+    <div class="codehilite"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1">#!C:/Python27/python.exe -u</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
@@ -1177,7 +1181,7 @@ webinterfaces.</p>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
         <span class="n">server</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
 
@@ -1217,7 +1221,7 @@ webinterfaces.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.main', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.main" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
 
     <span class="n">server</span> <span class="o">=</span> <span class="n">CGIHTTPServer</span><span class="o">.</span><span class="n">BaseHTTPServer</span><span class="o">.</span><span class="n">HTTPServer</span><span class="p">((</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span> <span class="n">MyCGIHTTPRequestHandler</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1242,7 +1246,7 @@ webinterfaces.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">MyCGIHTTPRequestHandler</span><span class="p">(</span><span class="n">CGIHTTPServer</span><span class="o">.</span><span class="n">CGIHTTPRequestHandler</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MyCGIHTTPRequestHandler</span><span class="p">(</span><span class="n">CGIHTTPServer</span><span class="o">.</span><span class="n">CGIHTTPRequestHandler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">is_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="c1"># Extend as to enable .cgi files to be recognized (Windows issue)</span>
         <span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -1467,7 +1471,7 @@ webinterfaces.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.__init__', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">client_address</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">client_address</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">request</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">client_address</span> <span class="o">=</span> <span class="n">client_address</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server</span>
@@ -1498,7 +1502,7 @@ and tries to find a name that contains at least one dot.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.address_string', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.address_string" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">address_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">address_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the client address formatted for logging.</span>
 <span class="sd">    This version looks up the full hostname using gethostbyaddr(),</span>
 <span class="sd">    and tries to find a name that contains at least one dot.</span>
@@ -1533,7 +1537,7 @@ to copy binary data as well.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.copyfile', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.copyfile" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">outputfile</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">outputfile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Copy all data between two file objects.</span>
 <span class="sd">    The SOURCE argument is a file object open for reading</span>
 <span class="sd">    (or anything with a read() method) and the DESTINATION</span>
@@ -1565,7 +1569,7 @@ to copy binary data as well.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.date_time_string', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.date_time_string" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">date_time_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">date_time_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the current date and time formatted for a message header.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -1595,7 +1599,7 @@ to copy binary data as well.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_GET', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_GET" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">do_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">do_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Serve a GET request.&quot;&quot;&quot;</span>
     <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_head</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
@@ -1623,7 +1627,7 @@ to copy binary data as well.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_HEAD', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_HEAD" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">do_HEAD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">do_HEAD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Serve a HEAD request.&quot;&quot;&quot;</span>
     <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_head</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
@@ -1649,7 +1653,7 @@ to copy binary data as well.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_POST', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.do_POST" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">do_POST</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">do_POST</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Serve a POST request.</span>
 <span class="sd">    This is only implemented for CGI scripts.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1677,7 +1681,7 @@ to copy binary data as well.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.end_headers', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.end_headers" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">end_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">end_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Send the blank line ending the MIME headers.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_version</span> <span class="o">!=</span> <span class="s1">&#39;HTTP/0.9&#39;</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1700,7 +1704,7 @@ to copy binary data as well.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.finish', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.finish" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
@@ -1737,7 +1741,7 @@ slow) to look inside the data to make a better guess.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.guess_type', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.guess_type" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Guess the type of a file.</span>
 <span class="sd">    Argument is a PATH (a filename).</span>
 <span class="sd">    Return value is a string of the form type/subtype,</span>
@@ -1775,7 +1779,7 @@ slow) to look inside the data to make a better guess.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Handle multiple requests if necessary.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">handle_one_request</span><span class="p">()</span>
@@ -1804,7 +1808,7 @@ commands such as GET and POST.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle_one_request', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.handle_one_request" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">handle_one_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">handle_one_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Handle a single HTTP request.</span>
 <span class="sd">    You normally don&#39;t need to override this method; see the class</span>
 <span class="sd">    __doc__ string for information on how to handle specific HTTP</span>
@@ -1864,7 +1868,7 @@ path begins with one of the strings in self.cgi_directories
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_cgi', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_cgi" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">is_cgi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">is_cgi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Test whether self.path corresponds to a CGI script.</span>
 <span class="sd">    Returns True and updates the cgi_info attribute to the tuple</span>
 <span class="sd">    (dir, rest) if self.path requires running a CGI script.</span>
@@ -1902,7 +1906,7 @@ path begins with one of the strings in self.cgi_directories
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_executable', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_executable" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">is_executable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">is_executable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Test whether argument path is an executable file.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">executable</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </pre></div>
@@ -1924,7 +1928,7 @@ path begins with one of the strings in self.cgi_directories
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_python', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.is_python" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">is_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">is_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="c1"># Extend as to enable .cgi files to be recognized (Windows issue)</span>
     <span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tail</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">,</span> <span class="s2">&quot;.pyw&quot;</span><span class="p">,</span> <span class="s2">&quot;.cgi&quot;</span><span class="p">)</span>
@@ -1951,7 +1955,7 @@ interface the same as for send_head().</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.list_directory', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.list_directory" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">list_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">list_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Helper to produce a directory listing (absent index.html).</span>
 <span class="sd">    Return value is either a file object, or None (indicating an</span>
 <span class="sd">    error).  In either case, the headers are sent, making the</span>
@@ -2010,7 +2014,7 @@ interface the same as for send_head().</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_date_time_string', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_date_time_string" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">log_date_time_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_date_time_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the current time formatted for logging.&quot;&quot;&quot;</span>
     <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hh</span><span class="p">,</span> <span class="n">mm</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
@@ -2041,7 +2045,7 @@ default it passes the message on to log_message().</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_error', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_error" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Log an error.</span>
 <span class="sd">    This is called when a request cannot be fulfilled.  By</span>
 <span class="sd">    default it passes the message on to log_message().</span>
@@ -2078,7 +2082,7 @@ message.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_message', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_message" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">log_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Log an arbitrary message.</span>
 <span class="sd">    This is used by all other logging functions.  Override</span>
 <span class="sd">    it if you have specific logging wishes.</span>
@@ -2115,7 +2119,7 @@ message.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_request', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.log_request" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">log_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Log an accepted request.</span>
 <span class="sd">    This is called by send_response().</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2146,7 +2150,7 @@ error is sent back.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.parse_request', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.parse_request" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">parse_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">parse_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parse a request (internal).</span>
 <span class="sd">    The request should be stored in self.raw_requestline; the results</span>
 <span class="sd">    are in self.command, self.path, self.request_version and</span>
@@ -2229,7 +2233,7 @@ error is sent back.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.run_cgi', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.run_cgi" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">run_cgi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">run_cgi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Execute a CGI script.&quot;&quot;&quot;</span>
     <span class="nb">dir</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgi_info</span>
     <span class="n">path</span> <span class="o">=</span> <span class="nb">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">rest</span>
@@ -2435,7 +2439,7 @@ a piece of HTML explaining the error to the user.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_error', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_error" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">send_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">send_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Send and log an error reply.</span>
 <span class="sd">    Arguments are the error code, and a detailed message.</span>
 <span class="sd">    The detailed message defaults to the short entry matching the</span>
@@ -2490,7 +2494,7 @@ a piece of HTML explaining the error to the user.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_head', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_head" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">send_head</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">send_head</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Version of send_head that support CGI scripts&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cgi</span><span class="p">():</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cgi</span><span class="p">()</span>
@@ -2516,7 +2520,7 @@ a piece of HTML explaining the error to the user.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_header', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_header" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">send_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">send_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Send a MIME header.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_version</span> <span class="o">!=</span> <span class="s1">&#39;HTTP/0.9&#39;</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="se">\r\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
@@ -2547,7 +2551,7 @@ version and the current date.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_response', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.send_response" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">send_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">send_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Send the response header and log the response code.</span>
 <span class="sd">    Also send two standard headers with the server software</span>
 <span class="sd">    version and the current date.</span>
@@ -2583,7 +2587,7 @@ version and the current date.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.setup', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.setup" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
@@ -2615,7 +2619,7 @@ probably be diagnosed.)</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.translate_path', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.translate_path" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">translate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">translate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Translate a /-separated PATH to the local filename syntax.</span>
 <span class="sd">    Components that mean special things to the local file system</span>
 <span class="sd">    (e.g. drive or directory names) are ignored.  (XXX They should</span>
@@ -2658,7 +2662,7 @@ probably be diagnosed.)</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.version_string', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.serve_cgi.MyCGIHTTPRequestHandler.version_string" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">version_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">version_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the server software version string.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_version</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_version</span>
 </pre></div>

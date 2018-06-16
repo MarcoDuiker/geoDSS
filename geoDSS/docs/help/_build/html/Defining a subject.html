@@ -1,0 +1,118 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Defining a subject &#8212; geoDSS 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Use Cases" href="Use cases.html" />
+    <link rel="prev" title="Defining a rule set" href="Defining a rule set.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="defining-a-subject">
+<span id="subject"></span><h1>Defining a subject<a class="headerlink" href="#defining-a-subject" title="Permalink to this headline">¶</a></h1>
+<p>A subject is built on two structures:</p>
+<ul class="simple">
+<li>A collection of name/value pairs</li>
+<li>An ordered list of values</li>
+</ul>
+<p>The subject is passed to the rules in the rule set as a Python dict, consisting of:</p>
+<ul class="simple">
+<li>dicts</li>
+<li>lists</li>
+<li>numbers</li>
+<li>strings</li>
+</ul>
+<p>combined in any way you like.</p>
+<p>Of course, this description is very generic. A subject has to fit the rules defined in the rule set where it is evaluated against. For example a processor which geocodes an address needs an address in the subject.</p>
+<p>Most <a class="reference internal" href="Tests.html#tests"><span class="std std-ref">Tests</span></a> and <a class="reference internal" href="Processors.html#processors"><span class="std std-ref">Processors</span></a> expect the subject to be a simple list of key-value pairs like these examples (in <a class="reference external" href="https://json.org">json</a> format):</p>
+<p>tests.get_map:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;geometry&quot;</span><span class="p">:</span> <span class="s2">&quot;SRID=28992;POINT(136905.198 430762.454)&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>processors.pdok_locatieserver:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;postcode&quot;</span><span class="p">:</span> <span class="s2">&quot;4171KG&quot;</span><span class="p">,</span> <span class="s2">&quot;huisnummer&quot;</span><span class="p">:</span> <span class="s2">&quot;74&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>tests.request:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="s2">&quot;github+geoDSS&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Defining a rule set.html" title="previous chapter">Defining a rule set</a></li>
+      <li>Next: <a href="Use cases.html" title="next chapter">Use Cases</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Marco Duiker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Defining a subject.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

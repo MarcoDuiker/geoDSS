@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Tests &#8212; geoDSS 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Processors" href="Processors.html" />
+    <link rel="prev" title="Loaders" href="Loaders.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tests">
+<span id="id1"></span><h1>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h1>
+<p>geoDSS has many tests which, together with the <a class="reference internal" href="Processors.html#processors"><span class="std std-ref">Processors</span></a>, provide the fundamental building blocks for a <a class="reference internal" href="Defining a rule set.html#ruleset"><span class="std std-ref">rule set</span></a>.</p>
+<p>A test will either evaluate to <cite>True</cite> or <cite>False</cite>. When the test evaluates to <cite>True</cite> something will be added to the report. A test optionally modifies the subject.</p>
+<p>Tests are explained in detail in the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/tests/index.html">tests section of the API documentation</a></p>
+<p>In this help, tests are explained at a more functional level. Don’t forget to refer to the API documentation for all the relevant details.</p>
+<div class="section" id="unit-test">
+<h2>unit_test<a class="headerlink" href="#unit-test" title="Permalink to this headline">¶</a></h2>
+<p>The unit_test is only there to see if geoDSS is functioning properly. It won’t test if other processors or tests function properly. It only tests the basic framework.</p>
+</div>
+<div class="section" id="remark">
+<h2>remark<a class="headerlink" href="#remark" title="Permalink to this headline">¶</a></h2>
+<p>The remark test always evaluates to <cite>True</cite>, so is designed to put a remark into the report.</p>
+<p>To make this more useful, you can put in values from the subject by using the <code class="docutils literal"><span class="pre">{parameter}</span></code> syntax. Furthermore you can insert a timestamp by specifying <code class="docutils literal"><span class="pre">{timestamp}</span></code> in the report_template.</p>
+</div>
+<div class="section" id="get-map">
+<h2>get_map<a class="headerlink" href="#get-map" title="Permalink to this headline">¶</a></h2>
+<p>The get_map test constructs a WMS GetMap request based on a geometry in the subject. Just like the <cite>remark</cite> test, this test always evaluates to <cite>True</cite>. So you can regard this test as something to put a map remark in the report.</p>
+<p>You can add a buffer so that the geometry ends up in the middle of the map.</p>
+<p>When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the image can be added.</p>
+</div>
+<div class="section" id="key-value-compare">
+<h2>key_value_compare<a class="headerlink" href="#key-value-compare" title="Permalink to this headline">¶</a></h2>
+<p>This test compares a key from the subject with a value given in the rule or in the subject itself.</p>
+<p>When comparing strings the <code class="docutils literal"><span class="pre">==</span></code> and <code class="docutils literal"><span class="pre">in</span></code> operators are most useful. This last one tests if the value is contained by the string.</p>
+<p>When comparing numbers all operators are useful except for the <code class="docutils literal"><span class="pre">in</span></code> operator.</p>
+</div>
+<div class="section" id="evaluate">
+<h2>evaluate<a class="headerlink" href="#evaluate" title="Permalink to this headline">¶</a></h2>
+<p>The evaluate test is designed to evaluate a combination of proviously executed tests using an expression. Eg.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rules</span><span class="o">.</span><span class="n">first_test</span> <span class="ow">and</span> <span class="n">rules</span><span class="o">.</span><span class="n">second_test</span> <span class="ow">or</span> <span class="n">rules</span><span class="o">.</span><span class="n">third_test</span>
+</pre></div>
+</div>
+<p>If such an expression evaluates to <cite>True</cite>, the report_template is reported. You can add a list of prveviously exectued tests from which to add the reports as well. This is most useful when these tests are configured with <code class="docutils literal"><span class="pre">report:</span> <span class="pre">False</span></code> to suppress reporting.</p>
+</div>
+<div class="section" id="request">
+<h2>request<a class="headerlink" href="#request" title="Permalink to this headline">¶</a></h2>
+<p>This test does a http(s) request using GET, POST or HEAD. The test evaluates to <cite>True</cite> or <cite>False</cite> depending on the status code returned by the server or by testing if a string is present in the content.</p>
+<p>URL and/ or data to send can be configured both in the rule as well as in the subject.</p>
+<p>As a complete payload can be POSTed (via the subject), it is easy to test a WFS service with an extensive query.</p>
+<p>If necessary, you can provide username and password for Basic Authetication or Digest Authentication. You can also add any header(s) you like to the request.</p>
+<p>As geoDSS has a script to run in a scheduled manner, this test is well suited to create a monitor on a webservice. For this, it is nice that a timestamp, status_code, response_time and even te entire response can be inserted in the report_template via the <code class="docutils literal"><span class="pre">{parameter}</span></code> syntax.</p>
+<p>The response from the server can also be added to the subject on any key you like.</p>
+</div>
+<div class="section" id="postgis-spatial-select">
+<h2>postgis_spatial_select<a class="headerlink" href="#postgis-spatial-select" title="Permalink to this headline">¶</a></h2>
+<p>This test is the workhorse of geoDSS. You need to have access to PostgreSQL/ Postgis (either on localhost or another server).</p>
+<p>This tests performs a query in the database and if one ore more rows are returned, the test evaluates to ‘True’.</p>
+<p>The query send to the database is in the following form:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="o">&lt;</span><span class="n">schema</span><span class="o">&gt;.&lt;</span><span class="n">table</span><span class="o">&gt;</span> <span class="n">WHERE</span> <span class="o">&lt;</span><span class="n">relationship</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&lt;</span><span class="n">relationship_parameters</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">&lt;</span><span class="n">where</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>All <code class="docutils literal"><span class="pre">&lt;things</span> <span class="pre">written</span> <span class="pre">like</span> <span class="pre">this&gt;</span></code> are configured in the rule. In this way, most functions from the “Spatial Relationships and Measurements” section on the <a class="reference external" href="https://postgis.net/docs/reference.html">PostGIS reference page</a> can be used.</p>
+<p>The test outputs one report for each line in the query results. In the report_template, the <code class="docutils literal"><span class="pre">{column_name}</span></code> syntax can be used to put the value in the column <code class="docutils literal"><span class="pre">column_name</span></code> in the report.</p>
+<p>To use this test you need to set up a rule like (&lt;where&gt; is optional):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>- dwithin_example:
+    type: tests.postgis_spatial_select
+    title: dwithin example with 1000 units (meters ?) distance
+    description: &quot;&quot;
+    schema: public
+    table: your_table_name
+    relationship: ST_DWithin
+    parameters:
+    - &quot;subject.geometry&quot;
+    - &quot;wkb_geometry&quot;
+    - &quot;1000&quot;
+    report_template: Found a hit with a value in the column your_column: {your_column}
+    db:
+        dbname: your_database_name
+</pre></div>
+</div>
+<p>This rule is doing a Postgis ST_DWithin query. Under the “synopsis” section of the <a class="reference external" href="https://postgis.net/docs/ST_DWithin.html">documentation of ST_Dwithin</a> you can see that ST_Dwithin takes 3 parameters.
+Exactly these parameters are defined in the <code class="docutils literal"><span class="pre">parameters</span></code> section of the example above.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">&quot;subject.geometry&quot;</span></code> is substituted by the geometry in the subject (in the key <code class="docutils literal"><span class="pre">geometry</span></code>).</li>
+<li><code class="docutils literal"><span class="pre">&quot;wkb_geometry&quot;</span></code> is the name of the geometry column of the table</li>
+<li><code class="docutils literal"><span class="pre">1000</span></code> is the distance in units of the spatial reference system the geometry column is in</li>
+</ul>
+</div>
+<div class="section" id="wfs2-spatialoperator">
+<h2>wfs2_SpatialOperator<a class="headerlink" href="#wfs2-spatialoperator" title="Permalink to this headline">¶</a></h2>
+<p>This test sends a query to a WFS 2.0.0 service and if one or more rows are returned, the test evaluates to ‘True’.</p>
+<p>The test outputs one report for each line in the query results. In the report_template, the <code class="docutils literal"><span class="pre">{column_name}</span></code> syntax can be used to put the value in the column <code class="docutils literal"><span class="pre">column_name</span></code> in the report.</p>
+<p>The most common WFS spatial operators are supported:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Disjoint</li>
+<li>DWithin</li>
+<li>Intersects</li>
+<li>Touches</li>
+<li>Crosses</li>
+<li>Within</li>
+<li>Contains</li>
+<li>Overlaps</li>
+</ul>
+</div></blockquote>
+<p>To use this test you need to set up a rule like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>- DWithin_example:
+     type: tests.wfs_SpatialOperator
+     title: Gemeenten binnen 40 km van de aanvraag
+     description: &quot;&quot;
+     url: https://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wfs?
+     typename: &quot;bestuurlijkegrenzen:gemeenten&quot;
+     geometryname: geom
+     namespace:
+         prefix: app
+         URI: &quot;http://www.deegree.org/app&quot;
+     spatial_operator: DWithin
+     distance: 40000
+     report_template: Doorsturen naar B&amp;W van gemeente {gemeentenaam}
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Loaders.html" title="previous chapter">Loaders</a></li>
+      <li>Next: <a href="Processors.html" title="next chapter">Processors</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Marco Duiker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Tests.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

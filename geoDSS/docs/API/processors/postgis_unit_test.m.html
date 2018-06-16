@@ -901,8 +901,10 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -913,9 +915,11 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1069,7 +1073,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.postgis_unit_test', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.processors.postgis_unit_test" class="source">
-    <div class="codehilite"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
+    <div class="codehilite"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">psycopg2</span>
@@ -1196,7 +1200,7 @@ table {
 <p><code>db</code> (dict):                          a dictionary specifying a postgis database connection</p>
 <h2>Rule example</h2>
 <p>a suitable yaml snippet would be:</p>
-<div class="codehilite"><pre><span class="n">rules</span><span class="o">:</span>
+<div class="codehilite"><pre><span></span><span class="n">rules</span><span class="o">:</span>
     <span class="n">my_postgis_test</span><span class="o">:</span>
         <span class="n">type</span><span class="o">:</span> <span class="n">processors</span><span class="o">.</span><span class="na">postgis_unit_test</span>
         <span class="n">title</span><span class="o">:</span> <span class="n">processor</span> <span class="n">unit</span> <span class="n">test</span>
@@ -1208,12 +1212,12 @@ table {
 
 <h2>Subject example</h2>
 <p>a usefull subject for this would be:</p>
-<div class="codehilite"><pre>subject = {&quot;geometry&quot;: &quot;SRID=28992;POINT(125000 360000)&quot;}
+<div class="codehilite"><pre><span></span>subject = {&quot;geometry&quot;: &quot;SRID=28992;POINT(125000 360000)&quot;}
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.postgis_unit_test.postgis_unit_test', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.processors.postgis_unit_test.postgis_unit_test" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">postgis_unit_test</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">postgis_unit_test</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    this processor provides a unit-like test for Postgis processing by buffering with distance 1</span>
 
@@ -1326,7 +1330,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.postgis_unit_test.postgis_unit_test.__init__', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.processors.postgis_unit_test.postgis_unit_test.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">rules</span><span class="p">,</span> <span class="n">settings</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">rules</span><span class="p">,</span> <span class="n">settings</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">definition</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1363,7 +1367,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.postgis_unit_test.postgis_unit_test.execute', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.processors.postgis_unit_test.postgis_unit_test.execute" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Executes the postgis unit-like test processor</span>
 <span class="sd">    `subject` is expected to be a dict having:</span>

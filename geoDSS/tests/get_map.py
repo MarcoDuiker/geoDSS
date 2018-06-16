@@ -43,12 +43,13 @@ class get_map(test):
     `flip_axes`      (optional) When using WMS 1.3.0 specify True if EPSG code and service requires the BBOX to be ymin,xmin,ymax,xmax
 
     `report_template` (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url.
-                                    When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the 
-                                    image can be added by providing an alt text like this:
                                     
-                                    `report_template`: "![Centered_map_small]({url})"
+        When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the 
+        image can be added by providing an alt text like this:
+                                    
+            `report_template`: "![Centered_map_small]({url})"
 
-                                    _small, _medium and _large refer to the image size. If no red box appears, go one size up.
+            _small, _medium and _large refer to the image size. If no red box appears, go one size up.
 
     Rule example
     ------------

@@ -1,0 +1,138 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Introduction &#8212; geoDSS 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Install" href="Install.html" />
+    <link rel="prev" title="Welcome to geoDSS’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="so-what-is-geodss-and-who-is-it-meant-for">
+<h2>So what is geoDSS and who is it meant for?<a class="headerlink" href="#so-what-is-geodss-and-who-is-it-meant-for" title="Permalink to this headline">¶</a></h2>
+<p>geoDSS is a tool aimed at non-programmers wanting to run sets of automated tests, mostly (but not necessarily) in the geo-spatial domain.
+Running a set of automated tests results in a report, often in html-format.</p>
+<p>So typically a GIS-specialist would create something that geocodes an address and test if this address is within an area of interest.</p>
+<p>geoDSS can run in batch mode and scheduled mode, often resulting in reports in .csv format. geoDSS can be run from the command line, as a cgi or wsgi web application.
+Furthermore geoDSS can be imported as a Python module and then be used with a few simple lines of Python.</p>
+<p>As geoDSS is very flexible it is also possible to monitor webservices, batch convert addresses to coordinates and much more.</p>
+<p>On top of that geoDSS is very extendable so that a programmer (or someone who can copy, paste and adapt Python code) can add to geoDSS capabilities.
+Eg. add tests and reporters.</p>
+</div>
+<div class="section" id="getting-help">
+<h2>Getting help<a class="headerlink" href="#getting-help" title="Permalink to this headline">¶</a></h2>
+<p>All code lives on GitHub, where you can find this documentation and API documentation providing all the details.</p>
+<p>On GitHub you’ll also find an issues page for reporting bugs.</p>
+<p>geoDSS has an examples folder with a lot of examples to get you started.</p>
+</div>
+<div class="section" id="concepts">
+<h2>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h2>
+<p>Before putting geoDSS to good use you need to know a few basic concepts used in geoDSS:</p>
+<div class="section" id="subject">
+<h3>Subject<a class="headerlink" href="#subject" title="Permalink to this headline">¶</a></h3>
+<p>A <a class="reference internal" href="Defining a subject.html#subject"><span class="std std-ref">subject</span></a> is evaluated against the <a class="reference internal" href="Defining a rule set.html#rules"><span class="std std-ref">Rules</span></a>. Eg. an address or a coordinate.</p>
+</div>
+<div class="section" id="rule">
+<h3>Rule<a class="headerlink" href="#rule" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="Defining a rule set.html#rules"><span class="std std-ref">Rules</span></a> can be of different types: <a class="reference internal" href="Tests.html#tests"><span class="std std-ref">Tests</span></a> or <a class="reference internal" href="Processors.html#processors"><span class="std std-ref">Processors</span></a>.</p>
+<p>A test will either evaluate to <cite>True</cite> or <cite>False</cite>. When the test evaluates to <cite>True</cite> something will be added to the report.</p>
+<p>A processor alters the subject. Eg. put a buffer around a point, or geocode an address.</p>
+</div>
+<div class="section" id="rule-set">
+<h3>Rule set<a class="headerlink" href="#rule-set" title="Permalink to this headline">¶</a></h3>
+<p>A set of <a class="reference internal" href="Defining a rule set.html#rules"><span class="std std-ref">Rules</span></a>, executed in order.</p>
+</div>
+<div class="section" id="report">
+<h3>Report<a class="headerlink" href="#report" title="Permalink to this headline">¶</a></h3>
+<p>A <a class="reference internal" href="Reporters.html#report"><span class="std std-ref">Reporters</span></a> is a collection of things reported by the <a class="reference internal" href="Defining a rule set.html#rules"><span class="std std-ref">Rules</span></a> in the <a class="reference internal" href="Defining a rule set.html#ruleset"><span class="std std-ref">rule set</span></a>. Most of the time this will be a html page.</p>
+</div>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>Probably the easiest way to try geoDSS is firing up the integrated webserver by executing <cite>serve_cgi</cite> and then browse to:</p>
+<p><a class="reference external" href="http://localhost:8000/cgi-bin/interfaces.py?form=geoDSS/examples/forms/basic.yaml&amp;template=geoDSS/examples/forms/basic_template.html&amp;output_format=html">http://localhost:8000/cgi-bin/interfaces.py?form=geoDSS/examples/forms/basic.yaml&amp;template=geoDSS/examples/forms/basic_template.html&amp;output_format=html</a></p>
+<p>The next thing to try is to execute an example from the command line (in a terminal):</p>
+<p><code class="docutils literal"><span class="pre">./geoDSS</span> <span class="pre">examples/rule_sets/unit_test.yaml</span> <span class="pre">'{&quot;result&quot;:</span> <span class="pre">true,</span> <span class="pre">&quot;geometry&quot;:</span> <span class="pre">&quot;SRID=28992;POINT(125000</span> <span class="pre">360000)&quot;</span> <span class="pre">}'</span></code></p>
+<p>Probably now it’s best to go to the use cases section of this help. There you’ll find some more elaborate examples and recipes.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to geoDSS’s documentation!</a></li>
+      <li>Next: <a href="Install.html" title="next chapter">Install</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Marco Duiker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Introduction.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -65,6 +65,7 @@ class request(test):
 
     `return_value`   When given the test will evaluate to True if the return value is in the response content.
                      If not given, only the returned status code will determine if the test evaluates to True.
+                     If `return_value` is a key in the subject, then the value of that key is used.
 
     `report_template` (string):     The string to report when the test evaluated to True.
                                     The following placeholders will be replaced:
@@ -73,6 +74,8 @@ class request(test):
     - `{status_code}`               will be replaced by the status code of the response.
     - `{response_time}`             will be replaced with the response time.
     - `{timestamp}`                 will be replaced by the ISO timestamp. 
+
+    `return_subject_key`    When given, this subject key will receive the response.
 
     Rule example
     ------------
@@ -110,39 +113,42 @@ class request(test):
                            urlencoded before being appended to the url.
         '''
 
-        params = self.definition
-        url = params['url']
+        
+        url = self.definition['url']
         if url in subject:
             url = subject[url]
 
-        try:
-            auth = None
-            if 'basicAuth' in params:
-                auth = HTTPBasicAuth(**params['basicAuth'])
-            if 'digestAuth' in params:
-                auth = HTTPDigestAuth(**params['digestAuth'])
-        except Exception as error:
-            return self._handle_execution_exception(subject, "Could not setup authentication with error: " + str(error))
-
+        auth = None
         verify = True
-        if 'verify' in params:
-            verify = params['verify']
-
         headers = None
-        if 'headers' in params:
-            headers = params['headers']
+        
+        if 'params' in self.definition:
+            params = self.definition['params']
+            try:
+                if 'basicAuth' in params:
+                    auth = HTTPBasicAuth(**params['basicAuth'])
+                if 'digestAuth' in params:
+                    auth = HTTPDigestAuth(**params['digestAuth'])
+            except Exception as error:
+                return self._handle_execution_exception(subject, "Could not setup authentication with error: " + str(error))
+            if 'verify' in params:
+                verify = params['verify']
+            if 'headers' in params:
+                headers = params['headers']
 
         status_codes = None
-        if 'status_codes' in params:
-            status_codes = params['status_codes']
+        if 'status_codes' in self.definition:
+            status_codes = self.definition['status_codes']
 
         data = None
         if 'request_data' in subject:
             data = subject['request_data']
-        if type(data) == str and os.path.exists(data):
+            self.logger.debug("Using %s with type: %s as data" % (str(data), type(data)))
+        if isinstance(data, basestring) and os.path.exists(data):
+            self.logger.debug("Reading %s as data" % (str(data)))
             with open(data,'rb') as stream:
                 data = stream.read()
-        if type(data) == str and not params["verb"] == 'POST':
+        if isinstance(data, basestring) and not self.definition["verb"] == 'POST':
             # append the string to the url
             if '?' in url:
                 if not url[-1] == '&':
@@ -152,30 +158,34 @@ class request(test):
             url = url + urlencode(data)
             data = None
 
-        if params["verb"] == 'GET':
+        if self.definition["verb"] == 'GET':
             try:
                 response = requests.get(url, params=data, headers=headers, verify=verify, auth=auth)
             except Exception as error:
                 return self._handle_execution_exception(subject, "Could not 'GET' url '%s' with error: %s" % (url, str(error)))
-        elif params["verb"] == 'POST':
+        elif self.definition["verb"] == 'POST':
             try:
                 response = requests.post(url, data=data, headers=headers, verify=verify, auth=auth)
             except Exception as error:
                 return self._handle_execution_exception(subject, "Could not 'POST' on url '%s' with error: %s" % (url, str(error)))
-        elif params["verb"] == 'HEAD':
+        elif self.definition["verb"] == 'HEAD':
             try:
                 response = requests.head(url, params=data, headers=headers, verify=verify, auth=auth)
             except Exception as error:
                 return self._handle_execution_exception(subject, "Could not 'HEAD' url '%s' with error: %s" % (url, str(error)))
         else:
-            return self._handle_execution_exception(subject, "HTML verb '%s' not supported." % params["verb"])
+            return self._handle_execution_exception(subject, "HTML verb '%s' not supported." % self.definition["verb"])
         
         self.executed = True
         if status_codes and response.status_code not in status_codes:
             self.decision = False
         else:
-            if 'return_value' in params:
-                if params['return_value'] in response.text:
+            if 'return_value' in self.definition:
+                if self.definition['return_value'] in subject:
+                    rv = subject[self.definition['return_value']]
+                else:
+                    rv = self.definition['return_value']
+                if rv in response.text:
                     self.decision = True
                 else:
                     self.decision = False
@@ -189,5 +199,8 @@ class request(test):
                 '{response_time}', str(response.elapsed.total_seconds())).replace(
                 '{timestamp}', datetime.datetime.now().isoformat())
             )
+
+        if 'return_subject_key' in self.definition:
+            subject[self.definition['return_subject_key']] = response.text
 
         return self._finish_execution(subject)

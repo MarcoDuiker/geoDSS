@@ -1,0 +1,114 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>UI_generators &#8212; geoDSS 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Scripts" href="Scripts.html" />
+    <link rel="prev" title="Reporters" href="Reporters.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ui-generators">
+<h1>UI_generators<a class="headerlink" href="#ui-generators" title="Permalink to this headline">¶</a></h1>
+<p>UI-generators are meant to help creating a user interface for the end user.</p>
+<p>Typically this involves generating a form where te user can specify the subject, and push a button to execute the subject against the rule_set.</p>
+<p>Up till now geoDSS has only one UI_generator which generates a web form.</p>
+<div class="section" id="form">
+<h2>form<a class="headerlink" href="#form" title="Permalink to this headline">¶</a></h2>
+<p>The form UI-generator generates a html form from a definition in <a class="reference external" href="http://yaml.org/">yaml</a> format.</p>
+<p>The geoDSS script <code class="docutils literal"><span class="pre">interfaces.py</span></code> can be used to generate the form and serve it to the user.</p>
+<p>The following example generates a form to enter a string to use to search in Google search:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">title</span><span class="p">:</span> <span class="n">geoDSS</span> <span class="n">example</span> <span class="n">form</span>
+<span class="n">url</span><span class="p">:</span> <span class="s2">&quot;http://localhost:8000/cgi-bin/interfaces.py&quot;</span>
+<span class="n">rule_set_file</span><span class="p">:</span> <span class="s2">&quot;../geoDSS/examples/rule_sets/request.yaml&quot;</span>
+<span class="n">description</span><span class="p">:</span> <span class="s2">&quot;Test google search by doing a search &quot;</span>
+<span class="n">subtitle</span><span class="p">:</span> <span class="s2">&quot;Subject&quot;</span>
+<span class="n">form_fields</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">search_string</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">q</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">Google</span> <span class="n">search</span> <span class="n">string</span>
+    <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;github+geoDSS&quot;</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">text</span>
+</pre></div>
+</div>
+<p>More information is in the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/ui_generators/form.m.html">API documentation of the form generator</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Reporters.html" title="previous chapter">Reporters</a></li>
+      <li>Next: <a href="Scripts.html" title="next chapter">Scripts</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Marco Duiker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/UI_generators.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

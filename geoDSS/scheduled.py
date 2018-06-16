@@ -45,7 +45,7 @@ class _VersionedOutputFile:
 
     # http://code.activestate.com/recipes/52277-saving-backups-when-writing-files/
     
-    def __init__(self, pathname, numSavedVersions=0):
+    def __init__(self, pathname, numSavedVersions=3):
         '''
         Create a new output file.
         
@@ -165,7 +165,7 @@ def execute_and_report(rule_set, subject, output_file, num_backups = 3):
         outf.write(rule_set.report())                       # reports accumulate as long as we don't re-initialize the geoDSS.rules_set
         outf.close()
     
-def schedule_geoDSS(rule_set_file, subject, output_file, interval = 1, units = "hours", at = "00.00", for_minutes = 0, for_hours = 0, num_backups = 0):
+def schedule_geoDSS(rule_set_file, subject, output_file, interval = 1, units = "hours", at = "00.00", for_minutes = 0, for_hours = 0, num_backups = 3):
     '''
     Run geoDSS scheduled.
     '''
@@ -243,7 +243,7 @@ if __name__ == '__main__':
                                                                     help = 'Units in which interval is specified.')
     parser.add_argument("output_file",                              help = 'An output file to write the results to.')
     parser.add_argument("--at",                                     help = 'A specific moment on a day to run, specified as string: HH:MM. defaults to 00.00')
-    parser.add_argument("--num_backups", type = int, default = 0,   help = 'The number of backups kept when saving a new output_file.')
+    parser.add_argument("--num_backups", type = int, default = 3,   help = 'The number of backups kept when saving a new output_file.')
     
     during_group = parser.add_mutually_exclusive_group()
     during_group.add_argument("--for_minutes", type = int,          help = 'The number of minutes to run for.')

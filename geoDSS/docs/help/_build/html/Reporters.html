@@ -1,0 +1,135 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Reporters &#8212; geoDSS 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="UI_generators" href="UI_generators.html" />
+    <link rel="prev" title="Processors" href="Processors.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="reporters">
+<span id="report"></span><h1>Reporters<a class="headerlink" href="#reporters" title="Permalink to this headline">¶</a></h1>
+<p>The reporters report whatever the rules ask them to report.</p>
+<p>geoDSS has serveral reporters. In the rule_set you define the reporter to use.</p>
+<p>If no reporter is specified the default markdown reporter will be used.</p>
+<div class="section" id="md">
+<h2>md<a class="headerlink" href="#md" title="Permalink to this headline">¶</a></h2>
+<p>md is the markdown reporter which is the default reporter and will report in markdown or html.</p>
+<p>The report will contain a heading with information about the rule_set and the subject followed by the reports of the rules.</p>
+<p>The reporter can be configured in the rule_set file as illustrated in the following example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">reporter</span><span class="p">:</span> <span class="n">reporters</span><span class="o">.</span><span class="n">md</span>
+<span class="n">reporter_args</span><span class="p">:</span>
+  <span class="n">output_format</span><span class="p">:</span> <span class="n">html</span>
+  <span class="n">decision_false_report</span><span class="p">:</span> <span class="s2">&quot;Uitkomst test: **negatief**&quot;</span>
+  <span class="n">decision_error_report</span><span class="p">:</span> <span class="s2">&quot;**Fout**: test kwam niet tot een beslissing of rapportage&quot;</span>
+</pre></div>
+</div>
+<p>More information can be found in the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/reporters/md.m.html">API documentation of the md reporter</a>.</p>
+</div>
+<div class="section" id="plain-text">
+<h2>plain_text<a class="headerlink" href="#plain-text" title="Permalink to this headline">¶</a></h2>
+<p>The plain_text reporter reports in plain text and is especially useful for generating .csv files.</p>
+<p>For this the header of the .csv file is put in the description item of the rule_set.</p>
+<p>Each rule will add a line to the .csv file. Make sure that the output of the rule matches the header.</p>
+<p>This is illustrated in the following example of a rule set:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># With this rule set we can generate a CSV file by batch geocoding subjects</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">batch_geocoder</span>
+<span class="n">title</span><span class="p">:</span> <span class="n">Batch</span> <span class="n">geocode</span> <span class="n">using</span> <span class="n">the</span> <span class="n">PDOK</span> <span class="n">Locatieserver</span> <span class="n">geocoder</span>
+<span class="c1"># using the plain_text reporter we can use the description to generate the header</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">wkt_geom</span><span class="p">,</span><span class="n">address</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span>
+<span class="n">reporter</span><span class="p">:</span> <span class="n">reporters</span><span class="o">.</span><span class="n">plain_text</span>
+<span class="n">logging</span><span class="p">:</span>
+  <span class="n">level</span><span class="p">:</span> <span class="n">DEBUG</span>
+  <span class="n">file</span><span class="p">:</span> <span class="s2">&quot;/home/marco/batch_geocoder.log&quot;</span>
+<span class="n">rules</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">batch</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">processors</span><span class="o">.</span><span class="n">pdok_locatieserver</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">geocoder</span>
+    <span class="n">description</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">url</span><span class="p">:</span> <span class="s2">&quot;https://geodata.nationaalgeoregister.nl/locatieserver/v3/free?q=&quot;</span>
+<span class="c1"># the report template should match the header we created using the description</span>
+    <span class="n">report_template</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{wkt_geometry}</span><span class="s1">,&quot;</span><span class="si">{address}</span><span class="s1">&quot;,</span><span class="si">{x}</span><span class="s1">,</span><span class="si">{y}</span><span class="s1">&#39;</span>
+</pre></div>
+</div>
+<p>More information can be found in the <a class="reference external" href="https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/reporters/plain_text.m.html">API documentation of the plain_text reporter</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Processors.html" title="previous chapter">Processors</a></li>
+      <li>Next: <a href="UI_generators.html" title="next chapter">UI_generators</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Marco Duiker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Reporters.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
