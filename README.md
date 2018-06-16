@@ -53,7 +53,7 @@ Especially useful are:
 >https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/tests/index.html
 >https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/processors/index.html
 
-Help pages to be expected ...
+Help you can find in the [help pages](https://marcoduiker.github.io/geoDSS/geoDSS/docs/help/_build/html/index.html) .
 	
 
 Quick Start
@@ -150,7 +150,3 @@ Probably the easiest to understand and extend is `tests.remark`.
 
 Just don't forget to add your newly created test or processor to the `imports` in `__init__.py`. Otherwise your new addition won't show up!
 
-Future developments
--------------------
-
-You may expect help pages coming soon. They will be linked from here for easy access.
