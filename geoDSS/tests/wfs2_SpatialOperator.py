@@ -44,7 +44,7 @@ class wfs2_SpatialOperator(test):
 
     `url`                                 service endpoint for the DWithin request
     
-    `typename`                            the name of the layer queried
+    `typenames`                           a list of layers to be queried
     
     `geometryname`                        the name of the geometry field
     
@@ -70,7 +70,19 @@ class wfs2_SpatialOperator(test):
 
      Optionaly required:
 
-     `distance`                            the distance (buffer) around the subjects geometry (in meters) for the DWithin SpatialOperator
+     `distance`                           The distance (buffer) around the subjects geometry (in meters) for the DWithin SpatialOperator
+     
+     Optionaly having:
+     
+     `srsName`                            The name of the spatial reference system the WFS service should return the features in. eg. `EPSG:4326`. 
+                                          If not given the service default spatial reference system wil be used.
+                                          
+     `headers`                            a dict defining the headers for the request. Of not given `'Content-Type': 'application/xml'` is used.
+     
+     `buffer`                             a distance to buffer the subjects geometry with before sending it to the WFS server
+     
+     `single_request`                     Set to `true` (default) or `talse`. When set to `true` al typenames will be send in a single request. 
+                                          When set to `false` a separate request will be done for each typename
 
 
     Rule example
@@ -158,12 +170,62 @@ class wfs2_SpatialOperator(test):
 
     def _get_srsName(self, ewkt):
         '''
-        A private method to get a proper srsName for the WFS request
+        A private method to get a proper srsName for the WFS request from an EWKT string
         '''
 
         code = ewkt.split(';')[0].split('=')[1].strip()
         return "urn:ogc:def:crs:EPSG::%s" % str(code)
         
+    def _get_SRID_string(self,ewkt):
+        '''
+        A private method to get the EWKT projection string from an EWKT string
+        '''
+        
+        return ewkt.split(';')[0].strip()
+        
+    def _get_WKT_geometry(self, ewkt):
+        '''
+        A private method to get a WKT geometry string from an EWKT string
+        '''
+        
+        return ewkt.split(';')[1].strip()
+        
+    def _EWKT_from_WKT(self, srid, wkt ):
+        '''
+        Private method to get a valid EWKT geometry string from a WKT string and a EWKT SRID string
+        '''
+        
+        return ';'.join([srid,wkt])
+        
+        
+    def _buffer(self, ewkt, distance):
+        '''
+        A private method which buffers the geometry with a distance
+        '''
+        
+        g = ogr.CreateGeometryFromWkt(self._get_WKT_geometry(ewkt))
+        ng = g.Buffer(distance)
+
+        return self._EWKT_from_WKT(self._get_SRID_string(ewkt),ng.ExportToWkt())
+
+    def _getGMLGeom(self, ewkt):
+        '''
+        Returns a gml geometry for use in WFS spatial filtering.
+        
+        Does NOT support geometries of the MULTI type.
+        '''
+        
+        _wkt = self._WKTParser()
+        _wktGeomType, _posLists = _wkt(ewkt.split(';')[1], True)
+        _posList = " ".join(_posLists)
+        
+        if _wktGeomType == "point":
+            return '''<gml:Point gml:id="P1" srsName="%s"><gml:pos>%s</gml:pos></gml:Point>''' % (self._get_srsName(ewkt), _posList)
+        if _wktGeomType == "linestring":
+            return '''<gml:LineString gml:id="P1" srsName="%s"><gml:posList>%s</gml:posList></gml:LineString>''' % (self._get_srsName(ewkt), _posList)
+        if _wktGeomType == "polygon":
+            return '''<gml:Polygon gml:id="P1" srsName="%s"><gml:exterior><gml:LinearRing><gml:posList>%s</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon>''' % (self._get_srsName(ewkt), _posList)
+
     def _getFeature(self):
         '''
         returns a xml wrapper for a getFeature request
@@ -174,12 +236,15 @@ class wfs2_SpatialOperator(test):
                             %s
                         </GetFeature>'''
                         
-    def _Query(self, namespace, typename):
+    def _Query(self, namespace, typename, srsName = None):
         ''' 
         returns a xml wrapper for a Query
         '''
         
-        return ('''<Query xmlns:%s="%s" typeNames="%s">''' % (namespace['prefix'],namespace['URI'],typename)) + "%s </Query>"
+        if srsName:
+            return ('''<Query xmlns:%s="%s" typeNames="%s" srsName="%s">''' % (namespace['prefix'],namespace['URI'],typename, srsName)) + "%s </Query>"
+        else:        
+            return ('''<Query xmlns:%s="%s" typeNames="%s">''' % (namespace['prefix'],namespace['URI'],typename)) + "%s </Query>"
      
     def _Filter(self):
         ''' 
@@ -221,32 +286,17 @@ class wfs2_SpatialOperator(test):
         if not spatial_operator in _supported_spatial_operators:
             self._handle_execution_exception(subject, "Spatial Operator %s not supported. Choose one of %s." % (spatial_operator, str(_supported_spatial_operators) ))
 
+        _distance = ""
         if distance:
-            distance = '''<fes:Distance uom="m">%s</fes:Distance>''' % distance
-            
+            _distance = '''<fes:Distance uom="m">%s</fes:Distance>''' % distance
+
         return '''<fes:%s>
                     <fes:ValueReference>%s</fes:ValueReference>
                     %s
                     %s
-                </fes:%s>''' % (spatial_operator, geometryname, self._getGMLGeom(ewkt), distance, spatial_operator)
+                </fes:%s>''' % (spatial_operator, geometryname, self._getGMLGeom(ewkt), _distance, spatial_operator)
                 
-    def _getGMLGeom(self, ewkt):
-        '''
-        Returns a gml geometry for use in WFS spatial filtering.
-        
-        Does NOT support geometries of the MULTI type.
-        '''
-        
-        _wkt = self._WKTParser()
-        _wktGeomType, _posLists = _wkt(ewkt.split(';')[1], True)
-        _posList = _posLists[0]
-        
-        if _wktGeomType == "point":
-            return '''<gml:Point gml:id="P1" srsName="%s"><gml:pos>%s</gml:pos></gml:Point>''' % (self._get_srsName(ewkt), _posList)
-        if _wktGeomType == "linestring":
-            return '''<gml:Linestring gml:id="P1" srsName="%s"><gml:posList>%s</gml:posList></gml:Linestring>''' % (self._get_srsName(ewkt), _posList)
-        if _wktGeomType == "linestring":
-            return '''<gml:Polygon gml:id="P1" srsName="%s"><gml:posList>%s</gml:posList></gml:Polygon>''' % (self._get_srsName(ewkt), _posList)
+
                 
     def execute(self, subject):
         ''' 
@@ -260,47 +310,83 @@ class wfs2_SpatialOperator(test):
         '''
 
         _distance = None
-        if self.definition['distance']:
+        if 'distance' in self.definition:
             _distance = self.definition['distance']
+            
+        _srsName = None
+        if 'srsName' in self.definition:
+            _srsName = self.definition['srsName']
+            
+        _headers = {'Content-Type': 'application/xml'}
+        if 'headers' in self.definition:
+            _headers = self.definition['headers']
         
-        _operator = self._SpatialOperator(self.definition['spatial_operator'], subject['geometry'], self.definition['geometryname'], _distance)
-        _filter = self._Filter() % _operator
-        _query = self._Query(self.definition['namespace'], self.definition['typename']) % _filter
-        payload = self._getFeature() % _query
-
-        self.logger.debug("Sending WFS-query to: " + self.definition['url'])
-        self.logger.debug(payload)
-        try:
-            r = requests.post(url = self.definition['url'], data=payload, headers={'Content-Type': 'application/xml'})
-        except Exception as error:
-            self.logger.debug(traceback.format_exc())
-            return self._handle_execution_exception( subject, 'Failed WFS request with error: ' + str(error) )
-
+        _geometry = subject['geometry']
+        if 'buffer' in self.definition:
+            _geometry = self._buffer(subject['geometry'], self.definition['buffer'])
+        #self.logger.debug('using geometry: ' + _geometry)
+        
+        _single_request = True
+        if 'single_request' in self.definition:
+            _single_request = self.definition['single_request'] 
+            
+        _type_names = self.definition['typenames']
+        if _single_request:
+            _type_names = [",".join(self.definition['typenames'])]
+        
         tmp_folder = tempfile.mkdtemp()
-        gml_file = os.path.join(tmp_folder,"response.gml")
-        with open(gml_file, 'wb') as f:
-            f.write(r.content)
+        for _type_name in _type_names:
+            _operator = self._SpatialOperator(self.definition['spatial_operator'], _geometry, self.definition['geometryname'], _distance)
+            _filter = self._Filter() % _operator
+            _query = self._Query(self.definition['namespace'], _type_name, _srsName) % _filter
+            payload = self._getFeature() % _query
 
-        gdal.UseExceptions() 
-        dataSource = ogr.Open(gml_file)
-        layer = dataSource.GetLayer()
-        layerDefinition = layer.GetLayerDefn()
-        cols = []
-        for i in range(layerDefinition.GetFieldCount()):
-            cols.append(layerDefinition.GetFieldDefn(i).GetName())
+            self.logger.debug("Sending WFS-query to: " + self.definition['url'])
+            self.logger.debug(payload)
+            try:
+                r = requests.post(url = self.definition['url'], data=payload, headers=_headers)
+            except Exception as error:
+                self.logger.debug(traceback.format_exc())
+                return self._handle_execution_exception( subject, 'Failed WFS request with error: ' + str(error) )
+                
+            if r.status_code == requests.codes.ok:
+                if "<Exception" in r.content or ":Exception" in r.content:
+                    self.logger.debug("Found Exception in WFS response:" + r.content)
+                    return self._handle_execution_exception( subject, 'Failed WFS request with error: ' + r.content )
+                gml_file = os.path.join(tmp_folder,"response.gml")
+                with open(gml_file, 'wb') as f:
+                    f.write(r.content)
 
-        for feature in layer:
-            to_report = self.definition['report_template']
-            self.decision = True
-            for col in cols:
-                if "{%s}" % col in to_report:
-                    to_report = to_report.replace("{%s}" % col, str(feature.GetField(col)))
-            if not to_report in self.result:
-                self.result.append(to_report)
+                gdal.UseExceptions() 
+                dataSource = ogr.Open(gml_file)
+                if dataSource is None:
+                    return self._handle_execution_exception( subject, 'Failed reading WFS request for an unknown reason')
+                else:
+                    layer = dataSource.GetLayer()
+                    if layer:
+                        layerDefinition = layer.GetLayerDefn()
+                                        
+                        cols = []
+                        for i in range(layerDefinition.GetFieldCount()):
+                            cols.append(layerDefinition.GetFieldDefn(i).GetName())
 
+                        for feature in layer:
+                            to_report = self.definition['report_template']
+                            self.decision = True
+                            for col in cols:
+                                if "{%s}" % col in to_report:
+                                    to_report = to_report.replace("{%s}" % col, str(feature.GetField(col)))
+                            if not to_report in self.result:
+                                self.result.append(to_report)
+                    else:
+                        # we have 0 features
+                        self.decision = False
+            else:
+                return self._handle_execution_exception( subject, 'WFS returned statuscode: ' + str(r.status_code) )
+                
         shutil.rmtree(tmp_folder)
 
-        self.executed = True                                                                # don't forget to set self.executed to True, 
-                                                                                            # otherwise "Error: test is not executed:" will be added to the report as well
+        self.executed = True                                                            # don't forget to set self.executed to True, 
+                                                                                        # otherwise "Error: test is not executed:" will be added to the report as well
 
-        return self._finish_execution(subject)                                              # Returns False to end execution or the subject to continue to the next test 
+        return self._finish_execution(subject)                                          # Returns False to end execution or the subject to continue to the next test 

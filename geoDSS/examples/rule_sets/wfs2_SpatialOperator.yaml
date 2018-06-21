@@ -15,7 +15,8 @@ rules:
     title: Gemeenten binnen 40 km van de aanvraag
     description: ""
     url: https://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wfs?
-    typename: "bestuurlijkegrenzen:gemeenten"
+    typenames: 
+    - "bestuurlijkegrenzen:gemeenten"
     geometryname: geom
     namespace:
         prefix: app

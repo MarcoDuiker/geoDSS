@@ -23,7 +23,8 @@ On windows start serve_cgi by running `serve_cgi.bat`.
 On Linux start serve_cgi by running `serve_cgi.sh` or `serve_cgi.py`.
 
 Once you've started serve_cgi you can open a browser and browse to one of the examples:
->http://localhost:8000/cgi-bin/interfaces.py?form=geoDSS/examples/forms/basic.yaml&template=geoDSS/examples/forms/basic_template.html&output_format=html
+>http://localhost:8000/cgi-bin/interfaces.py?form=../geoDSS/examples/forms/basic.yaml&template=../geoDSS/examples/forms/basic_template.html&output_format=html
+>http://localhost:8000/cgi-bin/interfaces.py?output_format=html&rule_set_file=../geoDSS/examples/rule_sets/bag_geocoder_test.yaml&subject={"postcode": "4171KG", "huisnummer": "74"}
 
 '''
 
@@ -44,8 +45,10 @@ class MyCGIHTTPRequestHandler(CGIHTTPServer.CGIHTTPRequestHandler):
 def main():
 
     server = CGIHTTPServer.BaseHTTPServer.HTTPServer((address, port), MyCGIHTTPRequestHandler)
+    help = '\nHTTP and CGI server starting, browse to http://127.0.0.1:%i/cgi-bin/interfaces.py, shutdown with Ctrl-C' % port
+    help = help + '\nExample: http://localhost:8000/cgi-bin/interfaces.py?output_format=html&rule_set_file=../geoDSS/examples/rule_sets/bag_geocoder_test.yaml&subject={"postcode": "4171KG", "huisnummer": "74"}'
     try:
-        print('HTTP and CGI server starting, browse to http://127.0.0.1:%i/cgi-bin/interfaces.py, shutdown with Ctrl-C' % port)
+        print(help)
         server.serve_forever()
     except KeyboardInterrupt:
         server.socket.close()
