@@ -44,6 +44,23 @@ And then do:
 
 	pip install <the_wheel_file_you_created.whl>
 	
+####Requirements
+
+Processors and tests can have dependencies on non-standard Python libraries. When these are not installed, the test or processor won't run, but other tests and processors will.
+
+The following libraries are not optional:
+
+- yaml
+- markdown
+- requests
+
+Most off the time you'll also want to install:
+
+- psycopg2
+- json
+- xml
+
+	
 Documentation
 -------------
 
@@ -51,8 +68,11 @@ The [API-docs](https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/index.html) 
 
 Especially useful are:
 >https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/interfaces.m.html
+
 >https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/base.m.html
+
 >https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/tests/index.html
+
 >https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/processors/index.html
 
 Help you can find in the [help pages](https://marcoduiker.github.io/geoDSS/geoDSS/docs/help/_build/html/index.html) .
