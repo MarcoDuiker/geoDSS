@@ -42,15 +42,18 @@ class wfs2_SpatialOperator(test):
 
     `definition`                          is expected to be a dict having at least:
 
-    `url`                                 service endpoint for the DWithin request
+    `url` (string)                        service endpoint for the DWithin request
     
-    `typenames`                           a list of layers to be queried
+    `typenames` (list)                    a list of layers to be queried
     
-    `geometryname`                        the name of the geometry field
+    `geometryname` (string)               the name of the geometry field
     
-    `namespace`                           a dict defining the namespace needed for a proper query. Eg. `app="http://www.deegree.org/app"`
-    - `prefix`                            the xml prefix used. eg. `app`
-    - `URI`                               the xml namespace URI. eg. `"http://www.deegree.org/app"`
+    `namespace` (dict)                    a dict defining the namespace needed for a proper query. 
+                                          Eg. `app="http://www.deegree.org/app"`
+    
+     - `prefix`                            the xml prefix used. eg. `app`
+     
+     - `URI`                               the xml namespace URI. eg. `"http://www.deegree.org/app"`
     
     `spatial_operator`                    the WFS Spatial Operator to use. Should be one of:
     
@@ -68,20 +71,22 @@ class wfs2_SpatialOperator(test):
                                           In the string columns in the result set of the query can be named.
                                           eg. `{my_param}` will be replaced by the value in the column my_param.
 
+
      Optionaly required:
 
-     `distance`                           The distance (buffer) around the subjects geometry (in meters) for the DWithin SpatialOperator
+     `distance` (number)                  The distance (buffer) around the subjects geometry (in meters) for the DWithin SpatialOperator
+     
      
      Optionaly having:
      
-     `srsName`                            The name of the spatial reference system the WFS service should return the features in. eg. `EPSG:4326`. 
+     `srsName` (string)                   The name of the spatial reference system the WFS service should return the features in. eg. `EPSG:4326`. 
                                           If not given the service default spatial reference system wil be used.
                                           
-     `headers`                            a dict defining the headers for the request. Of not given `'Content-Type': 'application/xml'` is used.
+     `headers` (dict)                     a dict defining the headers for the request. Of not given `'Content-Type': 'application/xml'` is used.
      
-     `buffer`                             a distance to buffer the subjects geometry with before sending it to the WFS server
+     `buffer` (number)                    a distance to buffer the subjects geometry with before sending it to the WFS server
      
-     `single_request`                     Set to `true` (default) or `talse`. When set to `true` al typenames will be send in a single request. 
+     `single_request` (boolean)           Set to `true` (default) or `talse`. When set to `true` al typenames will be send in a single request. 
                                           When set to `false` a separate request will be done for each typename
 
 
@@ -96,7 +101,8 @@ class wfs2_SpatialOperator(test):
                 title: Gemeenten binnen 40 km van de aanvraag
                 description: ""
                 url: https://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wfs?
-                typename: "bestuurlijkegrenzen:gemeenten"
+                typenames: 
+                - "bestuurlijkegrenzen:gemeenten"
                 geometryname: geom
                 namespace:
                     prefix: app
