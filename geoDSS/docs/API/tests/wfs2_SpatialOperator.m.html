@@ -1126,15 +1126,18 @@ table {
 
 <span class="sd">    `definition`                          is expected to be a dict having at least:</span>
 
-<span class="sd">    `url`                                 service endpoint for the DWithin request</span>
+<span class="sd">    `url` (string)                        service endpoint for the DWithin request</span>
 <span class="sd">    </span>
-<span class="sd">    `typename`                            the name of the layer queried</span>
+<span class="sd">    `typenames` (list)                    a list of layers to be queried</span>
 <span class="sd">    </span>
-<span class="sd">    `geometryname`                        the name of the geometry field</span>
+<span class="sd">    `geometryname` (string)               the name of the geometry field</span>
 <span class="sd">    </span>
-<span class="sd">    `namespace`                           a dict defining the namespace needed for a proper query. Eg. `app=&quot;http://www.deegree.org/app&quot;`</span>
-<span class="sd">    - `prefix`                            the xml prefix used. eg. `app`</span>
-<span class="sd">    - `URI`                               the xml namespace URI. eg. `&quot;http://www.deegree.org/app&quot;`</span>
+<span class="sd">    `namespace` (dict)                    a dict defining the namespace needed for a proper query. </span>
+<span class="sd">                                          Eg. `app=&quot;http://www.deegree.org/app&quot;`</span>
+<span class="sd">    </span>
+<span class="sd">     - `prefix`                            the xml prefix used. eg. `app`</span>
+<span class="sd">     </span>
+<span class="sd">     - `URI`                               the xml namespace URI. eg. `&quot;http://www.deegree.org/app&quot;`</span>
 <span class="sd">    </span>
 <span class="sd">    `spatial_operator`                    the WFS Spatial Operator to use. Should be one of:</span>
 <span class="sd">    </span>
@@ -1152,9 +1155,23 @@ table {
 <span class="sd">                                          In the string columns in the result set of the query can be named.</span>
 <span class="sd">                                          eg. `{my_param}` will be replaced by the value in the column my_param.</span>
 
+
 <span class="sd">     Optionaly required:</span>
 
-<span class="sd">     `distance`                            the distance (buffer) around the subjects geometry (in meters) for the DWithin SpatialOperator</span>
+<span class="sd">     `distance` (number)                  The distance (buffer) around the subjects geometry (in meters) for the DWithin SpatialOperator</span>
+<span class="sd">     </span>
+<span class="sd">     </span>
+<span class="sd">     Optionaly having:</span>
+<span class="sd">     </span>
+<span class="sd">     `srsName` (string)                   The name of the spatial reference system the WFS service should return the features in. eg. `EPSG:4326`. </span>
+<span class="sd">                                          If not given the service default spatial reference system wil be used.</span>
+<span class="sd">                                          </span>
+<span class="sd">     `headers` (dict)                     a dict defining the headers for the request. Of not given `&#39;Content-Type&#39;: &#39;application/xml&#39;` is used.</span>
+<span class="sd">     </span>
+<span class="sd">     `buffer` (number)                    a distance to buffer the subjects geometry with before sending it to the WFS server</span>
+<span class="sd">     </span>
+<span class="sd">     `single_request` (boolean)           Set to `true` (default) or `talse`. When set to `true` al typenames will be send in a single request. </span>
+<span class="sd">                                          When set to `false` a separate request will be done for each typename</span>
 
 
 <span class="sd">    Rule example</span>
@@ -1168,7 +1185,8 @@ table {
 <span class="sd">                title: Gemeenten binnen 40 km van de aanvraag</span>
 <span class="sd">                description: &quot;&quot;</span>
 <span class="sd">                url: https://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wfs?</span>
-<span class="sd">                typename: &quot;bestuurlijkegrenzen:gemeenten&quot;</span>
+<span class="sd">                typenames: </span>
+<span class="sd">                - &quot;bestuurlijkegrenzen:gemeenten&quot;</span>
 <span class="sd">                geometryname: geom</span>
 <span class="sd">                namespace:</span>
 <span class="sd">                    prefix: app</span>
@@ -1242,12 +1260,62 @@ table {
 
     <span class="k">def</span> <span class="nf">_get_srsName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get a proper srsName for the WFS request</span>
+<span class="sd">        A private method to get a proper srsName for the WFS request from an EWKT string</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="n">code</span> <span class="o">=</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">return</span> <span class="s2">&quot;urn:ogc:def:crs:EPSG::</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
         
+    <span class="k">def</span> <span class="nf">_get_SRID_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ewkt</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        A private method to get the EWKT projection string from an EWKT string</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">_get_WKT_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        A private method to get a WKT geometry string from an EWKT string</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">srid</span><span class="p">,</span> <span class="n">wkt</span> <span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Private method to get a valid EWKT geometry string from a WKT string and a EWKT SRID string</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="k">return</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">srid</span><span class="p">,</span><span class="n">wkt</span><span class="p">])</span>
+        
+        
+    <span class="k">def</span> <span class="nf">_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        A private method which buffers the geometry with a distance</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
+        <span class="n">ng</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">Buffer</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">ng</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_getGMLGeom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns a gml geometry for use in WFS spatial filtering.</span>
+<span class="sd">        </span>
+<span class="sd">        Does NOT support geometries of the MULTI type.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
+        <span class="n">_wktGeomType</span><span class="p">,</span> <span class="n">_posLists</span> <span class="o">=</span> <span class="n">_wkt</span><span class="p">(</span><span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">_posList</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_posLists</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;point&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Point gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:pos&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:pos&gt;&lt;/gml:Point&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;linestring&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:LineString gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:LineString&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;polygon&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Polygon gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:exterior&gt;&lt;gml:LinearRing&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:LinearRing&gt;&lt;/gml:exterior&gt;&lt;/gml:Polygon&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_getFeature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        returns a xml wrapper for a getFeature request</span>
@@ -1258,12 +1326,15 @@ table {
 <span class="s1">                            </span><span class="si">%s</span><span class="s1"></span>
 <span class="s1">                        &lt;/GetFeature&gt;&#39;&#39;&#39;</span>
                         
-    <span class="k">def</span> <span class="nf">_Query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">typename</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_Query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">typename</span><span class="p">,</span> <span class="n">srsName</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">        returns a xml wrapper for a Query</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         
-        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;&#39;&#39;&lt;Query xmlns:</span><span class="si">%s</span><span class="s1">=&quot;</span><span class="si">%s</span><span class="s1">&quot; typeNames=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">],</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;URI&#39;</span><span class="p">],</span><span class="n">typename</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> &lt;/Query&gt;&quot;</span>
+        <span class="k">if</span> <span class="n">srsName</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;&#39;&#39;&lt;Query xmlns:</span><span class="si">%s</span><span class="s1">=&quot;</span><span class="si">%s</span><span class="s1">&quot; typeNames=&quot;</span><span class="si">%s</span><span class="s1">&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">],</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;URI&#39;</span><span class="p">],</span><span class="n">typename</span><span class="p">,</span> <span class="n">srsName</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> &lt;/Query&gt;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>        
+            <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;&#39;&#39;&lt;Query xmlns:</span><span class="si">%s</span><span class="s1">=&quot;</span><span class="si">%s</span><span class="s1">&quot; typeNames=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">],</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;URI&#39;</span><span class="p">],</span><span class="n">typename</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> &lt;/Query&gt;&quot;</span>
      
     <span class="k">def</span> <span class="nf">_Filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
@@ -1305,32 +1376,17 @@ table {
         <span class="k">if</span> <span class="ow">not</span> <span class="n">spatial_operator</span> <span class="ow">in</span> <span class="n">_supported_spatial_operators</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Spatial Operator </span><span class="si">%s</span><span class="s2"> not supported. Choose one of </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spatial_operator</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">_supported_spatial_operators</span><span class="p">)</span> <span class="p">))</span>
 
+        <span class="n">_distance</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="n">distance</span><span class="p">:</span>
-            <span class="n">distance</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;fes:Distance uom=&quot;m&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/fes:Distance&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="n">distance</span>
-            
+            <span class="n">_distance</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;fes:Distance uom=&quot;m&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/fes:Distance&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="n">distance</span>
+
         <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;fes:</span><span class="si">%s</span><span class="s1">&gt;</span>
 <span class="s1">                    &lt;fes:ValueReference&gt;</span><span class="si">%s</span><span class="s1">&lt;/fes:ValueReference&gt;</span>
 <span class="s1">                    </span><span class="si">%s</span><span class="s1"></span>
 <span class="s1">                    </span><span class="si">%s</span><span class="s1"></span>
-<span class="s1">                &lt;/fes:</span><span class="si">%s</span><span class="s1">&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spatial_operator</span><span class="p">,</span> <span class="n">geometryname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getGMLGeom</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">distance</span><span class="p">,</span> <span class="n">spatial_operator</span><span class="p">)</span>
+<span class="s1">                &lt;/fes:</span><span class="si">%s</span><span class="s1">&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spatial_operator</span><span class="p">,</span> <span class="n">geometryname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getGMLGeom</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_distance</span><span class="p">,</span> <span class="n">spatial_operator</span><span class="p">)</span>
                 
-    <span class="k">def</span> <span class="nf">_getGMLGeom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Returns a gml geometry for use in WFS spatial filtering.</span>
-<span class="sd">        </span>
-<span class="sd">        Does NOT support geometries of the MULTI type.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
-        <span class="n">_wktGeomType</span><span class="p">,</span> <span class="n">_posLists</span> <span class="o">=</span> <span class="n">_wkt</span><span class="p">(</span><span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">True</span><span class="p">)</span>
-        <span class="n">_posList</span> <span class="o">=</span> <span class="n">_posLists</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;point&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Point gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:pos&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:pos&gt;&lt;/gml:Point&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;linestring&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Linestring gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:Linestring&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;linestring&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Polygon gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:Polygon&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
+
                 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
@@ -1344,53 +1400,86 @@ table {
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="n">_distance</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s1">&#39;distance&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
             <span class="n">_distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span>
+            
+        <span class="n">_srsName</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="s1">&#39;srsName&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">_srsName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;srsName&#39;</span><span class="p">]</span>
+            
+        <span class="n">_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/xml&#39;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="s1">&#39;headers&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">_headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;headers&#39;</span><span class="p">]</span>
         
-        <span class="n">_operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SpatialOperator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;spatial_operator&#39;</span><span class="p">],</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;geometryname&#39;</span><span class="p">],</span> <span class="n">_distance</span><span class="p">)</span>
-        <span class="n">_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Filter</span><span class="p">()</span> <span class="o">%</span> <span class="n">_operator</span>
-        <span class="n">_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;namespace&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;typename&#39;</span><span class="p">])</span> <span class="o">%</span> <span class="n">_filter</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getFeature</span><span class="p">()</span> <span class="o">%</span> <span class="n">_query</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending WFS-query to: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/xml&#39;</span><span class="p">})</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed WFS request with error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">)</span>
-
-        <span class="c1">#self.logger.debug(&quot;Received response:&quot;)</span>
-        <span class="c1">#self.logger.debug(r.content)</span>
-
+        <span class="n">_geometry</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;buffer&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;buffer&#39;</span><span class="p">])</span>
+        <span class="c1">#self.logger.debug(&#39;using geometry: &#39; + _geometry)</span>
+        
+        <span class="n">_single_request</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="s1">&#39;single_request&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">_single_request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;single_request&#39;</span><span class="p">]</span> 
+            
+        <span class="n">_type_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;typenames&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">_single_request</span><span class="p">:</span>
+            <span class="n">_type_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;typenames&#39;</span><span class="p">])]</span>
+        
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
-        <span class="n">gml_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span><span class="s2">&quot;response.gml&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-        
-        <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span> 
-        <span class="n">dataSource</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">)</span>
-        <span class="n">layer</span> <span class="o">=</span> <span class="n">dataSource</span><span class="o">.</span><span class="n">GetLayer</span><span class="p">()</span>
-        <span class="n">layerDefinition</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">GetLayerDefn</span><span class="p">()</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldCount</span><span class="p">()):</span>
-            <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldDefn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetName</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">_type_name</span> <span class="ow">in</span> <span class="n">_type_names</span><span class="p">:</span>
+            <span class="n">_operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SpatialOperator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;spatial_operator&#39;</span><span class="p">],</span> <span class="n">_geometry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;geometryname&#39;</span><span class="p">],</span> <span class="n">_distance</span><span class="p">)</span>
+            <span class="n">_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Filter</span><span class="p">()</span> <span class="o">%</span> <span class="n">_operator</span>
+            <span class="n">_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;namespace&#39;</span><span class="p">],</span> <span class="n">_type_name</span><span class="p">,</span> <span class="n">_srsName</span><span class="p">)</span> <span class="o">%</span> <span class="n">_filter</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getFeature</span><span class="p">()</span> <span class="o">%</span> <span class="n">_query</span>
 
-        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">:</span>
-            <span class="n">to_report</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report_template&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
-            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-                <span class="k">if</span> <span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">to_report</span><span class="p">:</span>
-                    <span class="n">to_report</span> <span class="o">=</span> <span class="n">to_report</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">GetField</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">to_report</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_report</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending WFS-query to: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">_headers</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed WFS request with error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">)</span>
+                
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;&lt;Exception&quot;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span> <span class="ow">or</span> <span class="s2">&quot;:Exception&quot;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found Exception in WFS response:&quot;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed WFS request with error: &#39;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span> <span class="p">)</span>
+                <span class="n">gml_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span><span class="s2">&quot;response.gml&quot;</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 
+                <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span> 
+                <span class="n">dataSource</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dataSource</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed reading WFS request for an unknown reason&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">layer</span> <span class="o">=</span> <span class="n">dataSource</span><span class="o">.</span><span class="n">GetLayer</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">layer</span><span class="p">:</span>
+                        <span class="n">layerDefinition</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">GetLayerDefn</span><span class="p">()</span>
+                                        
+                        <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldCount</span><span class="p">()):</span>
+                            <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldDefn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetName</span><span class="p">())</span>
+
+                        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">:</span>
+                            <span class="n">to_report</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report_template&#39;</span><span class="p">]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">to_report</span><span class="p">:</span>
+                                    <span class="n">to_report</span> <span class="o">=</span> <span class="n">to_report</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">GetField</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">to_report</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_report</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># we have 0 features</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;WFS returned statuscode: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span> <span class="p">)</span>
+                
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c1"># don&#39;t forget to set self.executed to True, </span>
-                                                                                            <span class="c1"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                            <span class="c1"># don&#39;t forget to set self.executed to True, </span>
+                                                                                        <span class="c1"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                              <span class="c1"># Returns False to end execution or the subject to continue to the next test </span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                          <span class="c1"># Returns False to end execution or the subject to continue to the next test </span>
 </pre></div>
 
   </div>
@@ -1434,12 +1523,19 @@ table {
     <div class="desc"><p>This test constructs a WFS 2.0.0 SpatialOperat0r request.</p>
 <h2>Definition</h2>
 <p><code>definition</code>                          is expected to be a dict having at least:</p>
-<p><code>url</code>                                 service endpoint for the DWithin request</p>
-<p><code>typename</code>                            the name of the layer queried</p>
-<p><code>geometryname</code>                        the name of the geometry field</p>
-<p><code>namespace</code>                           a dict defining the namespace needed for a proper query. Eg. <code>app="http://www.deegree.org/app"</code>
-- <code>prefix</code>                            the xml prefix used. eg. <code>app</code>
-- <code>URI</code>                               the xml namespace URI. eg. <code>"http://www.deegree.org/app"</code></p>
+<p><code>url</code> (string)                        service endpoint for the DWithin request</p>
+<p><code>typenames</code> (list)                    a list of layers to be queried</p>
+<p><code>geometryname</code> (string)               the name of the geometry field</p>
+<p><code>namespace</code> (dict)                    a dict defining the namespace needed for a proper query. 
+                                      Eg. <code>app="http://www.deegree.org/app"</code></p>
+<ul>
+<li>
+<p><code>prefix</code>                            the xml prefix used. eg. <code>app</code></p>
+</li>
+<li>
+<p><code>URI</code>                               the xml namespace URI. eg. <code>"http://www.deegree.org/app"</code></p>
+</li>
+</ul>
 <p><code>spatial_operator</code>                    the WFS Spatial Operator to use. Should be one of:</p>
 <div class="codehilite"><pre><span></span>- Disjoint
 - DWithin
@@ -1457,7 +1553,14 @@ table {
                                       In the string columns in the result set of the query can be named.
                                       eg. <code>{my_param}</code> will be replaced by the value in the column my_param.</p>
 <p>Optionaly required:</p>
-<p><code>distance</code>                            the distance (buffer) around the subjects geometry (in meters) for the DWithin SpatialOperator</p>
+<p><code>distance</code> (number)                  The distance (buffer) around the subjects geometry (in meters) for the DWithin SpatialOperator</p>
+<p>Optionaly having:</p>
+<p><code>srsName</code> (string)                   The name of the spatial reference system the WFS service should return the features in. eg. <code>EPSG:4326</code>. 
+                                      If not given the service default spatial reference system wil be used.</p>
+<p><code>headers</code> (dict)                     a dict defining the headers for the request. Of not given <code>'Content-Type': 'application/xml'</code> is used.</p>
+<p><code>buffer</code> (number)                    a distance to buffer the subjects geometry with before sending it to the WFS server</p>
+<p><code>single_request</code> (boolean)           Set to <code>true</code> (default) or <code>talse</code>. When set to <code>true</code> al typenames will be send in a single request. 
+                                      When set to <code>false</code> a separate request will be done for each typename</p>
 <h2>Rule example</h2>
 <p>a useful yaml snippet for this test would be:</p>
 <div class="codehilite"><pre><span></span><span class="n">rules</span><span class="o">:</span>
@@ -1466,7 +1569,8 @@ table {
         <span class="n">title</span><span class="o">:</span> <span class="n">Gemeenten</span> <span class="n">binnen</span> <span class="mi">40</span> <span class="n">km</span> <span class="n">van</span> <span class="n">de</span> <span class="n">aanvraag</span>
         <span class="n">description</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
         <span class="n">url</span><span class="o">:</span> <span class="n">https</span><span class="o">://</span><span class="n">geodata</span><span class="o">.</span><span class="na">nationaalgeoregister</span><span class="o">.</span><span class="na">nl</span><span class="sr">/bestuurlijkegrenzen/</span><span class="n">wfs</span><span class="o">?</span>
-        <span class="n">typename</span><span class="o">:</span> <span class="s2">&quot;bestuurlijkegrenzen:gemeenten&quot;</span>
+        <span class="n">typenames</span><span class="o">:</span> 
+        <span class="o">-</span> <span class="s2">&quot;bestuurlijkegrenzen:gemeenten&quot;</span>
         <span class="n">geometryname</span><span class="o">:</span> <span class="n">geom</span>
         <span class="kd">namespace</span><span class="o">:</span>
             <span class="n">prefix</span><span class="o">:</span> <span class="n">app</span>
@@ -1493,15 +1597,18 @@ table {
 
 <span class="sd">    `definition`                          is expected to be a dict having at least:</span>
 
-<span class="sd">    `url`                                 service endpoint for the DWithin request</span>
+<span class="sd">    `url` (string)                        service endpoint for the DWithin request</span>
 <span class="sd">    </span>
-<span class="sd">    `typename`                            the name of the layer queried</span>
+<span class="sd">    `typenames` (list)                    a list of layers to be queried</span>
 <span class="sd">    </span>
-<span class="sd">    `geometryname`                        the name of the geometry field</span>
+<span class="sd">    `geometryname` (string)               the name of the geometry field</span>
 <span class="sd">    </span>
-<span class="sd">    `namespace`                           a dict defining the namespace needed for a proper query. Eg. `app=&quot;http://www.deegree.org/app&quot;`</span>
-<span class="sd">    - `prefix`                            the xml prefix used. eg. `app`</span>
-<span class="sd">    - `URI`                               the xml namespace URI. eg. `&quot;http://www.deegree.org/app&quot;`</span>
+<span class="sd">    `namespace` (dict)                    a dict defining the namespace needed for a proper query. </span>
+<span class="sd">                                          Eg. `app=&quot;http://www.deegree.org/app&quot;`</span>
+<span class="sd">    </span>
+<span class="sd">     - `prefix`                            the xml prefix used. eg. `app`</span>
+<span class="sd">     </span>
+<span class="sd">     - `URI`                               the xml namespace URI. eg. `&quot;http://www.deegree.org/app&quot;`</span>
 <span class="sd">    </span>
 <span class="sd">    `spatial_operator`                    the WFS Spatial Operator to use. Should be one of:</span>
 <span class="sd">    </span>
@@ -1519,9 +1626,23 @@ table {
 <span class="sd">                                          In the string columns in the result set of the query can be named.</span>
 <span class="sd">                                          eg. `{my_param}` will be replaced by the value in the column my_param.</span>
 
+
 <span class="sd">     Optionaly required:</span>
 
-<span class="sd">     `distance`                            the distance (buffer) around the subjects geometry (in meters) for the DWithin SpatialOperator</span>
+<span class="sd">     `distance` (number)                  The distance (buffer) around the subjects geometry (in meters) for the DWithin SpatialOperator</span>
+<span class="sd">     </span>
+<span class="sd">     </span>
+<span class="sd">     Optionaly having:</span>
+<span class="sd">     </span>
+<span class="sd">     `srsName` (string)                   The name of the spatial reference system the WFS service should return the features in. eg. `EPSG:4326`. </span>
+<span class="sd">                                          If not given the service default spatial reference system wil be used.</span>
+<span class="sd">                                          </span>
+<span class="sd">     `headers` (dict)                     a dict defining the headers for the request. Of not given `&#39;Content-Type&#39;: &#39;application/xml&#39;` is used.</span>
+<span class="sd">     </span>
+<span class="sd">     `buffer` (number)                    a distance to buffer the subjects geometry with before sending it to the WFS server</span>
+<span class="sd">     </span>
+<span class="sd">     `single_request` (boolean)           Set to `true` (default) or `talse`. When set to `true` al typenames will be send in a single request. </span>
+<span class="sd">                                          When set to `false` a separate request will be done for each typename</span>
 
 
 <span class="sd">    Rule example</span>
@@ -1535,7 +1656,8 @@ table {
 <span class="sd">                title: Gemeenten binnen 40 km van de aanvraag</span>
 <span class="sd">                description: &quot;&quot;</span>
 <span class="sd">                url: https://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wfs?</span>
-<span class="sd">                typename: &quot;bestuurlijkegrenzen:gemeenten&quot;</span>
+<span class="sd">                typenames: </span>
+<span class="sd">                - &quot;bestuurlijkegrenzen:gemeenten&quot;</span>
 <span class="sd">                geometryname: geom</span>
 <span class="sd">                namespace:</span>
 <span class="sd">                    prefix: app</span>
@@ -1609,12 +1731,62 @@ table {
 
     <span class="k">def</span> <span class="nf">_get_srsName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get a proper srsName for the WFS request</span>
+<span class="sd">        A private method to get a proper srsName for the WFS request from an EWKT string</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="n">code</span> <span class="o">=</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">return</span> <span class="s2">&quot;urn:ogc:def:crs:EPSG::</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
         
+    <span class="k">def</span> <span class="nf">_get_SRID_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ewkt</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        A private method to get the EWKT projection string from an EWKT string</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">_get_WKT_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        A private method to get a WKT geometry string from an EWKT string</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">srid</span><span class="p">,</span> <span class="n">wkt</span> <span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Private method to get a valid EWKT geometry string from a WKT string and a EWKT SRID string</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="k">return</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">srid</span><span class="p">,</span><span class="n">wkt</span><span class="p">])</span>
+        
+        
+    <span class="k">def</span> <span class="nf">_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        A private method which buffers the geometry with a distance</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
+        <span class="n">ng</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">Buffer</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">ng</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_getGMLGeom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns a gml geometry for use in WFS spatial filtering.</span>
+<span class="sd">        </span>
+<span class="sd">        Does NOT support geometries of the MULTI type.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
+        <span class="n">_wktGeomType</span><span class="p">,</span> <span class="n">_posLists</span> <span class="o">=</span> <span class="n">_wkt</span><span class="p">(</span><span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">_posList</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_posLists</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;point&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Point gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:pos&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:pos&gt;&lt;/gml:Point&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;linestring&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:LineString gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:LineString&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;polygon&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Polygon gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:exterior&gt;&lt;gml:LinearRing&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:LinearRing&gt;&lt;/gml:exterior&gt;&lt;/gml:Polygon&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_getFeature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        returns a xml wrapper for a getFeature request</span>
@@ -1625,12 +1797,15 @@ table {
 <span class="s1">                            </span><span class="si">%s</span><span class="s1"></span>
 <span class="s1">                        &lt;/GetFeature&gt;&#39;&#39;&#39;</span>
                         
-    <span class="k">def</span> <span class="nf">_Query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">typename</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_Query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">typename</span><span class="p">,</span> <span class="n">srsName</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">        returns a xml wrapper for a Query</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         
-        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;&#39;&#39;&lt;Query xmlns:</span><span class="si">%s</span><span class="s1">=&quot;</span><span class="si">%s</span><span class="s1">&quot; typeNames=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">],</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;URI&#39;</span><span class="p">],</span><span class="n">typename</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> &lt;/Query&gt;&quot;</span>
+        <span class="k">if</span> <span class="n">srsName</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;&#39;&#39;&lt;Query xmlns:</span><span class="si">%s</span><span class="s1">=&quot;</span><span class="si">%s</span><span class="s1">&quot; typeNames=&quot;</span><span class="si">%s</span><span class="s1">&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">],</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;URI&#39;</span><span class="p">],</span><span class="n">typename</span><span class="p">,</span> <span class="n">srsName</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> &lt;/Query&gt;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>        
+            <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;&#39;&#39;&lt;Query xmlns:</span><span class="si">%s</span><span class="s1">=&quot;</span><span class="si">%s</span><span class="s1">&quot; typeNames=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">],</span><span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;URI&#39;</span><span class="p">],</span><span class="n">typename</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> &lt;/Query&gt;&quot;</span>
      
     <span class="k">def</span> <span class="nf">_Filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
@@ -1672,32 +1847,17 @@ table {
         <span class="k">if</span> <span class="ow">not</span> <span class="n">spatial_operator</span> <span class="ow">in</span> <span class="n">_supported_spatial_operators</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Spatial Operator </span><span class="si">%s</span><span class="s2"> not supported. Choose one of </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spatial_operator</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">_supported_spatial_operators</span><span class="p">)</span> <span class="p">))</span>
 
+        <span class="n">_distance</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="n">distance</span><span class="p">:</span>
-            <span class="n">distance</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;fes:Distance uom=&quot;m&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/fes:Distance&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="n">distance</span>
-            
+            <span class="n">_distance</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;fes:Distance uom=&quot;m&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/fes:Distance&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="n">distance</span>
+
         <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;fes:</span><span class="si">%s</span><span class="s1">&gt;</span>
 <span class="s1">                    &lt;fes:ValueReference&gt;</span><span class="si">%s</span><span class="s1">&lt;/fes:ValueReference&gt;</span>
 <span class="s1">                    </span><span class="si">%s</span><span class="s1"></span>
 <span class="s1">                    </span><span class="si">%s</span><span class="s1"></span>
-<span class="s1">                &lt;/fes:</span><span class="si">%s</span><span class="s1">&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spatial_operator</span><span class="p">,</span> <span class="n">geometryname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getGMLGeom</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">distance</span><span class="p">,</span> <span class="n">spatial_operator</span><span class="p">)</span>
+<span class="s1">                &lt;/fes:</span><span class="si">%s</span><span class="s1">&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spatial_operator</span><span class="p">,</span> <span class="n">geometryname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getGMLGeom</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_distance</span><span class="p">,</span> <span class="n">spatial_operator</span><span class="p">)</span>
                 
-    <span class="k">def</span> <span class="nf">_getGMLGeom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Returns a gml geometry for use in WFS spatial filtering.</span>
-<span class="sd">        </span>
-<span class="sd">        Does NOT support geometries of the MULTI type.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
-        <span class="n">_wktGeomType</span><span class="p">,</span> <span class="n">_posLists</span> <span class="o">=</span> <span class="n">_wkt</span><span class="p">(</span><span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">True</span><span class="p">)</span>
-        <span class="n">_posList</span> <span class="o">=</span> <span class="n">_posLists</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;point&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Point gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:pos&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:pos&gt;&lt;/gml:Point&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;linestring&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Linestring gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:Linestring&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;linestring&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Polygon gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:Polygon&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
+
                 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
@@ -1711,53 +1871,86 @@ table {
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="n">_distance</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s1">&#39;distance&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
             <span class="n">_distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span>
+            
+        <span class="n">_srsName</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="s1">&#39;srsName&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">_srsName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;srsName&#39;</span><span class="p">]</span>
+            
+        <span class="n">_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/xml&#39;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="s1">&#39;headers&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">_headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;headers&#39;</span><span class="p">]</span>
         
-        <span class="n">_operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SpatialOperator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;spatial_operator&#39;</span><span class="p">],</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;geometryname&#39;</span><span class="p">],</span> <span class="n">_distance</span><span class="p">)</span>
-        <span class="n">_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Filter</span><span class="p">()</span> <span class="o">%</span> <span class="n">_operator</span>
-        <span class="n">_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;namespace&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;typename&#39;</span><span class="p">])</span> <span class="o">%</span> <span class="n">_filter</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getFeature</span><span class="p">()</span> <span class="o">%</span> <span class="n">_query</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending WFS-query to: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/xml&#39;</span><span class="p">})</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed WFS request with error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">)</span>
-
-        <span class="c1">#self.logger.debug(&quot;Received response:&quot;)</span>
-        <span class="c1">#self.logger.debug(r.content)</span>
-
+        <span class="n">_geometry</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;buffer&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;buffer&#39;</span><span class="p">])</span>
+        <span class="c1">#self.logger.debug(&#39;using geometry: &#39; + _geometry)</span>
+        
+        <span class="n">_single_request</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="s1">&#39;single_request&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">_single_request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;single_request&#39;</span><span class="p">]</span> 
+            
+        <span class="n">_type_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;typenames&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">_single_request</span><span class="p">:</span>
+            <span class="n">_type_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;typenames&#39;</span><span class="p">])]</span>
+        
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
-        <span class="n">gml_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span><span class="s2">&quot;response.gml&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-        
-        <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span> 
-        <span class="n">dataSource</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">)</span>
-        <span class="n">layer</span> <span class="o">=</span> <span class="n">dataSource</span><span class="o">.</span><span class="n">GetLayer</span><span class="p">()</span>
-        <span class="n">layerDefinition</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">GetLayerDefn</span><span class="p">()</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldCount</span><span class="p">()):</span>
-            <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldDefn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetName</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">_type_name</span> <span class="ow">in</span> <span class="n">_type_names</span><span class="p">:</span>
+            <span class="n">_operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SpatialOperator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;spatial_operator&#39;</span><span class="p">],</span> <span class="n">_geometry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;geometryname&#39;</span><span class="p">],</span> <span class="n">_distance</span><span class="p">)</span>
+            <span class="n">_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Filter</span><span class="p">()</span> <span class="o">%</span> <span class="n">_operator</span>
+            <span class="n">_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;namespace&#39;</span><span class="p">],</span> <span class="n">_type_name</span><span class="p">,</span> <span class="n">_srsName</span><span class="p">)</span> <span class="o">%</span> <span class="n">_filter</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getFeature</span><span class="p">()</span> <span class="o">%</span> <span class="n">_query</span>
 
-        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">:</span>
-            <span class="n">to_report</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report_template&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
-            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-                <span class="k">if</span> <span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">to_report</span><span class="p">:</span>
-                    <span class="n">to_report</span> <span class="o">=</span> <span class="n">to_report</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">GetField</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">to_report</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_report</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending WFS-query to: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">_headers</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed WFS request with error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">)</span>
+                
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;&lt;Exception&quot;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span> <span class="ow">or</span> <span class="s2">&quot;:Exception&quot;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found Exception in WFS response:&quot;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed WFS request with error: &#39;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span> <span class="p">)</span>
+                <span class="n">gml_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span><span class="s2">&quot;response.gml&quot;</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 
+                <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span> 
+                <span class="n">dataSource</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dataSource</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed reading WFS request for an unknown reason&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">layer</span> <span class="o">=</span> <span class="n">dataSource</span><span class="o">.</span><span class="n">GetLayer</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">layer</span><span class="p">:</span>
+                        <span class="n">layerDefinition</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">GetLayerDefn</span><span class="p">()</span>
+                                        
+                        <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldCount</span><span class="p">()):</span>
+                            <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldDefn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetName</span><span class="p">())</span>
+
+                        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">:</span>
+                            <span class="n">to_report</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report_template&#39;</span><span class="p">]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">to_report</span><span class="p">:</span>
+                                    <span class="n">to_report</span> <span class="o">=</span> <span class="n">to_report</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">GetField</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">to_report</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_report</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># we have 0 features</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;WFS returned statuscode: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span> <span class="p">)</span>
+                
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c1"># don&#39;t forget to set self.executed to True, </span>
-                                                                                            <span class="c1"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                            <span class="c1"># don&#39;t forget to set self.executed to True, </span>
+                                                                                        <span class="c1"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                              <span class="c1"># Returns False to end execution or the subject to continue to the next test </span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                          <span class="c1"># Returns False to end execution or the subject to continue to the next test </span>
 </pre></div>
 
   </div>
@@ -1835,46 +2028,81 @@ table {
 <span class="sd">                 </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">_distance</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="s1">&#39;distance&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
         <span class="n">_distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span>
+        
+    <span class="n">_srsName</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="s1">&#39;srsName&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="n">_srsName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;srsName&#39;</span><span class="p">]</span>
+        
+    <span class="n">_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/xml&#39;</span><span class="p">}</span>
+    <span class="k">if</span> <span class="s1">&#39;headers&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="n">_headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;headers&#39;</span><span class="p">]</span>
     
-    <span class="n">_operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SpatialOperator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;spatial_operator&#39;</span><span class="p">],</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;geometryname&#39;</span><span class="p">],</span> <span class="n">_distance</span><span class="p">)</span>
-    <span class="n">_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Filter</span><span class="p">()</span> <span class="o">%</span> <span class="n">_operator</span>
-    <span class="n">_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;namespace&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;typename&#39;</span><span class="p">])</span> <span class="o">%</span> <span class="n">_filter</span>
-    <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getFeature</span><span class="p">()</span> <span class="o">%</span> <span class="n">_query</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending WFS-query to: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/xml&#39;</span><span class="p">})</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed WFS request with error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">)</span>
-    <span class="c1">#self.logger.debug(&quot;Received response:&quot;)</span>
-    <span class="c1">#self.logger.debug(r.content)</span>
+    <span class="n">_geometry</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;buffer&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="n">_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;buffer&#39;</span><span class="p">])</span>
+    <span class="c1">#self.logger.debug(&#39;using geometry: &#39; + _geometry)</span>
+    
+    <span class="n">_single_request</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">if</span> <span class="s1">&#39;single_request&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="n">_single_request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;single_request&#39;</span><span class="p">]</span> 
+        
+    <span class="n">_type_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;typenames&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">_single_request</span><span class="p">:</span>
+        <span class="n">_type_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;typenames&#39;</span><span class="p">])]</span>
+    
     <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
-    <span class="n">gml_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span><span class="s2">&quot;response.gml&quot;</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-    
-    <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span> 
-    <span class="n">dataSource</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">)</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="n">dataSource</span><span class="o">.</span><span class="n">GetLayer</span><span class="p">()</span>
-    <span class="n">layerDefinition</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">GetLayerDefn</span><span class="p">()</span>
-    <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldCount</span><span class="p">()):</span>
-        <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldDefn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetName</span><span class="p">())</span>
-    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">:</span>
-        <span class="n">to_report</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report_template&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">to_report</span><span class="p">:</span>
-                <span class="n">to_report</span> <span class="o">=</span> <span class="n">to_report</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">GetField</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">to_report</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_report</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_type_name</span> <span class="ow">in</span> <span class="n">_type_names</span><span class="p">:</span>
+        <span class="n">_operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SpatialOperator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;spatial_operator&#39;</span><span class="p">],</span> <span class="n">_geometry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;geometryname&#39;</span><span class="p">],</span> <span class="n">_distance</span><span class="p">)</span>
+        <span class="n">_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Filter</span><span class="p">()</span> <span class="o">%</span> <span class="n">_operator</span>
+        <span class="n">_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;namespace&#39;</span><span class="p">],</span> <span class="n">_type_name</span><span class="p">,</span> <span class="n">_srsName</span><span class="p">)</span> <span class="o">%</span> <span class="n">_filter</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getFeature</span><span class="p">()</span> <span class="o">%</span> <span class="n">_query</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending WFS-query to: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">_headers</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed WFS request with error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;&lt;Exception&quot;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span> <span class="ow">or</span> <span class="s2">&quot;:Exception&quot;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found Exception in WFS response:&quot;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed WFS request with error: &#39;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span> <span class="p">)</span>
+            <span class="n">gml_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span><span class="s2">&quot;response.gml&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span> 
+            <span class="n">dataSource</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dataSource</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed reading WFS request for an unknown reason&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">layer</span> <span class="o">=</span> <span class="n">dataSource</span><span class="o">.</span><span class="n">GetLayer</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">layer</span><span class="p">:</span>
+                    <span class="n">layerDefinition</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">GetLayerDefn</span><span class="p">()</span>
+                                    
+                    <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldCount</span><span class="p">()):</span>
+                        <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layerDefinition</span><span class="o">.</span><span class="n">GetFieldDefn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetName</span><span class="p">())</span>
+                    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">:</span>
+                        <span class="n">to_report</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;report_template&#39;</span><span class="p">]</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">to_report</span><span class="p">:</span>
+                                <span class="n">to_report</span> <span class="o">=</span> <span class="n">to_report</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">col</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">GetField</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">to_report</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_report</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># we have 0 features</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;WFS returned statuscode: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span> <span class="p">)</span>
+            
     <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                                <span class="c1"># don&#39;t forget to set self.executed to True, </span>
-                                                                                        <span class="c1"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                              <span class="c1"># Returns False to end execution or the subject to continue to the next test </span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>                                                            <span class="c1"># don&#39;t forget to set self.executed to True, </span>
+                                                                                    <span class="c1"># otherwise &quot;Error: test is not executed:&quot; will be added to the report as well</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>                                          <span class="c1"># Returns False to end execution or the subject to continue to the next test </span>
 </pre></div>
 
   </div>

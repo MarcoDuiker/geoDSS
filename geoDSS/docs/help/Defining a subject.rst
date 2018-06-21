@@ -4,7 +4,7 @@
 Defining a subject
 ==================
 
-A subject is built on two structures:
+A subject (sometimes called argument) is built on two structures:
 
 - A collection of name/value pairs
 - An ordered list of values

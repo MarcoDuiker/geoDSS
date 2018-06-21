@@ -1,7 +1,9 @@
 geoDSS
 ======
 
-geoDSS is a simple yet very extendable library to create automatic testing of a subject against rules and then report on the results.
+geoDSS is a simple yet very extendable library to create automatic testing of a subject (argument) against rules and then report on the results.
+
+geoDSS is a simple rule engine with a focus on geospatial rules.
 
 The library can be imported, or used via the interfaces scripts providing interfaces for:
 
@@ -13,7 +15,7 @@ The library can be imported, or used via the interfaces scripts providing interf
 Concepts
 --------
 
-geoDSS passes the subject to the rules defined in a rule_set, one by one in order. A rule can be a:
+geoDSS passes the subject (argument) to the rules defined in a rule_set, one by one in order. A rule can be a:
 
 - processor
   a processor alters the subject. Eg. buffers a geometry with 100 meters. So the next test or processor will work on the altered subject.
@@ -21,7 +23,7 @@ geoDSS passes the subject to the rules defined in a rule_set, one by one in orde
   a test result is either `True` or `False`. When `True` the given `report_template` will be converted to a report string and added to the report. 
   Most   of the time the reported string will be the same as the `report_template`. But you can add `{a_parameter}` to a `report_template` and then substitute this parameter by a value. Eg. if you test if a subject is near a municipality you can substitute `{a_parameter}` by the name of the municipality.
 
-The rule_set must be loaded from file (yaml or json). The subject can be passed in to evaluate the rules. Loading of the rule_set, passing in the subject and evaluet the rules can be done via a simple Python script, command line, cgi or wsgi.
+The rule_set must be loaded from file (yaml or json). The subject (argument) can be passed in to evaluate the rules. Loading of the rule_set, passing in the subject and evaluet the rules can be done via a simple Python script, command line, cgi or wsgi.
   
 The report will be in markdown, or if you prefer, in html. The report will list all report strings, prepended with a report on the rule_set and the subject.
 
@@ -53,7 +55,7 @@ Especially useful are:
 >https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/tests/index.html
 >https://marcoduiker.github.io/geoDSS/geoDSS/docs/API/processors/index.html
 
-Help pages to be expected ...
+Help you can find in the [help pages](https://marcoduiker.github.io/geoDSS/geoDSS/docs/help/_build/html/index.html) .
 	
 
 Quick Start
@@ -133,6 +135,7 @@ A few useful tests and processors are provided. The most notable ones being:
 
 - `processors.postgis_processing`
 - `tests.postgis_spatial_select`
+- `tests.wfs2_SpatialOperator`
 
 You should be able to do some useful work with that. But you can easily add your own tests and processors.
 
@@ -143,6 +146,7 @@ Actually, you can extend the:
 - `processors`
 - `reporters` 
 - `loaders`
+- `ui_generators`
 
 You'll probably want to extend the first two of this list to begin with. As the existing tests and processors are heavily documented it won't be a problem to add a new test or processor by mimicking one of the existing ones.
 
@@ -150,7 +154,3 @@ Probably the easiest to understand and extend is `tests.remark`.
 
 Just don't forget to add your newly created test or processor to the `imports` in `__init__.py`. Otherwise your new addition won't show up!
 
-Future developments
--------------------
-
-You may expect help pages coming soon. They will be linked from here for easy access.

@@ -153,7 +153,10 @@ class pdok_locatieserver(processor):
             if response.status_code == requests.codes.ok:
                 self.logger.debug("Debugger returned status code: " + str(response.status_code))
                 try:
-                    result = response.json()
+                    try:
+                        result = response.json()
+                    except:
+                        result = json.loads(response.content)                   # workaround for old requests libraries
                     if result["response"]["numFound"] > 0:
                         doc = result["response"]["docs"][0]
                         _wkt = self._WKTParser()
