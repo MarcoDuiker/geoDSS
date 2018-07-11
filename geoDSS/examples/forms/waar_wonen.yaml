@@ -1,0 +1,27 @@
+title: Wil ik hier wonen?
+url: "http://localhost:8000/cgi-bin/interfaces.py"
+rule_set_file: "../geoDSS/examples/rule_sets/wonen.yaml"
+description: "Met dit formulier kunt u zien of de plek die u invoert aantrekkelijk is om te wonen."
+subtitle: "Subject"
+form_fields:
+- huisnummer:
+    name: huisnummer
+    label: Huisnummer
+    type: text
+- postcode:
+    name: postcode
+    label: Postcode
+    type: text
+- geslacht:
+    name: geslacht
+    label: "Geinteresseerd in:"
+    type: radio
+    values:
+    - Mannen: man
+    - Vrouwen: vrouw
+    - Beide: beide
+- kinderhater:
+    name: kinderhater
+    label: Kinderhater
+    type: checkbox
+

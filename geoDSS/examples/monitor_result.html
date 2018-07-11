@@ -1,0 +1,93 @@
+<html>
+<!-- this page will only load the data when served bij a webserver -->
+<!-- when using the geoDSS webserver serve-cgi the URL to this page will be: http://localhost:8000/examples/monitor_result.html -->
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+<div id="myDiv"></div>
+<label for='followbox'>Follow</label><input id='followbox' type='checkbox' name='follow' />
+
+  <script>
+       
+        var refresh_interval = 1;       // seconds
+        
+        var csv_file = 'scheduled_run_results.csv';
+        var xdata_column = 'time';
+        var ydata_column = 'response_time';
+        var textdata_column = 'status_code';
+        var colordata_column = 'status_code';
+      
+        var trace2 = {
+              type: "scatter",
+              mode: 'lines+markers',
+              name: 'time',
+              x: [],
+              y: [],
+              text: [],
+              line: {color: '#7F7F7F'},
+              marker: {color: []}
+
+            }
+
+        var now = new Date();
+        var yesterday = "" + now.getFullYear() + '-' + (now.getMonth()+1) + '-' + (now.getDate()-1);
+        var tomorrow =  "" + now.getFullYear() + '-' + (now.getMonth()+1) + '-' + (now.getDate()+1);
+
+        var data = [trace2];
+        var layout = {
+              title: 'Monitor Results',
+              xaxis: {
+                range: [yesterday, tomorrow],
+                type: 'date'
+              },
+              yaxis: {
+                autorange: true,
+                type: 'linear'
+              }
+        };
+
+        Plotly.newPlot('myDiv', data, layout);
+
+        
+        var interval = setInterval(function() {
+                Plotly.d3.csv(csv_file, function(err, rows){
+                    function unpack(rows, key) {
+                        return rows.map(function(row) { return row[key]; });
+                    }
+                    var xdata = unpack(rows, xdata_column);
+                    var ydata = unpack(rows, ydata_column);
+                    var textdata = unpack(rows, textdata_column);
+                    var colordata = unpack(rows, colordata_column);
+                    trace2 = {
+                      type: "scatter",
+                      mode: 'lines+markers',
+                      name: 'time',
+                      x: xdata,
+                      y: ydata,
+                      text: textdata,
+                      line: {color: '#7F7F7F'},
+                      marker: {color: colordata}
+
+                    }
+
+                    data = [trace2];
+
+                    Plotly.animate(div="myDiv", {
+                        data: data,
+                        layout: {
+                            xaxis: document.getElementById('followbox').checked ? {range: [xdata.slice(-10)[0], xdata.slice(-1)[0]]} : {}
+                        }
+                    }, {
+                        transition: {duration: 0},
+                        frame: {duration: 0, redraw: false}
+                    });
+
+                });
+
+            }, refresh_interval * 1000);
+
+
+  </script>
+</body>
+</html>

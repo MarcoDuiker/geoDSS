@@ -1,0 +1,99 @@
+name: wonen
+title: Wil ik hier wonen?
+description: Beoordeeld een plek op geschiktheid voor wonen
+logging:
+  level: DEBUG
+  file: "/home/marco/wonen_cgi.log"
+reporter: reporters.md
+reporter_args:
+  output_format: html
+  decision_false_report: "Uitkomst test: **negatief**"
+  decision_error_report: "**Fout**: test kwam niet tot een beslissing of rapportage"
+rules:
+
+- test:
+    type: processors.pdok_locatieserver
+    title: Adres zoeker
+    description: Zoekt adres in de Basisregistratie Adressen en Gebouwen en zet het adres op de kaart
+    url: "https://geodata.nationaalgeoregister.nl/locatieserver/v3/free?q="
+    report_template: "Found _{address}_ on location: ['subject.geometry'](https://bagviewer.kadaster.nl/lvbag/bag-viewer/index.html#?geometry.x={x}&geometry.y={y}&zoomlevel=7)"
+    break_on_error: True
+
+- BAG map:
+    type: tests.get_map
+    title: Kaart uit de Basisregistratie Adressen en Gebouwen
+    description: ""
+    url: "https://geodata.nationaalgeoregister.nl/bag/wms/"
+    params:
+      layers: pand
+      styles: ""
+      width: 300
+      height: 200
+      format: "image/png"
+      version: "1.1.0"
+    buffer: 75
+    report_template: "![Centered_map_small]({url})"
+
+- gemeente_naam:
+    type: tests.wfs2_SpatialOperator
+    title: Gemeente
+    description: ""
+    url: https://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wfs?
+    typenames: 
+    - "bestuurlijkegrenzen:gemeenten"
+    geometryname: geom
+    namespace:
+        prefix: app
+        URI: "http://www.deegree.org/app"
+    spatial_operator: DWithin
+    distance: 1
+    report_template: Adres is gelegen in de gemeente *{gemeentenaam}*
+
+- buurt:
+    type: tests.postgis_spatial_select
+    title: Buurt
+    description: ""
+    db:
+        dbname: gisdefault
+    schema: public
+    table: buurt
+    relationship: ST_Within
+    parameters:
+    - "subject.geometry"
+    - "wkb_geometry"
+    report_template: "Adres is gelegen in de buurt: *{bu_naam}*"
+
+- kinderen_gt_15:
+    type: tests.postgis_spatial_select
+    title: "Hulptoets: minder dan 15% kinderen"
+    description: ""
+    db:
+        dbname: gisdefault
+    schema: public
+    table: buurt
+    relationship: ST_Within
+    parameters:
+    - "subject.geometry"
+    - "wkb_geometry"
+    where: " AND p_00_14_jr > '15'"
+    report: false
+    report_template: "Het percentage kinderen is hoog: *{p_00_14_jr}%*."
+    
+- kinderhater:
+    type: tests.key_value_compare
+    title: "Hulptoets: kinderhater"
+    description: ""
+    key: kinderhater
+    operator: "=="
+    value: 'true'
+    report_template: ""
+    report: false
+
+- kinderhater_kinderen_gt_15:
+    type: tests.evaluate
+    title: "Weinig kinderen"
+    description: "Teveel kinderen (>15% voor een kinderhater)?"
+    expression: "rules.kinderhater and rules.kinderen_gt_15"
+    report_template: ""
+    add_to_report:
+    - kinderen_gt_15

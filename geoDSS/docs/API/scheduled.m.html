@@ -1067,7 +1067,7 @@ table {
   <p>This example code shows how easy it is to run geoDSS in a scheduled manner. 
 Of course this example is functional, but might be improved on with eg. more error checking, logging and communication
 with the user.</p>
-<p>eg. ./schedule.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_request.json 10 seconds ./scheduled_run_results.csv</p>
+<p>eg. ./scheduled.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_request.json 10 seconds ./scheduled_run_results.csv</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.scheduled', this);">Show source &equiv;</a></p>
   <div id="source-geoDSS.scheduled" class="source">
@@ -1080,7 +1080,7 @@ with the user.</p>
 <span class="sd">Of course this example is functional, but might be improved on with eg. more error checking, logging and communication</span>
 <span class="sd">with the user.</span>
 
-<span class="sd">eg. ./schedule.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_request.json 10 seconds ./scheduled_run_results.csv</span>
+<span class="sd">eg. ./scheduled.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_request.json 10 seconds ./scheduled_run_results.csv</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="kn">import</span> <span class="nn">argparse</span>
@@ -1308,7 +1308,7 @@ with the user.</p>
     <span class="c1"># todo: add an &quot;until&quot; (eg. certain date) option.</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Invoke geoDSS in batch mode using the plain text reporter.&#39;</span><span class="p">,</span>
-                                     <span class="n">epilog</span> <span class="o">=</span>      <span class="s1">&#39;&#39;&#39;Example: ./schedule.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_request.json 10 seconds ./scheduled_run_results.csv &#39;&#39;&#39;</span><span class="p">)</span>
+                                     <span class="n">epilog</span> <span class="o">=</span>      <span class="s1">&#39;&#39;&#39;Example: ./scheduled.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_request.json 10 seconds ./scheduled_run_results.csv &#39;&#39;&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;rule_set_file&quot;</span><span class="p">,</span>                            <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;The file containing the rule set.&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span>                                  <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;Either a JSON-string defining a python dict containing a subject or a path to a file containing such a JSON-string.&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;interval&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>                       <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;Interval to run at.&#39;</span><span class="p">)</span>

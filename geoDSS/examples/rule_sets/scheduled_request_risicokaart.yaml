@@ -1,0 +1,20 @@
+name: scheduled_request_risicokaart
+title: Test scheduled requests risicokaart
+description: "time,status_code,response_time"
+reporter: reporters.plain_text
+logging:
+  level: DEBUG
+  file: "/home/marco/scheduled_request_risicokaart.log"
+rules:
+- post_risico:
+    type: tests.request
+    title: Test risicokaart
+    description: ""
+    url: "http://servicespub.risicokaart.nl/rk_services_pub/services/WFS-risicokaart"
+    verb: POST
+    status_codes:
+    - 200
+    headers:
+        'Content-Type': 'application/xml'
+    report_template: "{timestamp},{status_code},{response_time}"
+

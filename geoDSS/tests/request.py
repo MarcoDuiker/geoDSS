@@ -108,7 +108,8 @@ class request(test):
         `subject`       is expected a dict which can optionally have:
 
         - `request_data`   Either a dict or string to POST or GET. If the string
-                           is a path to a file this file is read to get a string.
+                           is an absolute or relative path to a file this file is 
+                           read to get a string.
                            In case of a GET or HEAD request, the string will be
                            urlencoded before being appended to the url.
         '''
@@ -144,10 +145,14 @@ class request(test):
         if 'request_data' in subject:
             data = subject['request_data']
             self.logger.debug("Using %s with type: %s as data" % (str(data), type(data)))
-        if isinstance(data, basestring) and os.path.exists(data):
-            self.logger.debug("Reading %s as data" % (str(data)))
-            with open(data,'rb') as stream:
-                data = stream.read()
+        if isinstance(data, basestring):
+            if os.path.exists(os.path.join(os.getcwd(),data)):
+                data = os.path.join(os.getcwd(),data)
+            if os.path.exists(data):
+                self.logger.debug("Reading %s as data" % (str(data)))
+                with open(data,'rb') as stream:
+                    data = stream.read()
+                    self.logger.debug("Using %s with type: %s as data" % (str(data), type(data)))
         if isinstance(data, basestring) and not self.definition["verb"] == 'POST':
             # append the string to the url
             if '?' in url:
