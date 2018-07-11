@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--http://servicespub.risicokaart.nl/rk_services_pub/services/WFS-risicokaart-->
+
+
+<GetFeature xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/2.0/wfs.xsd" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xmlns="http://www.opengis.net/wfs/2.0" 
+            service="WFS" 
+            version="2.0.0">
+        <Query xmlns:rrgs="http://www.risicokaart.nl/schemas/rrgs" typeNames="rrgs:p_LPG">
+            <fes:Filter
+                   xmlns:fes="http://www.opengis.net/fes/2.0"
+                   xmlns:gml="http://www.opengis.net/gml/3.2"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation=" http://www.opengis.net/fes/2.0
+                                        http://schemas.opengis.net/filter/2.0/filterAll.xsd
+                                        http://www.opengis.net/gml/3.2
+                                        http://schemas.opengis.net/gml/3.2.1/gml.xsd">
+               <fes:Intersects>
+                    <fes:ValueReference>rrgs:geometrie</fes:ValueReference>
+                    <gml:Point gml:id="P1" srsName="urn:ogc:def:crs:EPSG::28992">
+                        <gml:pos>31980.515 391663.508</gml:pos>
+                    </gml:Point>   
+               </fes:Intersects>
+            </fes:Filter> 
+        </Query>                        
+</GetFeature>

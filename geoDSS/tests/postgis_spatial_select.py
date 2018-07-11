@@ -94,7 +94,7 @@ class postgis_spatial_select(test):
         try:
             where = ' %s(%s) ' % (self.definition['relationship'], ','.join(self.definition['parameters']))
             if 'where' in self.definition.keys():
-                if subject['params']:
+                if 'params' in subject and subject['params']:
                     where = where + self.definition['where'].format(subject['parameters'])
                 else:
                     where = where + self.definition['where']

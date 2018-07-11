@@ -7,7 +7,7 @@ This example code shows how easy it is to run geoDSS in a scheduled manner.
 Of course this example is functional, but might be improved on with eg. more error checking, logging and communication
 with the user.
 
-eg. ./schedule.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_request.json 10 seconds ./scheduled_run_results.csv
+eg. ./scheduled.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_request.json 10 seconds ./scheduled_run_results.csv
 '''
 
 import argparse
@@ -235,7 +235,7 @@ if __name__ == '__main__':
     # todo: add an "until" (eg. certain date) option.
 
     parser = argparse.ArgumentParser(description = 'Invoke geoDSS in batch mode using the plain text reporter.',
-                                     epilog =      '''Example: ./schedule.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_request.json 10 seconds ./scheduled_run_results.csv ''')
+                                     epilog =      '''Example: ./scheduled.py examples/rule_sets/scheduled_request.yaml examples/subjects/google_request.json 10 seconds ./scheduled_run_results.csv ''')
     parser.add_argument("rule_set_file",                            help = 'The file containing the rule set.')
     parser.add_argument("subject",                                  help = 'Either a JSON-string defining a python dict containing a subject or a path to a file containing such a JSON-string.')
     parser.add_argument("interval", type=int,                       help = 'Interval to run at.')

@@ -86,7 +86,7 @@ class wfs2_SpatialOperator(test):
      
      `buffer` (number)                    a distance to buffer the subjects geometry with before sending it to the WFS server
      
-     `single_request` (boolean)           Set to `true` (default) or `talse`. When set to `true` al typenames will be send in a single request. 
+     `single_request` (boolean)           Set to `true` (default) or `false`. When set to `true` al typenames will be send in a single request. 
                                           When set to `false` a separate request will be done for each typename
 
 
