@@ -105,6 +105,9 @@ def load_execute_report(params):
         output_format = params['output_format'][0]
         if output_format in ['html']:
             mime = 'text/html'
+        if output_format in ['pdf']:
+            mime = 'application/pdf'
+            #mime = 'text/plain'
         elif output_format in ['markdown']:
             mime = 'text/plain'
     except:
@@ -122,7 +125,7 @@ def load_execute_report(params):
             data = geoDSS.ui_generators.form.generate(form_yaml = form_definition, template = template)
         except Exception as e:
             if DEBUG_LEVEL:
-                sys.stderr.write("geoDSS: Could not parse generate form with error: %s \n" % str(e))
+                sys.stderr.write("geoDSS: Could not generate form with error: %s \n" % str(e))
                 sys.stderr.write(traceback.format_exc())
             return status, response_headers, "Could not generate form with error: " + str(e)
             
@@ -132,6 +135,7 @@ def load_execute_report(params):
         except Exception as e:
             if DEBUG_LEVEL:
                 sys.stderr.write("geoDSS: Could not parse subject with error: %s \n" % str(e))
+                #sys.stderr.write("geoDSS: " + params['subject'][0])
             return status, response_headers, "Could not parse subject with error: " + str(e)
 
         rule_set_file = params['rule_set_file'][0]
@@ -164,6 +168,7 @@ def load_execute_report(params):
             return status, response_headers, "Could not evaluate rule_set with error: " + str(e)
 
         try:
+            sys.stderr.write("trying to generate a report with output format: " + output_format)
             data = r.report(output_format = output_format)
         except Exception as e:
             if DEBUG_LEVEL:

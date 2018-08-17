@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import sys
+import tempfile
+import time
 
 try:
     try:
@@ -8,6 +11,13 @@ try:
     except:
         import pymarkdown as md_lib
     import yaml
+except:
+    pass
+
+try:
+    # needed for pdf support
+    # see: https://pypi.org/project/pdfkit/ for dependencies and installation instructions
+    import pdfkit
 except:
     pass
     
@@ -24,6 +34,7 @@ def rule_set_reporter(rule_set, output_format='markdown', **kwargs):
 
     - 'markdown' (default)
     - 'html'
+    - 'pdf'
 
     Furthermore the following optional parameters can be passed:
 
@@ -36,6 +47,8 @@ def rule_set_reporter(rule_set, output_format='markdown', **kwargs):
     
     - `{timestamp}`                               The ISO timestamp
     '''
+
+    # return output_format
 
     if 'html_wrapper' in kwargs:
         html_wrapper = kwargs['html_wrapper']
@@ -94,8 +107,14 @@ def rule_set_reporter(rule_set, output_format='markdown', **kwargs):
     for rule in rule_set.rules:
         markdown = markdown + rule_reporter(rule, **kwargs) + '\n'
 
+    html = html_wrapper.replace('___content_goes_here___', md_lib.markdown(markdown))
     if output_format == 'html':
-        return html_wrapper.replace('___content_goes_here___', md_lib.markdown(markdown))
+        return html
+    elif output_format == 'pdf':     
+        try:
+            return pdfkit.from_string(html,False)
+        except Exception as e:
+            return False
     else:
         return markdown
 
