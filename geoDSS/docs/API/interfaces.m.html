@@ -1227,6 +1227,9 @@ You can set </p>
         <span class="n">output_format</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;output_format&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;html&#39;</span><span class="p">]:</span>
             <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/html&#39;</span>
+        <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pdf&#39;</span><span class="p">]:</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;application/pdf&#39;</span>
+            <span class="c1">#mime = &#39;text/plain&#39;</span>
         <span class="k">elif</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;markdown&#39;</span><span class="p">]:</span>
             <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/plain&#39;</span>
     <span class="k">except</span><span class="p">:</span>
@@ -1244,7 +1247,7 @@ You can set </p>
             <span class="n">data</span> <span class="o">=</span> <span class="n">geoDSS</span><span class="o">.</span><span class="n">ui_generators</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">form_yaml</span> <span class="o">=</span> <span class="n">form_definition</span><span class="p">,</span> <span class="n">template</span> <span class="o">=</span> <span class="n">template</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not parse generate form with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not generate form with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
             <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not generate form with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             
@@ -1254,6 +1257,7 @@ You can set </p>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not parse subject with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="c1">#sys.stderr.write(&quot;geoDSS: &quot; + params[&#39;subject&#39;][0])</span>
             <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not parse subject with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
         <span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;rule_set_file&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -1286,6 +1290,7 @@ You can set </p>
             <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not evaluate rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;trying to generate a report with output format: &quot;</span> <span class="o">+</span> <span class="n">output_format</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">output_format</span> <span class="o">=</span> <span class="n">output_format</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
@@ -1577,6 +1582,9 @@ You can set </p>
         <span class="n">output_format</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;output_format&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;html&#39;</span><span class="p">]:</span>
             <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/html&#39;</span>
+        <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pdf&#39;</span><span class="p">]:</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;application/pdf&#39;</span>
+            <span class="c1">#mime = &#39;text/plain&#39;</span>
         <span class="k">elif</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;markdown&#39;</span><span class="p">]:</span>
             <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/plain&#39;</span>
     <span class="k">except</span><span class="p">:</span>
@@ -1594,7 +1602,7 @@ You can set </p>
             <span class="n">data</span> <span class="o">=</span> <span class="n">geoDSS</span><span class="o">.</span><span class="n">ui_generators</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">form_yaml</span> <span class="o">=</span> <span class="n">form_definition</span><span class="p">,</span> <span class="n">template</span> <span class="o">=</span> <span class="n">template</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
-                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not parse generate form with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not generate form with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
             <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not generate form with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             
@@ -1604,6 +1612,7 @@ You can set </p>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;geoDSS: Could not parse subject with error: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="c1">#sys.stderr.write(&quot;geoDSS: &quot; + params[&#39;subject&#39;][0])</span>
             <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not parse subject with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
         <span class="n">rule_set_file</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;rule_set_file&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -1636,6 +1645,7 @@ You can set </p>
             <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="s2">&quot;Could not evaluate rule_set with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;trying to generate a report with output format: &quot;</span> <span class="o">+</span> <span class="n">output_format</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">output_format</span> <span class="o">=</span> <span class="n">output_format</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">DEBUG_LEVEL</span><span class="p">:</span>

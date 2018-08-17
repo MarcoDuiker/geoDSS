@@ -1272,9 +1272,14 @@ table {
 
 <span class="sd">        The default reporter module is reporters.md.</span>
 
-<span class="sd">        if `reporter` is part of the definition of the rule set, that reporter will be used.</span>
+<span class="sd">        if `reporter` is part of the definition of the rule set,</span>
+<span class="sd">        that reporter will be used.</span>
 
-<span class="sd">        if `reporter_args` is part of the definition of the rule set the arguments defined there will be passed to the reporter.</span>
+<span class="sd">        if `reporter_args` is part of the definition of the rule set,</span>
+<span class="sd">         the arguments defined there will be passed to the reporter.</span>
+<span class="sd">        </span>
+<span class="sd">        if `output_format` is passed as a parameter to the report function,</span>
+<span class="sd">        this will overrule the `output_format` defined in `reporter_args`.</span>
 
 <span class="sd">        A yaml snippet to illustrate the selection of the markdown reporter with html output:</span>
 
@@ -1285,16 +1290,22 @@ table {
 <span class="sd">            reporter_args:</span>
 <span class="sd">              output_format: html</span>
 
-<span class="sd">        If no arguments are defined in the rule set, arguments passed in this report method will be passed to the reporter.</span>
+<span class="sd">        If no arguments are defined in the rule set, </span>
+<span class="sd">        arguments passed in this report method will be passed to the reporter.</span>
 
-<span class="sd">        The &#39;rule_set_reporter&#39; method in the default reporter reporters.md accepts an optional `output_format` parameter which is expected to be one of:</span>
+<span class="sd">        The &#39;rule_set_reporter&#39; method in the default reporter reporters.md accepts </span>
+<span class="sd">        an optional `output_format` parameter which is expected to be one of:</span>
 
 <span class="sd">        - &#39;markdown&#39;    (default)</span>
 <span class="sd">        - &#39;html&#39;</span>
+<span class="sd">        - &#39;pdf&#39;</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;output_format&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;output_format&#39;</span><span class="p">],</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -1468,9 +1479,14 @@ table {
 
 <span class="sd">        The default reporter module is reporters.md.</span>
 
-<span class="sd">        if `reporter` is part of the definition of the rule set, that reporter will be used.</span>
+<span class="sd">        if `reporter` is part of the definition of the rule set,</span>
+<span class="sd">        that reporter will be used.</span>
 
-<span class="sd">        if `reporter_args` is part of the definition of the rule set the arguments defined there will be passed to the reporter.</span>
+<span class="sd">        if `reporter_args` is part of the definition of the rule set,</span>
+<span class="sd">         the arguments defined there will be passed to the reporter.</span>
+<span class="sd">        </span>
+<span class="sd">        if `output_format` is passed as a parameter to the report function,</span>
+<span class="sd">        this will overrule the `output_format` defined in `reporter_args`.</span>
 
 <span class="sd">        A yaml snippet to illustrate the selection of the markdown reporter with html output:</span>
 
@@ -1481,16 +1497,22 @@ table {
 <span class="sd">            reporter_args:</span>
 <span class="sd">              output_format: html</span>
 
-<span class="sd">        If no arguments are defined in the rule set, arguments passed in this report method will be passed to the reporter.</span>
+<span class="sd">        If no arguments are defined in the rule set, </span>
+<span class="sd">        arguments passed in this report method will be passed to the reporter.</span>
 
-<span class="sd">        The &#39;rule_set_reporter&#39; method in the default reporter reporters.md accepts an optional `output_format` parameter which is expected to be one of:</span>
+<span class="sd">        The &#39;rule_set_reporter&#39; method in the default reporter reporters.md accepts </span>
+<span class="sd">        an optional `output_format` parameter which is expected to be one of:</span>
 
 <span class="sd">        - &#39;markdown&#39;    (default)</span>
 <span class="sd">        - &#39;html&#39;</span>
+<span class="sd">        - &#39;pdf&#39;</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;output_format&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;output_format&#39;</span><span class="p">],</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -1691,8 +1713,12 @@ table {
     <div class="desc"><p>Report the result of the rules.</p>
 <p>this method should be called AFTER the execute method.</p>
 <p>The default reporter module is reporters.md.</p>
-<p>if <code>reporter</code> is part of the definition of the rule set, that reporter will be used.</p>
-<p>if <code>reporter_args</code> is part of the definition of the rule set the arguments defined there will be passed to the reporter.</p>
+<p>if <code>reporter</code> is part of the definition of the rule set,
+that reporter will be used.</p>
+<p>if <code>reporter_args</code> is part of the definition of the rule set,
+ the arguments defined there will be passed to the reporter.</p>
+<p>if <code>output_format</code> is passed as a parameter to the report function,
+this will overrule the <code>output_format</code> defined in <code>reporter_args</code>.</p>
 <p>A yaml snippet to illustrate the selection of the markdown reporter with html output:</p>
 <div class="codehilite"><pre><span></span><span class="n">name</span><span class="o">:</span> <span class="n">test_bag_geocoder</span>
 <span class="n">title</span><span class="o">:</span> <span class="n">Test</span> <span class="n">the</span> <span class="n">BAG</span> <span class="n">geocoder</span>
@@ -1703,11 +1729,14 @@ table {
 </pre></div>
 
 
-<p>If no arguments are defined in the rule set, arguments passed in this report method will be passed to the reporter.</p>
-<p>The 'rule_set_reporter' method in the default reporter reporters.md accepts an optional <code>output_format</code> parameter which is expected to be one of:</p>
+<p>If no arguments are defined in the rule set, 
+arguments passed in this report method will be passed to the reporter.</p>
+<p>The 'rule_set_reporter' method in the default reporter reporters.md accepts 
+an optional <code>output_format</code> parameter which is expected to be one of:</p>
 <ul>
 <li>'markdown'    (default)</li>
 <li>'html'</li>
+<li>'pdf'</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.base.rules_set.report', this);">Show source &equiv;</a></p>
@@ -1717,8 +1746,13 @@ table {
 <span class="sd">    Report the result of the rules.</span>
 <span class="sd">    this method should be called AFTER the execute method.</span>
 <span class="sd">    The default reporter module is reporters.md.</span>
-<span class="sd">    if `reporter` is part of the definition of the rule set, that reporter will be used.</span>
-<span class="sd">    if `reporter_args` is part of the definition of the rule set the arguments defined there will be passed to the reporter.</span>
+<span class="sd">    if `reporter` is part of the definition of the rule set,</span>
+<span class="sd">    that reporter will be used.</span>
+<span class="sd">    if `reporter_args` is part of the definition of the rule set,</span>
+<span class="sd">     the arguments defined there will be passed to the reporter.</span>
+<span class="sd">    </span>
+<span class="sd">    if `output_format` is passed as a parameter to the report function,</span>
+<span class="sd">    this will overrule the `output_format` defined in `reporter_args`.</span>
 <span class="sd">    A yaml snippet to illustrate the selection of the markdown reporter with html output:</span>
 <span class="sd">        name: test_bag_geocoder</span>
 <span class="sd">        title: Test the BAG geocoder</span>
@@ -1726,13 +1760,19 @@ table {
 <span class="sd">        reporter: reporters.md</span>
 <span class="sd">        reporter_args:</span>
 <span class="sd">          output_format: html</span>
-<span class="sd">    If no arguments are defined in the rule set, arguments passed in this report method will be passed to the reporter.</span>
-<span class="sd">    The &#39;rule_set_reporter&#39; method in the default reporter reporters.md accepts an optional `output_format` parameter which is expected to be one of:</span>
+<span class="sd">    If no arguments are defined in the rule set, </span>
+<span class="sd">    arguments passed in this report method will be passed to the reporter.</span>
+<span class="sd">    The &#39;rule_set_reporter&#39; method in the default reporter reporters.md accepts </span>
+<span class="sd">    an optional `output_format` parameter which is expected to be one of:</span>
 <span class="sd">    - &#39;markdown&#39;    (default)</span>
 <span class="sd">    - &#39;html&#39;</span>
+<span class="sd">    - &#39;pdf&#39;</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;output_format&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;output_format&#39;</span><span class="p">],</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">reporter_args</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span><span class="o">.</span><span class="n">rule_set_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>

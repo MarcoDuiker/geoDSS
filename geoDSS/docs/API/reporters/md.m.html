@@ -1070,6 +1070,9 @@ table {
     <div class="codehilite"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1077,6 +1080,13 @@ table {
     <span class="k">except</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">pymarkdown</span> <span class="kn">as</span> <span class="nn">md_lib</span>
     <span class="kn">import</span> <span class="nn">yaml</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># needed for pdf support</span>
+    <span class="c1"># see: https://pypi.org/project/pdfkit/ for dependencies and installation instructions</span>
+    <span class="kn">import</span> <span class="nn">pdfkit</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="k">pass</span>
     
@@ -1093,6 +1103,7 @@ table {
 
 <span class="sd">    - &#39;markdown&#39; (default)</span>
 <span class="sd">    - &#39;html&#39;</span>
+<span class="sd">    - &#39;pdf&#39;</span>
 
 <span class="sd">    Furthermore the following optional parameters can be passed:</span>
 
@@ -1105,6 +1116,8 @@ table {
 <span class="sd">    </span>
 <span class="sd">    - `{timestamp}`                               The ISO timestamp</span>
 <span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># return output_format</span>
 
     <span class="k">if</span> <span class="s1">&#39;html_wrapper&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">html_wrapper</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;html_wrapper&#39;</span><span class="p">]</span>
@@ -1163,8 +1176,14 @@ table {
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_set</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
         <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
+    <span class="n">html</span> <span class="o">=</span> <span class="n">html_wrapper</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;___content_goes_here___&#39;</span><span class="p">,</span> <span class="n">md_lib</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">markdown</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s1">&#39;html&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">html_wrapper</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;___content_goes_here___&#39;</span><span class="p">,</span> <span class="n">md_lib</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">markdown</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">html</span>
+    <span class="k">elif</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s1">&#39;pdf&#39;</span><span class="p">:</span>     
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pdfkit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">html</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">markdown</span>
 
@@ -1296,6 +1315,7 @@ table {
 <ul>
 <li>'markdown' (default)</li>
 <li>'html'</li>
+<li>'pdf'</li>
 </ul>
 <p>Furthermore the following optional parameters can be passed:</p>
 <ul>
@@ -1319,6 +1339,7 @@ table {
 
 <span class="sd">    - &#39;markdown&#39; (default)</span>
 <span class="sd">    - &#39;html&#39;</span>
+<span class="sd">    - &#39;pdf&#39;</span>
 
 <span class="sd">    Furthermore the following optional parameters can be passed:</span>
 
@@ -1331,6 +1352,8 @@ table {
 <span class="sd">    </span>
 <span class="sd">    - `{timestamp}`                               The ISO timestamp</span>
 <span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># return output_format</span>
 
     <span class="k">if</span> <span class="s1">&#39;html_wrapper&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">html_wrapper</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;html_wrapper&#39;</span><span class="p">]</span>
@@ -1389,8 +1412,14 @@ table {
     <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_set</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
         <span class="n">markdown</span> <span class="o">=</span> <span class="n">markdown</span> <span class="o">+</span> <span class="n">rule_reporter</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
+    <span class="n">html</span> <span class="o">=</span> <span class="n">html_wrapper</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;___content_goes_here___&#39;</span><span class="p">,</span> <span class="n">md_lib</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">markdown</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s1">&#39;html&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">html_wrapper</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;___content_goes_here___&#39;</span><span class="p">,</span> <span class="n">md_lib</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">markdown</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">html</span>
+    <span class="k">elif</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s1">&#39;pdf&#39;</span><span class="p">:</span>     
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pdfkit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">html</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">markdown</span>
 </pre></div>
