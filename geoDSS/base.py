@@ -186,9 +186,14 @@ class rules_set(object):
 
         The default reporter module is reporters.md.
 
-        if `reporter` is part of the definition of the rule set, that reporter will be used.
+        if `reporter` is part of the definition of the rule set,
+        that reporter will be used.
 
-        if `reporter_args` is part of the definition of the rule set the arguments defined there will be passed to the reporter.
+        if `reporter_args` is part of the definition of the rule set,
+         the arguments defined there will be passed to the reporter.
+        
+        if `output_format` is passed as a parameter to the report function,
+        this will overrule the `output_format` defined in `reporter_args`.
 
         A yaml snippet to illustrate the selection of the markdown reporter with html output:
 
@@ -199,15 +204,21 @@ class rules_set(object):
             reporter_args:
               output_format: html
 
-        If no arguments are defined in the rule set, arguments passed in this report method will be passed to the reporter.
+        If no arguments are defined in the rule set, 
+        arguments passed in this report method will be passed to the reporter.
 
-        The 'rule_set_reporter' method in the default reporter reporters.md accepts an optional `output_format` parameter which is expected to be one of:
+        The 'rule_set_reporter' method in the default reporter reporters.md accepts 
+        an optional `output_format` parameter which is expected to be one of:
 
         - 'markdown'    (default)
         - 'html'
+        - 'pdf'
         '''
 
         if self.reporter_args:
-            return self.reporter_module.rule_set_reporter(self, **self.reporter_args)
+            if 'output_format' in kwargs:
+                return self.reporter_module.rule_set_reporter(self, output_format = kwargs['output_format'], **self.reporter_args)
+            else:
+                return self.reporter_module.rule_set_reporter(self, **self.reporter_args)
         else:
             return self.reporter_module.rule_set_reporter(self, **kwargs)
