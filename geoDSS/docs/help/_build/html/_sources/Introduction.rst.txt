@@ -6,9 +6,9 @@ So what is geoDSS and who is it meant for?
 ------------------------------------------
 
 geoDSS is a tool aimed at non-programmers wanting to run sets of automated tests, mostly (but not necessarily) in the geo-spatial domain.
-Running a set of automated tests results in a report, often in html-format.
+Running a set of automated tests results in a report, often in html-format. This kind of tooling is often refered to with 'rule engine'.
 
-So typically a GIS-specialist would create something that geocodes an address and test if this address is within an area of interest.
+So typically a GIS-specialist would create something that geocodes an address and tests if this address is within an area of interest.
 
 geoDSS can run in batch mode and scheduled mode, often resulting in reports in .csv format. geoDSS can be run from the command line, as a cgi or wsgi web application. 
 Furthermore geoDSS can be imported as a Python module and then be used with a few simple lines of Python. 
@@ -37,7 +37,7 @@ Before putting geoDSS to good use you need to know a few basic concepts used in 
 Subject
 ^^^^^^^
 
-A :ref:`subject <subject>` is evaluated against the :ref:`rules`. Eg. an address or a coordinate.
+A :ref:`subject <subject>` is evaluated against the :ref:`rules`. Eg. an address or a coordinate. In some rule engines is spoken of an `argument` instead of a `subject`.
 
 Rule
 ^^^^

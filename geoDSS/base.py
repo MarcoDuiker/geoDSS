@@ -93,7 +93,7 @@ class rules_set(object):
                 self.logger.debug("Selecting reporter %s" % self.reporter_module.__name__)
             else:
                 self.logger.error('The reporter %s is not defined yet.' % self.definition['reporter'])
-                raise exceptions.NotImplementedError('The reporter %s is not defined yet.' % self.definition['reporter'])
+                raise exceptions.NotImplementedError('The reporter %s is not defined yet or has unmet dependencies.' % self.definition['reporter'])
 
         self.reporter_args = None
         if 'reporter_args' in self.definition.keys():
@@ -118,7 +118,7 @@ class rules_set(object):
                 self.rules.append(test_to_add(name, definition, logger = self.logger, rules = self._rules, settings = self.definition['settings']))
             else:
                 self.logger.error('The type %s is not defined yet.' % definition['type'])
-                raise exceptions.NotImplementedError('The type %s is not defined yet.' % definition['type'])
+                raise exceptions.NotImplementedError('The type %s is not defined yet or has unmet dependencies.' % definition['type'])
 
 
     def _setup_logging(self):

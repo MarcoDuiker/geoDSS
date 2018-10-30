@@ -29,7 +29,13 @@ from ..tests.test import test
 
 class wfs2_SpatialOperator(test):
     '''
-    This test constructs a WFS 2.0.0 SpatialOperat0r request.
+    This test constructs a WFS 2.0.0 SpatialOperator request.
+    
+    Dependencies
+    ------------
+    
+    - osgeo
+    - owslib
     
     Definition
     ----------
