@@ -7,17 +7,11 @@ import shutil
 import tempfile
 import traceback
 
-try:
-    from osgeo import ogr, gdal
-except:
-    pass
+from osgeo import ogr, gdal
 
-try:
-    from owslib.fes import *
-    from owslib.etree import etree
-    from owslib.wfs import WebFeatureService
-except:
-    pass
+from owslib.fes import *
+from owslib.etree import etree
+from owslib.wfs import WebFeatureService
 
 try:
     # python2

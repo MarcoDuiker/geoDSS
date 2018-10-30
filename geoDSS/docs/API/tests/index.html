@@ -1053,6 +1053,7 @@ table {
         <li class="mono"><a href="postgis_spatial_select.m.html">geoDSS.tests.postgis_spatial_select</a></li>
         <li class="mono"><a href="remark.m.html">geoDSS.tests.remark</a></li>
         <li class="mono"><a href="request.m.html">geoDSS.tests.request</a></li>
+        <li class="mono"><a href="rss.m.html">geoDSS.tests.rss</a></li>
         <li class="mono"><a href="test.m.html">geoDSS.tests.test</a></li>
         <li class="mono"><a href="unit_test.m.html">geoDSS.tests.unit_test</a></li>
         <li class="mono"><a href="wfs2_SpatialOperator.m.html">geoDSS.tests.wfs2_SpatialOperator</a></li>
@@ -1109,7 +1110,31 @@ In real life more parameters will be present in a subject.</p>
 
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">from</span> <span class="nn">..tests</span> <span class="kn">import</span> <span class="n">evaluate</span><span class="p">,</span> <span class="n">get_map</span><span class="p">,</span> <span class="n">key_value_compare</span><span class="p">,</span> <span class="n">postgis_spatial_select</span><span class="p">,</span> <span class="n">remark</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">unit_test</span><span class="p">,</span> <span class="n">wfs2_SpatialOperator</span>
+<span class="c1"># first import all tests dependent on python libraries needed by geoDSS only.</span>
+<span class="kn">from</span> <span class="nn">..tests</span> <span class="kn">import</span> <span class="n">evaluate</span><span class="p">,</span> \
+                    <span class="n">get_map</span><span class="p">,</span> \
+                    <span class="n">key_value_compare</span><span class="p">,</span> \
+                    <span class="n">remark</span><span class="p">,</span> \
+                    <span class="n">request</span><span class="p">,</span> \
+                    <span class="n">unit_test</span>
+
+<span class="c1"># then try to import other tests as well; skip a test if import fails.</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">..tests</span> <span class="kn">import</span> <span class="n">postgis_spatial_select</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">..tests</span> <span class="kn">import</span> <span class="n">rss</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">..tests</span> <span class="kn">import</span> <span class="n">wfs2_SpatialOperator</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+    
+<span class="c1"># and as long as we are developing we try the import here to prevent exceptions being caught.</span>
 </pre></div>
 
   </div>
@@ -1153,6 +1178,12 @@ In real life more parameters will be present in a subject.</p>
       </div>
       <div class="item">
       <p class="name"><a href="request.m.html">geoDSS.tests.request</a></p>
+      
+  
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="rss.m.html">geoDSS.tests.rss</a></p>
       
   
 

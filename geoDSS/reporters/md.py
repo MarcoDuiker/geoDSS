@@ -4,15 +4,13 @@ import datetime
 import sys
 import tempfile
 import time
+import yaml
+
 
 try:
-    try:
-        import markdown as md_lib
-    except:
-        import pymarkdown as md_lib
-    import yaml
+    import markdown as md_lib
 except:
-    pass
+    import pymarkdown as md_lib
 
 try:
     # needed for pdf support

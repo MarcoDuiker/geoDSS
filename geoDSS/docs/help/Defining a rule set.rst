@@ -58,6 +58,8 @@ Explanation (almost all arguments are optional):
 - ``name``: a useful identifier meant for computers to read.
 - ``title``: a useful identifier for humans to read. Most reporters will put this in the report. If left empty, then the ``name`` will be used as a title.
 - ``description``: a description of this rule set. Most reporters will put this in the report.
+- ``break_on_true``: when set, stops execution on the first test evaluating to True.
+- ``break_on_false``: when set, stops execution on the first test evaluating to False.
 - ``logging``: sets the logging properties:
 
   - ``level``:  Python log level. Usually one of: ``DEBUG``, ``INFO``, ``ERROR`` (defaults to ``INFO``)

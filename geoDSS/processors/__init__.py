@@ -20,4 +20,23 @@ In real life more parameters will be present in a subject.
 
 '''
 
-from ..processors import bag_geocoder, pdok_locatieserver, postgis_processing, postgis_unit_test, random_point_geometry, random_value
+# first import all processors dependent on python libraries needed by geoDSS only.
+from ..processors import    bag_geocoder, \
+                            pdok_locatieserver, \
+                            random_point_geometry, \
+                            random_value
+
+# then try to import other processors as well; skip a processor if import fails.
+
+try:
+    from ..processors import postgis_processing
+except:
+    pass
+
+try:
+    from ..processors import postgis_unit_test
+except:
+    pass
+
+# and as long as we are developing we try the import here to prevent exceptions being caught.
+

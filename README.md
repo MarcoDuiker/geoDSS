@@ -57,9 +57,6 @@ The following libraries are not optional:
 Most off the time you'll also want to install:
 
 - psycopg2
-- json
-- xml
-
 	
 Documentation
 -------------

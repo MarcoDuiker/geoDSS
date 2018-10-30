@@ -4,11 +4,7 @@ This is the default rule_set loader.
 It loads a rule_set from a yaml file.
 '''
 
-try:
-    import yaml
-except:
-    pass
-    
+import yaml
 
 def load_rule_set(rules_set_file, **kwargs):
     '''

@@ -4,10 +4,7 @@
 import json
 import re
 
-try:
-    import requests
-except:
-    pass
+import requests
 
 try:
     import exceptions
