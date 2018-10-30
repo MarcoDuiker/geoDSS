@@ -1106,7 +1106,25 @@ In real life more parameters will be present in a subject.</p>
 
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">from</span> <span class="nn">..processors</span> <span class="kn">import</span> <span class="n">bag_geocoder</span><span class="p">,</span> <span class="n">pdok_locatieserver</span><span class="p">,</span> <span class="n">postgis_processing</span><span class="p">,</span> <span class="n">postgis_unit_test</span><span class="p">,</span> <span class="n">random_point_geometry</span><span class="p">,</span> <span class="n">random_value</span>
+<span class="c1"># first import all processors dependent on python libraries needed by geoDSS only.</span>
+<span class="kn">from</span> <span class="nn">..processors</span> <span class="kn">import</span>    <span class="n">bag_geocoder</span><span class="p">,</span> \
+                            <span class="n">pdok_locatieserver</span><span class="p">,</span> \
+                            <span class="n">random_point_geometry</span><span class="p">,</span> \
+                            <span class="n">random_value</span>
+
+<span class="c1"># then try to import other processors as well; skip a processor if import fails.</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">..processors</span> <span class="kn">import</span> <span class="n">postgis_processing</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">..processors</span> <span class="kn">import</span> <span class="n">postgis_unit_test</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="c1"># and as long as we are developing we try the import here to prevent exceptions being caught.</span>
 </pre></div>
 
   </div>

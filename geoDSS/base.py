@@ -55,7 +55,7 @@ class rules_set(object):
         '''
         Reads the rules_set with the load_rule_set method of the loader_moduler.
 
-        If not specified the dafault yaml loader is used.
+        If not specified the default yaml loader is used.
 
         `rules_set_file` is expected to be a file containing the rules set.
         '''
@@ -72,6 +72,10 @@ class rules_set(object):
             self.definition['settings'] = None
         if not 'logging' in self.definition.keys():
             self.definition['logging'] = {}
+        if not 'break_on_true' in self.definition.keys():
+            self.definition['break_on_true'] = False
+        if not 'break_on_false' in self.definition.keys():
+            self.definition['break_on_false'] = False
 
         self.logger = self._setup_logging()
 
@@ -154,7 +158,7 @@ class rules_set(object):
         '''
         Executes processors and tests in the rules_set.
 
-        this methoud should be called BEFORE the report method.
+        this method should be called BEFORE the report method.
 
         `subject`       is expected to be a dict which is passed to each rule.
         '''
@@ -172,6 +176,12 @@ class rules_set(object):
             if result:
                 self.result.append(copy.deepcopy(subject))               # and add each subject to the rule_set result as well
                 subject = result
+                if self.definition['break_on_true'] and result.decision:
+                    self.logger.info('Rule "%s" evaluated to True and ended execution due to break_on_true being True.' % str(rule.name))
+                    break
+                if self.definition['break_on_false'] and not result.decision:
+                    self.logger.info('Rule "%s" evaluated to False and ended execution due to break_on_false being True.' % str(rule.name))
+                    break
             if not result:
                 self.logger.info('Rule "%s" returned False to end execution.' % str(rule.name))
                 break

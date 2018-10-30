@@ -1141,7 +1141,7 @@ table {
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Reads the rules_set with the load_rule_set method of the loader_moduler.</span>
 
-<span class="sd">        If not specified the dafault yaml loader is used.</span>
+<span class="sd">        If not specified the default yaml loader is used.</span>
 
 <span class="sd">        `rules_set_file` is expected to be a file containing the rules set.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -1158,6 +1158,10 @@ table {
             <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;logging&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;logging&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;break_on_true&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_true&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;break_on_false&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_false&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_logging</span><span class="p">()</span>
 
@@ -1240,7 +1244,7 @@ table {
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Executes processors and tests in the rules_set.</span>
 
-<span class="sd">        this methoud should be called BEFORE the report method.</span>
+<span class="sd">        this method should be called BEFORE the report method.</span>
 
 <span class="sd">        `subject`       is expected to be a dict which is passed to each rule.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -1258,6 +1262,12 @@ table {
             <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">subject</span><span class="p">))</span>               <span class="c1"># and add each subject to the rule_set result as well</span>
                 <span class="n">subject</span> <span class="o">=</span> <span class="n">result</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_true&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; evaluated to True and ended execution due to break_on_true being True.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                    <span class="k">break</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_false&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; evaluated to False and ended execution due to break_on_false being True.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                    <span class="k">break</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; returned False to end execution.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
                 <span class="k">break</span>
@@ -1348,7 +1358,7 @@ table {
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Reads the rules_set with the load_rule_set method of the loader_moduler.</span>
 
-<span class="sd">        If not specified the dafault yaml loader is used.</span>
+<span class="sd">        If not specified the default yaml loader is used.</span>
 
 <span class="sd">        `rules_set_file` is expected to be a file containing the rules set.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -1365,6 +1375,10 @@ table {
             <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;logging&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;logging&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;break_on_true&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_true&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;break_on_false&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_false&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_logging</span><span class="p">()</span>
 
@@ -1447,7 +1461,7 @@ table {
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Executes processors and tests in the rules_set.</span>
 
-<span class="sd">        this methoud should be called BEFORE the report method.</span>
+<span class="sd">        this method should be called BEFORE the report method.</span>
 
 <span class="sd">        `subject`       is expected to be a dict which is passed to each rule.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -1465,6 +1479,12 @@ table {
             <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">subject</span><span class="p">))</span>               <span class="c1"># and add each subject to the rule_set result as well</span>
                 <span class="n">subject</span> <span class="o">=</span> <span class="n">result</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_true&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; evaluated to True and ended execution due to break_on_true being True.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                    <span class="k">break</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_false&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; evaluated to False and ended execution due to break_on_false being True.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                    <span class="k">break</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; returned False to end execution.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
                 <span class="k">break</span>
@@ -1590,7 +1610,7 @@ table {
     
   
     <div class="desc"><p>Reads the rules_set with the load_rule_set method of the loader_moduler.</p>
-<p>If not specified the dafault yaml loader is used.</p>
+<p>If not specified the default yaml loader is used.</p>
 <p><code>rules_set_file</code> is expected to be a file containing the rules set.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.base.rules_set.__init__', this);">Show source &equiv;</a></p>
@@ -1598,7 +1618,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rules_set_file</span><span class="p">,</span> <span class="n">loader_module</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">yaml_loader</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Reads the rules_set with the load_rule_set method of the loader_moduler.</span>
-<span class="sd">    If not specified the dafault yaml loader is used.</span>
+<span class="sd">    If not specified the default yaml loader is used.</span>
 <span class="sd">    `rules_set_file` is expected to be a file containing the rules set.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">dss</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="vm">__name__</span><span class="p">]</span>
@@ -1612,6 +1632,10 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;logging&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;logging&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;break_on_true&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_true&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;break_on_false&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_false&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_logging</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;reporter&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reporter_module</span> <span class="o">=</span> <span class="n">reporters</span><span class="o">.</span><span class="n">md</span>
@@ -1668,7 +1692,7 @@ table {
     
   
     <div class="desc"><p>Executes processors and tests in the rules_set.</p>
-<p>this methoud should be called BEFORE the report method.</p>
+<p>this method should be called BEFORE the report method.</p>
 <p><code>subject</code>       is expected to be a dict which is passed to each rule.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.base.rules_set.execute', this);">Show source &equiv;</a></p>
@@ -1676,7 +1700,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Executes processors and tests in the rules_set.</span>
-<span class="sd">    this methoud should be called BEFORE the report method.</span>
+<span class="sd">    this method should be called BEFORE the report method.</span>
 <span class="sd">    `subject`       is expected to be a dict which is passed to each rule.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>                                                 <span class="c1"># the rule_set has it&#39;s own result we can report on; we fill it with the subjects</span>
@@ -1690,6 +1714,12 @@ table {
         <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">subject</span><span class="p">))</span>               <span class="c1"># and add each subject to the rule_set result as well</span>
             <span class="n">subject</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_true&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; evaluated to True and ended execution due to break_on_true being True.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;break_on_false&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; evaluated to False and ended execution due to break_on_false being True.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="k">break</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Rule &quot;</span><span class="si">%s</span><span class="s1">&quot; returned False to end execution.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
             <span class="k">break</span>

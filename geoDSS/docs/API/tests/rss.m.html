@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>geoDSS.tests.request API documentation</title>
+    <title>geoDSS.tests.rss API documentation</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1045,12 +1045,12 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#geoDSS.tests.request.request">request</a></span>
+        <span class="class_name"><a href="#geoDSS.tests.rss.rss">rss</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#geoDSS.tests.request.request.__init__">__init__</a></li>
-    <li class="mono"><a href="#geoDSS.tests.request.request.execute">execute</a></li>
+    <li class="mono"><a href="#geoDSS.tests.rss.rss.__init__">__init__</a></li>
+    <li class="mono"><a href="#geoDSS.tests.rss.rss.execute">execute</a></li>
   </ul>
 
         </li>
@@ -1068,21 +1068,29 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">geoDSS.tests.request</span> module</h1>
+  <h1 class="title"><span class="name">geoDSS.tests.rss</span> module</h1>
   
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.request', this);">Show source &equiv;</a></p>
-  <div id="source-geoDSS.tests.request" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.rss', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.tests.rss" class="source">
     <div class="codehilite"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
+<span class="kn">import</span> <span class="nn">feedparser</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
 <span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPDigestAuth</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">fuzzywuzzy</span> <span class="kn">import</span> <span class="n">fuzz</span> 
+    <span class="kn">from</span> <span class="nn">fuzzywuzzy</span> <span class="kn">import</span> <span class="n">process</span> 
+<span class="k">except</span><span class="p">:</span>
+    <span class="c1"># we won&#39;t be able to do fuzzy matching</span>
+    <span class="k">pass</span>
+    
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># python2</span>
     <span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">urlencode</span>
@@ -1098,19 +1106,23 @@ table {
 <span class="kn">from</span> <span class="nn">..tests.test</span> <span class="kn">import</span> <span class="n">test</span>
 
 
-<span class="k">class</span> <span class="nc">request</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">rss</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This test fires a request to an URL using the requests module.</span>
+<span class="sd">    This test fires a request to an URL using the requests module and parses</span>
+<span class="sd">    the result as a RSS-feed.</span>
 <span class="sd">    The test can be configured to evaluate to True depending on status codes</span>
-<span class="sd">    and/ or the response containing a specific string.</span>
+<span class="sd">    and/ or the RSS-feed containing a specific string.</span>
 
 <span class="sd">    Definition</span>
 <span class="sd">    ----------</span>
 
-<span class="sd">    `definition`     is expected to be a dict having at least:</span>
+<span class="sd">    `definition`     is expected to be a dict having:</span>
 
 <span class="sd">    `url`            Service endpoint for the request. You may also give a string. </span>
 <span class="sd">                     If this string is a key in the subject the url will be taken from subject. </span>
+<span class="sd">                     </span>
+<span class="sd">                     The url may contain placeholders which will be replaced with values from the </span>
+<span class="sd">                     given keys in the subject. A placeholder is written like `{subject_key_goes_here}`.</span>
 
 <span class="sd">    `verb`           supported html verb. `GET`, `POST` and `HEAD` are supported.</span>
 
@@ -1131,46 +1143,66 @@ table {
 <span class="sd">    - `headers`         A dict containing the headers. eg. `&#39;user-agent&#39;: &#39;my-app/0.0.1&#39;`</span>
 <span class="sd">    - `verify`          Defaults to `True`. Set to `False` to ignore verifying the SSL certificate.</span>
 
+<span class="sd">    `report_template` (string):     The string to report when the test evaluated to True.</span>
+<span class="sd">                                    The following placeholders will be replaced:</span>
+
+<span class="sd">    - `{status_code}`               will be replaced by the status code of the response.</span>
+<span class="sd">    - `{response_time}`             will be replaced with the response time.</span>
+<span class="sd">    - `{timestamp}`                 will be replaced by the ISO timestamp. </span>
+<span class="sd">    - `{rss_item_goes_here}`        will be replaced by the given RSS-item.</span>
+<span class="sd">    - `{score}`                     will be replaced by the fuzzy matching score, </span>
+<span class="sd">                                    or 100 when no fuzzy matching is done.     </span>
+<span class="sd">        </span>
+<span class="sd">    `return_subject_key`            When given, this subject key will receive the response.</span>
+
+<span class="sd">    optionally having one of:</span>
 
 <span class="sd">    `status_codes`   A list of status codes. If the returned status code is NOT in this list, this test evaluates to False.</span>
 <span class="sd">                     If `None` or not given the test will NOT eveluate to False based on the returned status_code.</span>
 
-<span class="sd">    `return_value`   When given the test will evaluate to True if the return value is in the response content.</span>
+<span class="sd">    `rss_item`       When given the test will evaluate to True if the `search_string` in the subject is in the specified rss_item</span>
+<span class="sd">                     of one of the RSS entries. All RSS entries will be reported, with a maximim of `limit`.</span>
 <span class="sd">                     If not given, only the returned status code will determine if the test evaluates to True.</span>
-<span class="sd">                     If `return_value` is a key in the subject, then the value of that key is used.</span>
+<span class="sd">                     If `rss_item` is a key in the subject, then the value of that key is used as `rss_item`.</span>
 
-<span class="sd">    `report_template` (string):     The string to report when the test evaluated to True.</span>
-<span class="sd">                                    The following placeholders will be replaced:</span>
+<span class="sd">    optionally having:</span>
+<span class="sd">    </span>
+<span class="sd">    `fuzzy_score`           When given fuzzy matching of the `search_string` is done. </span>
+<span class="sd">                            Every RSS-entry with a fuzzy score above `fuzz_score` is reported.</span>
+<span class="sd">                            If there is one or more entries to reported the test evaluates to True.</span>
 
-<span class="sd">    - `{text}`                      will be replaced by the text of the response.</span>
-<span class="sd">    - `{status_code}`               will be replaced by the status code of the response.</span>
-<span class="sd">    - `{response_time}`             will be replaced with the response time.</span>
-<span class="sd">    - `{timestamp}`                 will be replaced by the ISO timestamp. </span>
-
-<span class="sd">    `return_subject_key`    When given, this subject key will receive the response.</span>
+<span class="sd">    `limit`                 Limits the reported number of RSS-entries. Defaults to 10.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
 
 <span class="sd">    a useful yaml snippet for this test would be:</span>
 
+<span class="sd">        name: rss</span>
+<span class="sd">        title: Found in RSS</span>
+<span class="sd">        description: &quot;&quot;</span>
+<span class="sd">        logging:</span>
+<span class="sd">          level: DEBUG</span>
 <span class="sd">        rules:</span>
-<span class="sd">            google:</span>
-<span class="sd">                type: tests.request</span>
-<span class="sd">                title: See if Google is alive</span>
-<span class="sd">                description: &quot;&quot;</span>
-<span class="sd">                url: &quot;https://google.com/search&quot;</span>
-<span class="sd">                verb: GET</span>
-<span class="sd">                status_codes:</span>
-<span class="sd">                - 200</span>
-<span class="sd">                report_template: &quot;It&#39;s alive cause it returned status code {status_code} in {response_time} seconds.&quot;</span>
+<span class="sd">        - reddit_gis_search</span>
+<span class="sd">            type: tests.rss</span>
+<span class="sd">            title: Found in RSS feed</span>
+<span class="sd">            description: &quot;&quot;</span>
+<span class="sd">            url: &quot;https://www.reddit.com/r/gis/.rss&quot;</span>
+<span class="sd">            verb: GET</span>
+<span class="sd">            status_codes:</span>
+<span class="sd">            - 200</span>
+<span class="sd">            rss_item: content</span>
+<span class="sd">            fuzzy_score: 10</span>
+<span class="sd">            limit: 3</span>
+<span class="sd">            report_template: &quot;{score}: &lt;{link}&gt;&quot;</span>
 
 <span class="sd">    Subject Example</span>
 <span class="sd">    ---------------</span>
 
 <span class="sd">    a useful subject for this would be:</span>
 
-<span class="sd">        subject = {&quot;q&quot;: &quot;geoDSS+github&quot;}</span>
+<span class="sd">        subject = {&quot;search_string&quot;:&quot;data science&quot;}</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
@@ -1184,12 +1216,16 @@ table {
 <span class="sd">                           read to get a string.</span>
 <span class="sd">                           In case of a GET or HEAD request, the string will be</span>
 <span class="sd">                           urlencoded before being appended to the url.</span>
+<span class="sd">                           </span>
+<span class="sd">        - `search_string`  Search a `rss_item` defined in the rule set for this string.   </span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
-        
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
             <span class="n">url</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">subject</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">subject</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">subject</span><span class="p">[</span><span class="n">key</span><span class="p">],</span><span class="n">subject</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
         <span class="n">auth</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">verify</span> <span class="o">=</span> <span class="bp">True</span>
@@ -1212,6 +1248,10 @@ table {
         <span class="n">status_codes</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s1">&#39;status_codes&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
             <span class="n">status_codes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;status_codes&#39;</span><span class="p">]</span>
+            
+        <span class="n">limit</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="k">if</span> <span class="s1">&#39;limit&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+             <span class="n">limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;limit&#39;</span><span class="p">]</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s1">&#39;request_data&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
@@ -1257,25 +1297,49 @@ table {
         <span class="k">if</span> <span class="n">status_codes</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">status_codes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s1">&#39;return_value&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_value&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
-                    <span class="n">rv</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_value&#39;</span><span class="p">]]</span>
+            <span class="n">rss_entries</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="s1">&#39;rss_item&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="ow">and</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]]</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_value&#39;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">rv</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                <span class="n">feed</span> <span class="o">=</span> <span class="n">feedparser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;fuzzy_score&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+                    <span class="n">testset</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">]</span>
+                    <span class="n">summary_list</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">extractBests</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">],</span> 
+                        <span class="n">testset</span><span class="p">,</span> 
+                        <span class="n">scorer</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">token_set_ratio</span><span class="p">,</span>
+                        <span class="n">score_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;fuzzy_score&#39;</span><span class="p">],</span>
+                        <span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">summary_list</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="k">for</span> <span class="n">summary</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">summary_list</span><span class="p">:</span>
+                            <span class="n">rss_entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">testset</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">summary</span><span class="p">)],</span> <span class="n">score</span><span class="p">))</span>                 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
+                    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+                            <span class="n">rss_entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entry</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
+                                <span class="k">break</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
-            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">rss_entry</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">rss_entries</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s1">&#39;{score}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">score</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">rss_entry</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="s1">&#39;{</span><span class="si">%s</span><span class="s1">}&#39;</span> <span class="o">%</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{</span><span class="si">%s</span><span class="s1">}&#39;</span> <span class="o">%</span> <span class="n">item</span><span class="p">,</span> <span class="n">rss_entry</span><span class="p">[</span><span class="n">item</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="s1">&#39;return_subject_key&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
             <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_subject_key&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
@@ -1293,16 +1357,22 @@ table {
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="geoDSS.tests.request.request" class="name">class <span class="ident">request</span></p>
+      <p id="geoDSS.tests.rss.rss" class="name">class <span class="ident">rss</span></p>
       
   
-    <div class="desc"><p>This test fires a request to an URL using the requests module.
+    <div class="desc"><p>This test fires a request to an URL using the requests module and parses
+the result as a RSS-feed.
 The test can be configured to evaluate to True depending on status codes
-and/ or the response containing a specific string.</p>
+and/ or the RSS-feed containing a specific string.</p>
 <h2>Definition</h2>
-<p><code>definition</code>     is expected to be a dict having at least:</p>
+<p><code>definition</code>     is expected to be a dict having:</p>
 <p><code>url</code>            Service endpoint for the request. You may also give a string. 
                  If this string is a key in the subject the url will be taken from subject. </p>
+<div class="codehilite"><pre><span></span>             The url may contain placeholders which will be replaced with values from the 
+             given keys in the subject. A placeholder is written like `{subject_key_goes_here}`.
+</pre></div>
+
+
 <p><code>verb</code>           supported html verb. <code>GET</code>, <code>POST</code> and <code>HEAD</code> are supported.</p>
 <p><code>params</code>         a dict with al params for the request. The following optional parameters are supported:</p>
 <ul>
@@ -1319,55 +1389,76 @@ and/ or the response containing a specific string.</p>
 <li><code>headers</code>         A dict containing the headers. eg. <code>'user-agent': 'my-app/0.0.1'</code></li>
 <li><code>verify</code>          Defaults to <code>True</code>. Set to <code>False</code> to ignore verifying the SSL certificate.</li>
 </ul>
-<p><code>status_codes</code>   A list of status codes. If the returned status code is NOT in this list, this test evaluates to False.
-                 If <code>None</code> or not given the test will NOT eveluate to False based on the returned status_code.</p>
-<p><code>return_value</code>   When given the test will evaluate to True if the return value is in the response content.
-                 If not given, only the returned status code will determine if the test evaluates to True.
-                 If <code>return_value</code> is a key in the subject, then the value of that key is used.</p>
 <p><code>report_template</code> (string):     The string to report when the test evaluated to True.
                                 The following placeholders will be replaced:</p>
 <ul>
-<li><code>{text}</code>                      will be replaced by the text of the response.</li>
 <li><code>{status_code}</code>               will be replaced by the status code of the response.</li>
 <li><code>{response_time}</code>             will be replaced with the response time.</li>
 <li><code>{timestamp}</code>                 will be replaced by the ISO timestamp. </li>
+<li><code>{rss_item_goes_here}</code>        will be replaced by the given RSS-item.</li>
+<li><code>{score}</code>                     will be replaced by the fuzzy matching score, 
+                                or 100 when no fuzzy matching is done.     </li>
 </ul>
-<p><code>return_subject_key</code>    When given, this subject key will receive the response.</p>
+<p><code>return_subject_key</code>            When given, this subject key will receive the response.</p>
+<p>optionally having one of:</p>
+<p><code>status_codes</code>   A list of status codes. If the returned status code is NOT in this list, this test evaluates to False.
+                 If <code>None</code> or not given the test will NOT eveluate to False based on the returned status_code.</p>
+<p><code>rss_item</code>       When given the test will evaluate to True if the <code>search_string</code> in the subject is in the specified rss_item
+                 of one of the RSS entries. All RSS entries will be reported, with a maximim of <code>limit</code>.
+                 If not given, only the returned status code will determine if the test evaluates to True.
+                 If <code>rss_item</code> is a key in the subject, then the value of that key is used as <code>rss_item</code>.</p>
+<p>optionally having:</p>
+<p><code>fuzzy_score</code>           When given fuzzy matching of the <code>search_string</code> is done. 
+                        Every RSS-entry with a fuzzy score above <code>fuzz_score</code> is reported.
+                        If there is one or more entries to reported the test evaluates to True.</p>
+<p><code>limit</code>                 Limits the reported number of RSS-entries. Defaults to 10.</p>
 <h2>Rule example</h2>
 <p>a useful yaml snippet for this test would be:</p>
-<div class="codehilite"><pre><span></span><span class="n">rules</span><span class="o">:</span>
-    <span class="n">google</span><span class="o">:</span>
-        <span class="n">type</span><span class="o">:</span> <span class="n">tests</span><span class="o">.</span><span class="na">request</span>
-        <span class="n">title</span><span class="o">:</span> <span class="n">See</span> <span class="k">if</span> <span class="n">Google</span> <span class="k">is</span> <span class="n">alive</span>
-        <span class="n">description</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">url</span><span class="o">:</span> <span class="s2">&quot;https://google.com/search&quot;</span>
-        <span class="n">verb</span><span class="o">:</span> <span class="n">GET</span>
-        <span class="n">status_codes</span><span class="o">:</span>
-        <span class="o">-</span> <span class="mi">200</span>
-        <span class="n">report_template</span><span class="o">:</span> <span class="s2">&quot;It&#39;s alive cause it returned status code {status_code} in {response_time} seconds.&quot;</span>
+<div class="codehilite"><pre><span></span><span class="n">name</span><span class="o">:</span> <span class="n">rss</span>
+<span class="n">title</span><span class="o">:</span> <span class="n">Found</span> <span class="k">in</span> <span class="n">RSS</span>
+<span class="n">description</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
+<span class="n">logging</span><span class="o">:</span>
+  <span class="n">level</span><span class="o">:</span> <span class="n">DEBUG</span>
+<span class="n">rules</span><span class="o">:</span>
+<span class="o">-</span> <span class="n">reddit_gis_search</span>
+    <span class="n">type</span><span class="o">:</span> <span class="n">tests</span><span class="o">.</span><span class="na">rss</span>
+    <span class="n">title</span><span class="o">:</span> <span class="n">Found</span> <span class="k">in</span> <span class="n">RSS</span> <span class="n">feed</span>
+    <span class="n">description</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">url</span><span class="o">:</span> <span class="s2">&quot;https://www.reddit.com/r/gis/.rss&quot;</span>
+    <span class="n">verb</span><span class="o">:</span> <span class="n">GET</span>
+    <span class="n">status_codes</span><span class="o">:</span>
+    <span class="o">-</span> <span class="mi">200</span>
+    <span class="n">rss_item</span><span class="o">:</span> <span class="n">content</span>
+    <span class="n">fuzzy_score</span><span class="o">:</span> <span class="mi">10</span>
+    <span class="n">limit</span><span class="o">:</span> <span class="mi">3</span>
+    <span class="n">report_template</span><span class="o">:</span> <span class="s2">&quot;{score}: &lt;{link}&gt;&quot;</span>
 </pre></div>
 
 
 <h2>Subject Example</h2>
 <p>a useful subject for this would be:</p>
-<div class="codehilite"><pre><span></span>subject = {&quot;q&quot;: &quot;geoDSS+github&quot;}
+<div class="codehilite"><pre><span></span>subject = {&quot;search_string&quot;:&quot;data science&quot;}
 </pre></div></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.request.request', this);">Show source &equiv;</a></p>
-  <div id="source-geoDSS.tests.request.request" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">request</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.rss.rss', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.tests.rss.rss" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">rss</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This test fires a request to an URL using the requests module.</span>
+<span class="sd">    This test fires a request to an URL using the requests module and parses</span>
+<span class="sd">    the result as a RSS-feed.</span>
 <span class="sd">    The test can be configured to evaluate to True depending on status codes</span>
-<span class="sd">    and/ or the response containing a specific string.</span>
+<span class="sd">    and/ or the RSS-feed containing a specific string.</span>
 
 <span class="sd">    Definition</span>
 <span class="sd">    ----------</span>
 
-<span class="sd">    `definition`     is expected to be a dict having at least:</span>
+<span class="sd">    `definition`     is expected to be a dict having:</span>
 
 <span class="sd">    `url`            Service endpoint for the request. You may also give a string. </span>
 <span class="sd">                     If this string is a key in the subject the url will be taken from subject. </span>
+<span class="sd">                     </span>
+<span class="sd">                     The url may contain placeholders which will be replaced with values from the </span>
+<span class="sd">                     given keys in the subject. A placeholder is written like `{subject_key_goes_here}`.</span>
 
 <span class="sd">    `verb`           supported html verb. `GET`, `POST` and `HEAD` are supported.</span>
 
@@ -1388,46 +1479,66 @@ and/ or the response containing a specific string.</p>
 <span class="sd">    - `headers`         A dict containing the headers. eg. `&#39;user-agent&#39;: &#39;my-app/0.0.1&#39;`</span>
 <span class="sd">    - `verify`          Defaults to `True`. Set to `False` to ignore verifying the SSL certificate.</span>
 
+<span class="sd">    `report_template` (string):     The string to report when the test evaluated to True.</span>
+<span class="sd">                                    The following placeholders will be replaced:</span>
+
+<span class="sd">    - `{status_code}`               will be replaced by the status code of the response.</span>
+<span class="sd">    - `{response_time}`             will be replaced with the response time.</span>
+<span class="sd">    - `{timestamp}`                 will be replaced by the ISO timestamp. </span>
+<span class="sd">    - `{rss_item_goes_here}`        will be replaced by the given RSS-item.</span>
+<span class="sd">    - `{score}`                     will be replaced by the fuzzy matching score, </span>
+<span class="sd">                                    or 100 when no fuzzy matching is done.     </span>
+<span class="sd">        </span>
+<span class="sd">    `return_subject_key`            When given, this subject key will receive the response.</span>
+
+<span class="sd">    optionally having one of:</span>
 
 <span class="sd">    `status_codes`   A list of status codes. If the returned status code is NOT in this list, this test evaluates to False.</span>
 <span class="sd">                     If `None` or not given the test will NOT eveluate to False based on the returned status_code.</span>
 
-<span class="sd">    `return_value`   When given the test will evaluate to True if the return value is in the response content.</span>
+<span class="sd">    `rss_item`       When given the test will evaluate to True if the `search_string` in the subject is in the specified rss_item</span>
+<span class="sd">                     of one of the RSS entries. All RSS entries will be reported, with a maximim of `limit`.</span>
 <span class="sd">                     If not given, only the returned status code will determine if the test evaluates to True.</span>
-<span class="sd">                     If `return_value` is a key in the subject, then the value of that key is used.</span>
+<span class="sd">                     If `rss_item` is a key in the subject, then the value of that key is used as `rss_item`.</span>
 
-<span class="sd">    `report_template` (string):     The string to report when the test evaluated to True.</span>
-<span class="sd">                                    The following placeholders will be replaced:</span>
+<span class="sd">    optionally having:</span>
+<span class="sd">    </span>
+<span class="sd">    `fuzzy_score`           When given fuzzy matching of the `search_string` is done. </span>
+<span class="sd">                            Every RSS-entry with a fuzzy score above `fuzz_score` is reported.</span>
+<span class="sd">                            If there is one or more entries to reported the test evaluates to True.</span>
 
-<span class="sd">    - `{text}`                      will be replaced by the text of the response.</span>
-<span class="sd">    - `{status_code}`               will be replaced by the status code of the response.</span>
-<span class="sd">    - `{response_time}`             will be replaced with the response time.</span>
-<span class="sd">    - `{timestamp}`                 will be replaced by the ISO timestamp. </span>
-
-<span class="sd">    `return_subject_key`    When given, this subject key will receive the response.</span>
+<span class="sd">    `limit`                 Limits the reported number of RSS-entries. Defaults to 10.</span>
 
 <span class="sd">    Rule example</span>
 <span class="sd">    ------------</span>
 
 <span class="sd">    a useful yaml snippet for this test would be:</span>
 
+<span class="sd">        name: rss</span>
+<span class="sd">        title: Found in RSS</span>
+<span class="sd">        description: &quot;&quot;</span>
+<span class="sd">        logging:</span>
+<span class="sd">          level: DEBUG</span>
 <span class="sd">        rules:</span>
-<span class="sd">            google:</span>
-<span class="sd">                type: tests.request</span>
-<span class="sd">                title: See if Google is alive</span>
-<span class="sd">                description: &quot;&quot;</span>
-<span class="sd">                url: &quot;https://google.com/search&quot;</span>
-<span class="sd">                verb: GET</span>
-<span class="sd">                status_codes:</span>
-<span class="sd">                - 200</span>
-<span class="sd">                report_template: &quot;It&#39;s alive cause it returned status code {status_code} in {response_time} seconds.&quot;</span>
+<span class="sd">        - reddit_gis_search</span>
+<span class="sd">            type: tests.rss</span>
+<span class="sd">            title: Found in RSS feed</span>
+<span class="sd">            description: &quot;&quot;</span>
+<span class="sd">            url: &quot;https://www.reddit.com/r/gis/.rss&quot;</span>
+<span class="sd">            verb: GET</span>
+<span class="sd">            status_codes:</span>
+<span class="sd">            - 200</span>
+<span class="sd">            rss_item: content</span>
+<span class="sd">            fuzzy_score: 10</span>
+<span class="sd">            limit: 3</span>
+<span class="sd">            report_template: &quot;{score}: &lt;{link}&gt;&quot;</span>
 
 <span class="sd">    Subject Example</span>
 <span class="sd">    ---------------</span>
 
 <span class="sd">    a useful subject for this would be:</span>
 
-<span class="sd">        subject = {&quot;q&quot;: &quot;geoDSS+github&quot;}</span>
+<span class="sd">        subject = {&quot;search_string&quot;:&quot;data science&quot;}</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
@@ -1441,12 +1552,16 @@ and/ or the response containing a specific string.</p>
 <span class="sd">                           read to get a string.</span>
 <span class="sd">                           In case of a GET or HEAD request, the string will be</span>
 <span class="sd">                           urlencoded before being appended to the url.</span>
+<span class="sd">                           </span>
+<span class="sd">        - `search_string`  Search a `rss_item` defined in the rule set for this string.   </span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
-        
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
             <span class="n">url</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">subject</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">subject</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">subject</span><span class="p">[</span><span class="n">key</span><span class="p">],</span><span class="n">subject</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
         <span class="n">auth</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">verify</span> <span class="o">=</span> <span class="bp">True</span>
@@ -1469,6 +1584,10 @@ and/ or the response containing a specific string.</p>
         <span class="n">status_codes</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s1">&#39;status_codes&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
             <span class="n">status_codes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;status_codes&#39;</span><span class="p">]</span>
+            
+        <span class="n">limit</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="k">if</span> <span class="s1">&#39;limit&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+             <span class="n">limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;limit&#39;</span><span class="p">]</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s1">&#39;request_data&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
@@ -1514,25 +1633,49 @@ and/ or the response containing a specific string.</p>
         <span class="k">if</span> <span class="n">status_codes</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">status_codes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s1">&#39;return_value&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_value&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
-                    <span class="n">rv</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_value&#39;</span><span class="p">]]</span>
+            <span class="n">rss_entries</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="s1">&#39;rss_item&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="ow">and</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]]</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_value&#39;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">rv</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                <span class="n">feed</span> <span class="o">=</span> <span class="n">feedparser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;fuzzy_score&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+                    <span class="n">testset</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">]</span>
+                    <span class="n">summary_list</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">extractBests</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">],</span> 
+                        <span class="n">testset</span><span class="p">,</span> 
+                        <span class="n">scorer</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">token_set_ratio</span><span class="p">,</span>
+                        <span class="n">score_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;fuzzy_score&#39;</span><span class="p">],</span>
+                        <span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">summary_list</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="k">for</span> <span class="n">summary</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">summary_list</span><span class="p">:</span>
+                            <span class="n">rss_entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">testset</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">summary</span><span class="p">)],</span> <span class="n">score</span><span class="p">))</span>                 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
+                    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+                            <span class="n">rss_entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entry</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
+                                <span class="k">break</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
-            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">rss_entry</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">rss_entries</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s1">&#39;{score}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">score</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">rss_entry</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="s1">&#39;{</span><span class="si">%s</span><span class="s1">}&#39;</span> <span class="o">%</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{</span><span class="si">%s</span><span class="s1">}&#39;</span> <span class="o">%</span> <span class="n">item</span><span class="p">,</span> <span class="n">rss_entry</span><span class="p">[</span><span class="n">item</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="s1">&#39;return_subject_key&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
             <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_subject_key&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
@@ -1547,14 +1690,14 @@ and/ or the response containing a specific string.</p>
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#geoDSS.tests.request.request">request</a></li>
+          <li><a href="#geoDSS.tests.rss.rss">rss</a></li>
           <li>geoDSS.tests.test.test</li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="geoDSS.tests.request.request.__init__">
+    <div class="name def" id="geoDSS.tests.rss.rss.__init__">
     <p>def <span class="ident">__init__</span>(</p><p>self, name, definition, logger, rules, settings=None)</p>
     </div>
     
@@ -1562,8 +1705,8 @@ and/ or the response containing a specific string.</p>
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.request.request.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-geoDSS.tests.request.request.__init__" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.rss.rss.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.tests.rss.rss.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">rules</span><span class="p">,</span> <span class="n">settings</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">definition</span>
@@ -1589,7 +1732,7 @@ and/ or the response containing a specific string.</p>
   
             
   <div class="item">
-    <div class="name def" id="geoDSS.tests.request.request.execute">
+    <div class="name def" id="geoDSS.tests.rss.rss.execute">
     <p>def <span class="ident">execute</span>(</p><p>self, subject)</p>
     </div>
     
@@ -1599,15 +1742,20 @@ and/ or the response containing a specific string.</p>
     <div class="desc"><p>Executes the test.</p>
 <p><code>subject</code>       is expected a dict which can optionally have:</p>
 <ul>
-<li><code>request_data</code>   Either a dict or string to POST or GET. If the string
+<li>
+<p><code>request_data</code>   Either a dict or string to POST or GET. If the string
                    is an absolute or relative path to a file this file is 
                    read to get a string.
                    In case of a GET or HEAD request, the string will be
-                   urlencoded before being appended to the url.</li>
+                   urlencoded before being appended to the url.</p>
+</li>
+<li>
+<p><code>search_string</code>  Search a <code>rss_item</code> defined in the rule set for this string.</p>
+</li>
 </ul></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.request.request.execute', this);">Show source &equiv;</a></p>
-  <div id="source-geoDSS.tests.request.request.execute" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.tests.rss.rss.execute', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.tests.rss.rss.execute" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Executes the test.</span>
@@ -1617,11 +1765,15 @@ and/ or the response containing a specific string.</p>
 <span class="sd">                       read to get a string.</span>
 <span class="sd">                       In case of a GET or HEAD request, the string will be</span>
 <span class="sd">                       urlencoded before being appended to the url.</span>
+<span class="sd">                       </span>
+<span class="sd">    - `search_string`  Search a `rss_item` defined in the rule set for this string.   </span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    
     <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">subject</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">subject</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{</span><span class="si">%s</span><span class="s2">}&quot;</span> <span class="o">%</span> <span class="n">subject</span><span class="p">[</span><span class="n">key</span><span class="p">],</span><span class="n">subject</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
     <span class="n">auth</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">verify</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">headers</span> <span class="o">=</span> <span class="bp">None</span>
@@ -1642,6 +1794,10 @@ and/ or the response containing a specific string.</p>
     <span class="n">status_codes</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="s1">&#39;status_codes&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
         <span class="n">status_codes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;status_codes&#39;</span><span class="p">]</span>
+        
+    <span class="n">limit</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="k">if</span> <span class="s1">&#39;limit&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+         <span class="n">limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;limit&#39;</span><span class="p">]</span>
     <span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="s1">&#39;request_data&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;request_data&#39;</span><span class="p">]</span>
@@ -1685,24 +1841,48 @@ and/ or the response containing a specific string.</p>
     <span class="k">if</span> <span class="n">status_codes</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">status_codes</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s1">&#39;return_value&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_value&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
-                <span class="n">rv</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_value&#39;</span><span class="p">]]</span>
+        <span class="n">rss_entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="s1">&#39;rss_item&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="ow">and</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_value&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">rv</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+            <span class="n">feed</span> <span class="o">=</span> <span class="n">feedparser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;fuzzy_score&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+                <span class="n">testset</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">]</span>
+                <span class="n">summary_list</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">extractBests</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">],</span> 
+                    <span class="n">testset</span><span class="p">,</span> 
+                    <span class="n">scorer</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">token_set_ratio</span><span class="p">,</span>
+                    <span class="n">score_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;fuzzy_score&#39;</span><span class="p">],</span>
+                    <span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">summary_list</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="k">for</span> <span class="n">summary</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">summary_list</span><span class="p">:</span>
+                        <span class="n">rss_entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">testset</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">summary</span><span class="p">)],</span> <span class="n">score</span><span class="p">))</span>                 
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="n">rss_entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entry</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
+                            <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
-        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">rss_entry</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">rss_entries</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{score}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">score</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">rss_entry</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s1">&#39;{</span><span class="si">%s</span><span class="s1">}&#39;</span> <span class="o">%</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{</span><span class="si">%s</span><span class="s1">}&#39;</span> <span class="o">%</span> <span class="n">item</span><span class="p">,</span> <span class="n">rss_entry</span><span class="p">[</span><span class="n">item</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
     <span class="k">if</span> <span class="s1">&#39;return_subject_key&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
         <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_subject_key&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_execution</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>

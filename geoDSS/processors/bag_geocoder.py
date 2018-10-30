@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
-try:
-    import requests
-    from xml.dom import minidom
-    from xml.dom.minidom import parseString
-except:
-    pass
+
+import requests
+from xml.dom import minidom
+from xml.dom.minidom import parseString
     
 try:
     import exceptions

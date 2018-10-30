@@ -21,4 +21,29 @@ In real life more parameters will be present in a subject.
 
 '''
 
-from ..tests import evaluate, get_map, key_value_compare, postgis_spatial_select, remark, request, unit_test, wfs2_SpatialOperator
+# first import all tests dependent on python libraries needed by geoDSS only.
+from ..tests import evaluate, \
+                    get_map, \
+                    key_value_compare, \
+                    remark, \
+                    request, \
+                    unit_test
+
+# then try to import other tests as well; skip a test if import fails.
+try:
+    from ..tests import postgis_spatial_select
+except:
+    pass
+
+try:
+    from ..tests import rss
+except:
+    pass
+
+try:
+    from ..tests import wfs2_SpatialOperator
+except:
+    pass
+    
+# and as long as we are developing we try the import here to prevent exceptions being caught.
+

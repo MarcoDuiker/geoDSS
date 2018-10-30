@@ -4,10 +4,18 @@ import datetime
 import traceback
 import os
 
+import feedparser
 import requests
 from requests.auth import HTTPBasicAuth
 from requests.auth import HTTPDigestAuth
 
+try:
+    from fuzzywuzzy import fuzz 
+    from fuzzywuzzy import process 
+except:
+    # we won't be able to do fuzzy matching
+    pass
+    
 try:
     # python2
     from urllib import urlencode
@@ -23,19 +31,23 @@ except:
 from ..tests.test import test
 
 
-class request(test):
+class rss(test):
     '''
-    This test fires a request to an URL using the requests module.
+    This test fires a request to an URL using the requests module and parses
+    the result as a RSS-feed.
     The test can be configured to evaluate to True depending on status codes
-    and/ or the response containing a specific string.
+    and/ or the RSS-feed containing a specific string.
 
     Definition
     ----------
 
-    `definition`     is expected to be a dict having at least:
+    `definition`     is expected to be a dict having:
 
     `url`            Service endpoint for the request. You may also give a string. 
                      If this string is a key in the subject the url will be taken from subject. 
+                     
+                     The url may contain placeholders which will be replaced with values from the 
+                     given keys in the subject. A placeholder is written like `{subject_key_goes_here}`.
 
     `verb`           supported html verb. `GET`, `POST` and `HEAD` are supported.
 
@@ -56,46 +68,66 @@ class request(test):
     - `headers`         A dict containing the headers. eg. `'user-agent': 'my-app/0.0.1'`
     - `verify`          Defaults to `True`. Set to `False` to ignore verifying the SSL certificate.
 
+    `report_template` (string):     The string to report when the test evaluated to True.
+                                    The following placeholders will be replaced:
+
+    - `{status_code}`               will be replaced by the status code of the response.
+    - `{response_time}`             will be replaced with the response time.
+    - `{timestamp}`                 will be replaced by the ISO timestamp. 
+    - `{rss_item_goes_here}`        will be replaced by the given RSS-item.
+    - `{score}`                     will be replaced by the fuzzy matching score, 
+                                    or 100 when no fuzzy matching is done.     
+        
+    `return_subject_key`            When given, this subject key will receive the response.
+
+    optionally having one of:
 
     `status_codes`   A list of status codes. If the returned status code is NOT in this list, this test evaluates to False.
                      If `None` or not given the test will NOT eveluate to False based on the returned status_code.
 
-    `return_value`   When given the test will evaluate to True if the return value is in the response content.
+    `rss_item`       When given the test will evaluate to True if the `search_string` in the subject is in the specified rss_item
+                     of one of the RSS entries. All RSS entries will be reported, with a maximim of `limit`.
                      If not given, only the returned status code will determine if the test evaluates to True.
-                     If `return_value` is a key in the subject, then the value of that key is used.
+                     If `rss_item` is a key in the subject, then the value of that key is used as `rss_item`.
 
-    `report_template` (string):     The string to report when the test evaluated to True.
-                                    The following placeholders will be replaced:
+    optionally having:
+    
+    `fuzzy_score`           When given fuzzy matching of the `search_string` is done. 
+                            Every RSS-entry with a fuzzy score above `fuzz_score` is reported.
+                            If there is one or more entries to reported the test evaluates to True.
 
-    - `{text}`                      will be replaced by the text of the response.
-    - `{status_code}`               will be replaced by the status code of the response.
-    - `{response_time}`             will be replaced with the response time.
-    - `{timestamp}`                 will be replaced by the ISO timestamp. 
-
-    `return_subject_key`    When given, this subject key will receive the response.
+    `limit`                 Limits the reported number of RSS-entries. Defaults to 10.
 
     Rule example
     ------------
 
     a useful yaml snippet for this test would be:
 
+        name: rss
+        title: Found in RSS
+        description: ""
+        logging:
+          level: DEBUG
         rules:
-            google:
-                type: tests.request
-                title: See if Google is alive
-                description: ""
-                url: "https://google.com/search"
-                verb: GET
-                status_codes:
-                - 200
-                report_template: "It's alive cause it returned status code {status_code} in {response_time} seconds."
+        - reddit_gis_search
+            type: tests.rss
+            title: Found in RSS feed
+            description: ""
+            url: "https://www.reddit.com/r/gis/.rss"
+            verb: GET
+            status_codes:
+            - 200
+            rss_item: content
+            fuzzy_score: 10
+            limit: 3
+            report_template: "{score}: <{link}>"
 
     Subject Example
     ---------------
 
     a useful subject for this would be:
 
-        subject = {"q": "geoDSS+github"}
+        subject = {"search_string":"data science"}
     '''
 
     def execute(self, subject):
@@ -109,12 +141,16 @@ class request(test):
                            read to get a string.
                            In case of a GET or HEAD request, the string will be
                            urlencoded before being appended to the url.
+                           
+        - `search_string`  Search a `rss_item` defined in the rule set for this string.   
         '''
 
-        
         url = self.definition['url']
         if url in subject:
             url = subject[url]
+        for key in subject.keys():
+            if "{%s}" % subject[key] in url:
+                url = url.replace("{%s}" % subject[key],subject[key])
 
         auth = None
         verify = True
@@ -137,6 +173,10 @@ class request(test):
         status_codes = None
         if 'status_codes' in self.definition:
             status_codes = self.definition['status_codes']
+            
+        limit = 10
+        if 'limit' in self.definition:
+             limit = self.definition['limit']
 
         data = None
         if 'request_data' in subject:
@@ -182,25 +222,49 @@ class request(test):
         if status_codes and response.status_code not in status_codes:
             self.decision = False
         else:
-            if 'return_value' in self.definition:
-                if self.definition['return_value'] in subject:
-                    rv = subject[self.definition['return_value']]
+            rss_entries = []
+            if 'rss_item' in self.definition and 'search_string' in subject:
+                if self.definition['rss_item'] in subject:
+                    item = subject[self.definition['rss_item']]
                 else:
-                    rv = self.definition['return_value']
-                if rv in response.text:
-                    self.decision = True
+                    item = self.definition['rss_item']
+                self.logger.debug("Looking for %s in %s" % ( subject['search_string'] ,item))
+                feed = feedparser.parse(response.text)
+                if 'fuzzy_score' in self.definition:
+                    testset = [entry[item] for entry in feed.entries]
+                    summary_list = process.extractBests(subject['search_string'], 
+                        testset, 
+                        scorer = fuzz.token_set_ratio,
+                        score_cutoff = self.definition['fuzzy_score'],
+                        limit = limit)
+                    if len(summary_list):
+                        self.decision = True
+                        for summary, score in summary_list:
+                            rss_entries.append((feed.entries[testset.index(summary)], score))                 
                 else:
-                    self.decision = False
+                    i = 0
+                    for entry in feed.entries:
+                        if subject['search_string'] in entry[item]:
+                            self.decision = True
+                            i = i + 1
+                            rss_entries.append((entry, 100))
+                            self.logger.debug("Found %s in %s" % ( subject['search_string'] ,item))
+                            if i > limit:
+                                break
             else:
                 self.decision = True
 
         if self.decision:
-            self.result.append(self.definition["report_template"].replace(
-                '{text}', response.text).replace(
-                '{status_code}', str(response.status_code)).replace(
-                '{response_time}', str(response.elapsed.total_seconds())).replace(
-                '{timestamp}', datetime.datetime.now().isoformat())
-            )
+            for rss_entry, score in rss_entries:
+                result = self.definition["report_template"].replace(
+                    '{status_code}', str(response.status_code)).replace(
+                    '{response_time}', str(response.elapsed.total_seconds())).replace(
+                    '{timestamp}', datetime.datetime.now().isoformat()).replace(
+                    '{score}', str(score))
+                for item in rss_entry.keys():
+                    if '{%s}' % item in result:
+                        result = result.replace('{%s}' % item, rss_entry[item])
+                self.result.append(result)
 
         if 'return_subject_key' in self.definition:
             subject[self.definition['return_subject_key']] = response.text
