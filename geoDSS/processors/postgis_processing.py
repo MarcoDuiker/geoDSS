@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-try:
-    import psycopg2
-except:
-    pass
+import psycopg2
 
 try:
     import exceptions
@@ -16,6 +13,11 @@ from ..processors.processor import processor
 class postgis_processing(processor):
     '''
     This processor does basic Postgis processing like ST_Buffer or ST_Transform.
+    
+    Dependencies
+    ------------
+    
+    - psycopg2
 
     Definition
     ----------

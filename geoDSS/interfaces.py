@@ -118,16 +118,24 @@ def load_execute_report(params):
     
     if 'form' in params:        
         form_definition = params['form'][0]
-        template = None
-        if 'template' in params:
-            template = params['template'][0]
-        try:
-            data = geoDSS.ui_generators.form.generate(form_yaml = form_definition, template = template)
-        except Exception as e:
-            if DEBUG_LEVEL:
-                sys.stderr.write("geoDSS: Could not generate form with error: %s \n" % str(e))
-                sys.stderr.write(traceback.format_exc())
-            return status, response_headers, "Could not generate form with error: " + str(e)
+        if form_definition[-4:] == '.htm' or form_definition[-5:] =='.html':
+            # just serve this html file
+            if os.path.exists(form_definition):
+                with open(form_definition,'rb') as f:
+                    data = f.read()
+            else:
+                return status, response_headers, "Could not find requested form"
+        else:    
+            template = None
+            if 'template' in params:
+                template = params['template'][0]
+            try:
+                data = geoDSS.ui_generators.form.generate(form_yaml = form_definition, template = template)
+            except Exception as e:
+                if DEBUG_LEVEL:
+                    sys.stderr.write("geoDSS: Could not generate form with error: %s \n" % str(e))
+                    sys.stderr.write(traceback.format_exc())
+                return status, response_headers, "Could not generate form with error: " + str(e)
             
     elif 'rule_set_file' in params:
         try:
@@ -211,7 +219,8 @@ def application(environ, start_response):
     status, response_headers, data = load_execute_report(params)
     headers = sanitize_headers(response_headers)
     start_response(status, headers.items())
-    return [data]
+    #return [data]
+    return [data.encode('latin-1')]  # needed for apache to encode unicode to bytes string
 
 
 def cgi_application(params):

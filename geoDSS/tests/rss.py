@@ -4,11 +4,11 @@ import datetime
 import traceback
 import os
 
-import feedparser
 import requests
 from requests.auth import HTTPBasicAuth
 from requests.auth import HTTPDigestAuth
 
+import feedparser
 try:
     from fuzzywuzzy import fuzz 
     from fuzzywuzzy import process 
@@ -37,6 +37,12 @@ class rss(test):
     the result as a RSS-feed.
     The test can be configured to evaluate to True depending on status codes
     and/ or the RSS-feed containing a specific string.
+    
+    Dependencies
+    ------------
+    
+    - feedparser
+    - fuzzywuzzy    (optional, but fuzzy matching won't be possible without this module)
 
     Definition
     ----------

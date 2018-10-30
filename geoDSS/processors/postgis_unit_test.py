@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-try:
-    import psycopg2
-except:
-    pass
+
+import psycopg2
 
 try:
     import exceptions
@@ -19,7 +17,12 @@ from ..processors.processor import processor
 
 class postgis_unit_test(processor):
     '''
-    this processor provides a unit-like test for Postgis processing by buffering with distance 1
+    this processor provides a unit-like test for Postgis processing by buffering with distance 1.
+
+    Dependencies
+    ------------
+    
+    - psycopg2
 
     Definition
     ----------

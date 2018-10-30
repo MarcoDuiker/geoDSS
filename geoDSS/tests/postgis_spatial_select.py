@@ -16,6 +16,11 @@ from ..tests.test import test
 class postgis_spatial_select(test):
     '''
     This test performs a basic postgis select test.
+    
+    Dependencies
+    ------------
+    
+    - psycopg2
 
     Definition
     ----------

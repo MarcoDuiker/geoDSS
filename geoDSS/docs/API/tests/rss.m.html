@@ -1079,11 +1079,11 @@ table {
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">feedparser</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
 <span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPDigestAuth</span>
 
+<span class="kn">import</span> <span class="nn">feedparser</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">fuzzywuzzy</span> <span class="kn">import</span> <span class="n">fuzz</span> 
     <span class="kn">from</span> <span class="nn">fuzzywuzzy</span> <span class="kn">import</span> <span class="n">process</span> 
@@ -1112,6 +1112,12 @@ table {
 <span class="sd">    the result as a RSS-feed.</span>
 <span class="sd">    The test can be configured to evaluate to True depending on status codes</span>
 <span class="sd">    and/ or the RSS-feed containing a specific string.</span>
+<span class="sd">    </span>
+<span class="sd">    Dependencies</span>
+<span class="sd">    ------------</span>
+<span class="sd">    </span>
+<span class="sd">    - feedparser</span>
+<span class="sd">    - fuzzywuzzy    (optional, but fuzzy matching won&#39;t be possible without this module)</span>
 
 <span class="sd">    Definition</span>
 <span class="sd">    ----------</span>
@@ -1364,6 +1370,11 @@ table {
 the result as a RSS-feed.
 The test can be configured to evaluate to True depending on status codes
 and/ or the RSS-feed containing a specific string.</p>
+<h2>Dependencies</h2>
+<ul>
+<li>feedparser</li>
+<li>fuzzywuzzy    (optional, but fuzzy matching won't be possible without this module)</li>
+</ul>
 <h2>Definition</h2>
 <p><code>definition</code>     is expected to be a dict having:</p>
 <p><code>url</code>            Service endpoint for the request. You may also give a string. 
@@ -1448,6 +1459,12 @@ and/ or the RSS-feed containing a specific string.</p>
 <span class="sd">    the result as a RSS-feed.</span>
 <span class="sd">    The test can be configured to evaluate to True depending on status codes</span>
 <span class="sd">    and/ or the RSS-feed containing a specific string.</span>
+<span class="sd">    </span>
+<span class="sd">    Dependencies</span>
+<span class="sd">    ------------</span>
+<span class="sd">    </span>
+<span class="sd">    - feedparser</span>
+<span class="sd">    - fuzzywuzzy    (optional, but fuzzy matching won&#39;t be possible without this module)</span>
 
 <span class="sd">    Definition</span>
 <span class="sd">    ----------</span>

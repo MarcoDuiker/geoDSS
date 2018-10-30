@@ -16,6 +16,13 @@ At least you'll need the following Python packages:
 - requests
 - yaml
 
+Most off the time you'll also want to install:
+
+- psycopg2
+- json
+- xml
+- ogr
+
 If you'd like to use the nice geospatial functions based on Postgis you'll need to install PostgreSQL/ Postgis and the Python package psycopg2.
 
 Basic
