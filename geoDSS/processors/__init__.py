@@ -22,7 +22,7 @@ In real life more parameters will be present in a subject.
 
 # first import all processors dependent on python libraries needed by geoDSS only.
 
-from ..processors import    alter_string, \
+from ..processors import    alter_key, \
                             bag_geocoder, \
                             pdok_locatieserver, \
                             random_point_geometry, \

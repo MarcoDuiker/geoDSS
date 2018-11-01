@@ -1,0 +1,14 @@
+# a simple rule set demonstrating the 'alter_string' processor
+name: alter_string
+title: Test the alter_string processor
+description: ""
+logging:
+  level: DEBUG
+rules:
+- example:
+    type: processors.alter_key
+    title: Alter a string
+    description: ""
+    subject_key: url
+    expression: subject['url'].replace(' ','%20')
+    report_template: "Generated a new string: {result}"
