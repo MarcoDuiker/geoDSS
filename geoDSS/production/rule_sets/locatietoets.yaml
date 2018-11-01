@@ -9,9 +9,10 @@ reporter_args:
   decision_false_report: "Beslissing: Niet van toepassing"
   decision_error_report: "**Fout**: test kwam niet tot een beslissing of rapportage"
 rules:
+
 - BAG kaart:
     type: tests.get_map
-    title: Kaart van het adres
+    title: Kaart van de locatie
     description: ""
     url: "https://geodata.nationaalgeoregister.nl/bag/wms/"
     params:
@@ -23,6 +24,22 @@ rules:
       version: "1.1.0"
     buffer: 75
     report_template: "![Centered_map_small]({url})"
+
+- Luchtfoto:
+    type: tests.get_map
+    title: Luchtfoto van de locatie
+    description: "Luchtfoto uit 2017"
+    url: "https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?"
+    params:
+      layers: 2017_ortho25
+      styles: ""
+      width: 300
+      height: 200
+      format: "image/png"
+      version: "1.1.0"
+    buffer: 75
+    report_template: "![Centered_map_small]({url})"
+
 - waterwingebieden:
     type: tests.wfs2_SpatialOperator
     title: Ligt binnen waterwingebieden
@@ -41,6 +58,7 @@ rules:
     distance: 100
 #    where: AND omschrijving = 'waterwingebied' OR omschrijving = 'grondwaterbeschermingsgebied'
     report_template: "GS Zeeland inlichten via mail en per post (begeleidende brief)"
+
 - risicokaart:
     type: tests.wfs2_SpatialOperator
     title: Veiligheidsregio
@@ -70,10 +88,11 @@ rules:
     spatial_operator: Intersects
     buffer: 100
     report_template: "Stuur door naar veiligheidsregio via OLO en per post (begeleidende brief) en deelzaak veiligheidsspecialist"
-- Provinciale Geluidsgezoneerde industrieterreinen:
+
+- Provinciale_Geluidsgezoneerde_industrieterreinen:
     type: tests.wfs2_SpatialOperator
     title: Ligt binnen provinciaal geluidsgezoneerd industrieterrein
-    description: "Er geldt een marge van 100 meter"
+    description: "Er geldt een marge van 100 meter. De geluidsaspecten zijn relevant. Denk echter ook aan de industriegebieden in Schouwen-Duiveland (#), Kapelle (#) en Middelburg (#). Voor bedrijven buiten het gezoneerd industrieterrein kan geluid ook relevant zijn. Een eerste inschatting is over het aantal woningen binnen een straal van 50 meter rondom het bedrijf. Neem dan ook contact op met de geluidsspecialist."
     url: "https://opengeodata.zeeland.nl/geoserver/inspire/wfs"
     headers:
       "Content-Type": "application/xml"
@@ -87,6 +106,32 @@ rules:
     spatial_operator: DWithin
     distance: 100
     report_template: "Deel zaken met geluidsspecialist"    
+
+- Woningen_kaart:
+    type: tests.get_map
+    title: Woningen rond de locatie
+    description: ""
+    url: "https://geodata.nationaalgeoregister.nl/bag/wms?"
+    params:
+      layers: pand
+      styles: "bag_pand_selected"
+      width: 300
+      height: 200
+      format: "image/png"
+      filter: '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc"><ogc:And><ogc:Or><ogc:PropertyIsLike wildCard="*" singleChar="." escape="!"><ogc:PropertyName>gebruiksdoel</ogc:PropertyName><ogc:Literal>*woonfunctie*</ogc:Literal></ogc:PropertyIsLike></ogc:Or><ogc:Or><ogc:PropertyIsEqualTo><ogc:PropertyName>status</ogc:PropertyName><ogc:Literal>Bouwvergunning verleend</ogc:Literal></ogc:PropertyIsEqualTo><ogc:PropertyIsEqualTo><ogc:PropertyName>status</ogc:PropertyName><ogc:Literal>Bouw gestart</ogc:Literal></ogc:PropertyIsEqualTo><ogc:PropertyIsEqualTo><ogc:PropertyName>status</ogc:PropertyName><ogc:Literal>Pand in gebruik (niet ingemeten)</ogc:Literal></ogc:PropertyIsEqualTo><ogc:PropertyIsEqualTo><ogc:PropertyName>status</ogc:PropertyName><ogc:Literal>Pand in gebruik</ogc:Literal></ogc:PropertyIsEqualTo></ogc:Or><ogc:PropertyIsBetween><ogc:PropertyName>bouwjaar</ogc:PropertyName><ogc:LowerBoundary><ogc:Literal>-500</ogc:Literal></ogc:LowerBoundary><ogc:UpperBoundary><ogc:Literal>2025</ogc:Literal></ogc:UpperBoundary></ogc:PropertyIsBetween><ogc:And><ogc:PropertyIsGreaterThanOrEqualTo><ogc:PropertyName>oppervlakte_min</ogc:PropertyName><ogc:Literal>0</ogc:Literal></ogc:PropertyIsGreaterThanOrEqualTo></ogc:And></ogc:And></ogc:Filter>'
+      version: "1.1.1"
+    buffer: 75
+    report_template: "![Centered_map_small]({url})"
+    report: False
+
+- Toon_woningen_kaart:
+    type: tests.evaluate
+    title: Woningen rond de locatie
+    description: ""
+    expression: "rules.Provinciale_Geluidsgezoneerde_industrieterreinen and rules.Woningen_kaart"
+    add_to_report:
+    - Woningen_kaart
+
 - BRZO_Inspectie_SZW:
     type: tests.key_value_compare
     title: BRZO Inspectie SZW
@@ -95,6 +140,7 @@ rules:
     operator: "=="
     value: 'true'
     report_template: "Stuur door naar inspectie SZW"
+
 - BRZO_Veiligheidsregio:
     type: tests.key_value_compare
     title: BRZO Veiligheidsregio
@@ -103,6 +149,7 @@ rules:
     operator: "=="
     value: 'true'
     report_template: "Stuur door naar Veiligheidsregio"
+
 - BRZO_Onze_Minister:
     type: tests.key_value_compare
     title: BRZO Onze Minister
@@ -111,6 +158,7 @@ rules:
     operator: "=="
     value: 'true'
     report_template: "Stuur door naar onze minister"
+
 - BRZO_ILT:
     type: tests.key_value_compare
     title: BRZO ILT
@@ -119,6 +167,7 @@ rules:
     operator: "=="
     value: 'true'
     report_template: "Stuur door naar ILT"
+
 - in_gemeente:
     type: tests.wfs2_SpatialOperator
     title: "Hulptoets: Gemeente"
@@ -134,6 +183,7 @@ rules:
     distance: 100
     report: false
     report_template: "gemeente {gemeentenaam}"
+
 - gemeente:
     type: tests.evaluate
     title: Gemeente
@@ -142,6 +192,7 @@ rules:
     report_template: "Stuur per post (begeleidende brief) naar B&W van gemeente(n):"
     add_to_report:
     - in_gemeente 
+
 - brzo_gemeente:
     type: tests.evaluate
     title: BRZO gemeente
@@ -150,6 +201,7 @@ rules:
     report_template: "Stuur via OLO en per post (begeleidende brief) naar Burgemeester(s) van gemeente(n):"
     add_to_report:
     - in_gemeente 
+
 - IPPC:
     type: tests.key_value_compare
     title: IPPC

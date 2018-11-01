@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 long_description = """
-geoDss is a library supported by several interfaces to quickly evaluate a subject against rules, resulting in a report.
+geoDSS is a library supported by several interfaces to quickly evaluate a subject against rules, resulting in a report.
 """
 
 setup(
     name='geoDSS',
-    version='1.1',
+    version='1.2',
     description='geoDSS',
     long_description=long_description,
     url='',

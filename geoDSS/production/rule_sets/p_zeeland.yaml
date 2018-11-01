@@ -16,4 +16,4 @@ rules:
     rss_item: summary
     fuzzy_score: 10
     limit: 3
-    report_template: "{score}: <{link}>"
+    report_template: "{score}: <{link}> \n {summary}"

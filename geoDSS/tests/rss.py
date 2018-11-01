@@ -236,7 +236,18 @@ class rss(test):
                     item = self.definition['rss_item']
                 self.logger.debug("Looking for %s in %s" % ( subject['search_string'] ,item))
                 feed = feedparser.parse(response.text)
-                if 'fuzzy_score' in self.definition:
+                # first do exact matching:
+                i = 0
+                for entry in feed.entries:
+                    if subject['search_string'] in entry[item]:
+                        self.decision = True
+                        i = i + 1
+                        rss_entries.append((entry, 100))
+                        self.logger.debug("Found %s in %s" % ( subject['search_string'] ,item))
+                        if i > limit:
+                            break
+                # if nothing found and fuzzy search is asked:
+                if not rss_entries and 'fuzzy_score' in self.definition:
                     testset = [entry[item] for entry in feed.entries]
                     summary_list = process.extractBests(subject['search_string'], 
                         testset, 
@@ -247,16 +258,6 @@ class rss(test):
                         self.decision = True
                         for summary, score in summary_list:
                             rss_entries.append((feed.entries[testset.index(summary)], score))                 
-                else:
-                    i = 0
-                    for entry in feed.entries:
-                        if subject['search_string'] in entry[item]:
-                            self.decision = True
-                            i = i + 1
-                            rss_entries.append((entry, 100))
-                            self.logger.debug("Found %s in %s" % ( subject['search_string'] ,item))
-                            if i > limit:
-                                break
             else:
                 self.decision = True
 
