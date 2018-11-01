@@ -4,4 +4,3 @@ dist/
 *.pyc
 *~
 production/
-libs/*/*.jar
