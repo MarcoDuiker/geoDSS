@@ -6,7 +6,7 @@ geoDSS is a library supported by several interfaces to quickly evaluate a subjec
 
 setup(
     name='geoDSS',
-    version='1.2',
+    version='1.3',
     description='geoDSS',
     long_description=long_description,
     url='',
