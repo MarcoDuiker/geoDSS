@@ -46,4 +46,4 @@ except:
     pass
     
 # and as long as we are developing we try the import here to prevent exceptions being caught.
-
+from ..tests import pdf

@@ -1,0 +1,19 @@
+name: rss
+title: Gevonden bekendmakingen
+description: ""
+logging:
+  level: DEBUG
+rules:
+- middelburg:
+    type: tests.rss
+    title: Omgevingsvergunning gepubliceerd
+    description: ""
+    url: "https://zoek.officielebekendmakingen.nl/zoeken/resultaat/rss/?zkt=Uitgebreid&pst=Staatscourant|Provinciaalblad|BladGemeenschappelijkeRegeling&vrt=omgevingsvergunning&zkd=InDeGeheleText&dpr=AfgelopenMaand&sdt=DatumPublicatie&org=Zeeland&orgt=provincie&ap=&pnr=1&rpp=10
+"
+    verb: GET
+    status_codes:
+    - 200
+    rss_item: summary
+    fuzzy_score: 10
+    limit: 3
+    report_template: "{score}: <{link}> \n {summary}"

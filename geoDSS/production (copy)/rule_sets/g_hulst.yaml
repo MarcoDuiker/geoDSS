@@ -1,0 +1,16 @@
+name: rss
+title: Gevonden bekendmakingen
+description: ""
+logging:
+  level: DEBUG
+rules:
+- gemeente:
+    type: tests.pdf
+    title: Omgevingsvergunning gepubliceerd
+    description: ""
+    url: "https://www.gemeentehulst.nl/de_Gemeente/Bekendmakingen/Informatiepagina_s_Zeeuws_Vlaams_Advertentieblad/Zeeuws_Vlaams_Advertentieblad_17_oktober_2018.org"
+    verb: GET
+    status_codes:
+    - 200
+    fuzzy_score: 10
+    report_template: "{score}: <{url}>"

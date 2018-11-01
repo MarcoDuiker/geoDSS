@@ -247,7 +247,7 @@ class rss(test):
                         if i > limit:
                             break
                 # if nothing found and fuzzy search is asked:
-                if not rss_entries and 'fuzzy_score' in self.definition:
+                if not self.decision and 'fuzzy_score' in self.definition:
                     testset = [entry[item] for entry in feed.entries]
                     summary_list = process.extractBests(subject['search_string'], 
                         testset, 

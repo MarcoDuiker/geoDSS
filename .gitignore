@@ -3,4 +3,5 @@ build/
 dist/
 *.pyc
 *~
-production/*
+production/
+libs/*/*.jar
