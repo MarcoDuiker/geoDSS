@@ -1146,6 +1146,7 @@ table {
 <span class="sd">    - `{status_code}`               will be replaced by the status code of the response.</span>
 <span class="sd">    - `{response_time}`             will be replaced with the response time.</span>
 <span class="sd">    - `{timestamp}`                 will be replaced by the ISO timestamp. </span>
+<span class="sd">    - `{url}`                       will be replaced by the requested url.</span>
 
 <span class="sd">    `return_subject_key`    When given, this subject key will receive the response.</span>
 
@@ -1274,7 +1275,8 @@ table {
                 <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
                 <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
                 <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+                <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{url}&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="s1">&#39;return_subject_key&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
@@ -1331,6 +1333,7 @@ and/ or the response containing a specific string.</p>
 <li><code>{status_code}</code>               will be replaced by the status code of the response.</li>
 <li><code>{response_time}</code>             will be replaced with the response time.</li>
 <li><code>{timestamp}</code>                 will be replaced by the ISO timestamp. </li>
+<li><code>{url}</code>                       will be replaced by the requested url.</li>
 </ul>
 <p><code>return_subject_key</code>    When given, this subject key will receive the response.</p>
 <h2>Rule example</h2>
@@ -1403,6 +1406,7 @@ and/ or the response containing a specific string.</p>
 <span class="sd">    - `{status_code}`               will be replaced by the status code of the response.</span>
 <span class="sd">    - `{response_time}`             will be replaced with the response time.</span>
 <span class="sd">    - `{timestamp}`                 will be replaced by the ISO timestamp. </span>
+<span class="sd">    - `{url}`                       will be replaced by the requested url.</span>
 
 <span class="sd">    `return_subject_key`    When given, this subject key will receive the response.</span>
 
@@ -1531,7 +1535,8 @@ and/ or the response containing a specific string.</p>
                 <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
                 <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
                 <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+                <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s1">&#39;{url}&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="s1">&#39;return_subject_key&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
@@ -1701,7 +1706,8 @@ and/ or the response containing a specific string.</p>
             <span class="s1">&#39;{text}&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
             <span class="s1">&#39;{status_code}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
             <span class="s1">&#39;{response_time}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+            <span class="s1">&#39;{timestamp}&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="s1">&#39;{url}&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="s1">&#39;return_subject_key&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
         <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;return_subject_key&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>

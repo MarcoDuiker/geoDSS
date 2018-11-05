@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-from lxml import html
-
 from contextlib import contextmanager
+
+from lxml import html
 
 try:
     import exceptions
@@ -13,7 +13,7 @@ except:
 from ..processors.processor import processor
 
 
-class alter_key(processor):
+class alter_key_xpath(processor):
     '''
     This processor alters a subject key by executing an xpath expression against
     a subject key. As namespacing is not supported, this is most useful for html.
@@ -46,6 +46,8 @@ class alter_key(processor):
      `expression` (string):             The python xpath-expression to execute against the subject_key. 
                                         If expression is a key in the subject then the expression will be 
                                         taken from that key in the subject.
+                                        
+     `delimiter` (string):              The items in the result set will be delimited by this string. Defaults to `;`.
      
      `report_template` (string):        (optional) String (with markdown support) to be reported on success.
 
@@ -90,13 +92,24 @@ class alter_key(processor):
         Keys changed or added to the subject on success.
         '''
         
-        expression = self.definition["expression"]
-        if expression in subject:
-            expression = subject[expression]
-
+        delimiter = ';'
+        if 'delimiter' in self.definition:
+            delimiter = self.definition['delimiter']
+        
+        try:
+            expression = self.definition["expression"]
+            if expression in subject:
+                expression = subject[expression]
+        except Exception as error:
+            return self._handle_execution_exception(subject, "Could not get expression from the definition with error: `%s`" % str(error))
+            
         try:
             tree = html.fromstring(subject[self.definition['subject_key']])
             result = tree.xpath( expression )
+            if result:                  
+                result = delimiter.join(result)
+            else:
+                result = ""
             subject[self.definition['result_key']] = result
         except Exception as error:
             return self._handle_execution_exception(subject, "Could not execute expression with error: `%s`" % str(error))

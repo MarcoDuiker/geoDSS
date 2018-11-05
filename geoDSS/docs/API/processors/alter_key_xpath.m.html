@@ -1045,12 +1045,12 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#geoDSS.processors.alter_key_xpath.alter_key">alter_key</a></span>
+        <span class="class_name"><a href="#geoDSS.processors.alter_key_xpath.alter_key_xpath">alter_key_xpath</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#geoDSS.processors.alter_key_xpath.alter_key.__init__">__init__</a></li>
-    <li class="mono"><a href="#geoDSS.processors.alter_key_xpath.alter_key.execute">execute</a></li>
+    <li class="mono"><a href="#geoDSS.processors.alter_key_xpath.alter_key_xpath.__init__">__init__</a></li>
+    <li class="mono"><a href="#geoDSS.processors.alter_key_xpath.alter_key_xpath.execute">execute</a></li>
   </ul>
 
         </li>
@@ -1076,9 +1076,9 @@ table {
     <div class="codehilite"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 
-<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">html</span>
-
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">html</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">exceptions</span>
@@ -1088,7 +1088,7 @@ table {
 <span class="kn">from</span> <span class="nn">..processors.processor</span> <span class="kn">import</span> <span class="n">processor</span>
 
 
-<span class="k">class</span> <span class="nc">alter_key</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">alter_key_xpath</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This processor alters a subject key by executing an xpath expression against</span>
 <span class="sd">    a subject key. As namespacing is not supported, this is most useful for html.</span>
@@ -1121,6 +1121,8 @@ table {
 <span class="sd">     `expression` (string):             The python xpath-expression to execute against the subject_key. </span>
 <span class="sd">                                        If expression is a key in the subject then the expression will be </span>
 <span class="sd">                                        taken from that key in the subject.</span>
+<span class="sd">                                        </span>
+<span class="sd">     `delimiter` (string):              The items in the result set will be delimited by this string. Defaults to `;`.</span>
 <span class="sd">     </span>
 <span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported on success.</span>
 
@@ -1165,13 +1167,24 @@ table {
 <span class="sd">        Keys changed or added to the subject on success.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         
-        <span class="n">expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;expression&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
-            <span class="n">expression</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">expression</span><span class="p">]</span>
-
+        <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;;&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;delimiter&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;delimiter&#39;</span><span class="p">]</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;expression&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+                <span class="n">expression</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">expression</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not get expression from the definition with error: `</span><span class="si">%s</span><span class="s2">`&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
+            
         <span class="k">try</span><span class="p">:</span>
             <span class="n">tree</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;subject_key&#39;</span><span class="p">]])</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span> <span class="n">expression</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="n">result</span><span class="p">:</span>                  
+                <span class="n">result</span> <span class="o">=</span> <span class="n">delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;result_key&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">result</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not execute expression with error: `</span><span class="si">%s</span><span class="s2">`&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
@@ -1194,7 +1207,7 @@ table {
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="geoDSS.processors.alter_key_xpath.alter_key" class="name">class <span class="ident">alter_key</span></p>
+      <p id="geoDSS.processors.alter_key_xpath.alter_key_xpath" class="name">class <span class="ident">alter_key_xpath</span></p>
       
   
     <div class="desc"><p>This processor alters a subject key by executing an xpath expression against
@@ -1216,6 +1229,7 @@ a subject key. As namespacing is not supported, this is most useful for html.</p
 <p><code>expression</code> (string):             The python xpath-expression to execute against the subject_key. 
                                     If expression is a key in the subject then the expression will be 
                                     taken from that key in the subject.</p>
+<p><code>delimiter</code> (string):              The items in the result set will be delimited by this string. Defaults to <code>;</code>.</p>
 <p><code>report_template</code> (string):        (optional) String (with markdown support) to be reported on success.</p>
 <div class="codehilite"><pre><span></span>                                The following placeholders will be replaced:
 </pre></div>
@@ -1242,9 +1256,9 @@ a subject key. As namespacing is not supported, this is most useful for html.</p
 <div class="codehilite"><pre><span></span>subject = &#39;{&quot;url&quot;: &quot;a stupid url with spaces.com&quot;}&#39;
 </pre></div></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.alter_key_xpath.alter_key', this);">Show source &equiv;</a></p>
-  <div id="source-geoDSS.processors.alter_key_xpath.alter_key" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">alter_key</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.alter_key_xpath.alter_key_xpath', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.processors.alter_key_xpath.alter_key_xpath" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">alter_key_xpath</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This processor alters a subject key by executing an xpath expression against</span>
 <span class="sd">    a subject key. As namespacing is not supported, this is most useful for html.</span>
@@ -1277,6 +1291,8 @@ a subject key. As namespacing is not supported, this is most useful for html.</p
 <span class="sd">     `expression` (string):             The python xpath-expression to execute against the subject_key. </span>
 <span class="sd">                                        If expression is a key in the subject then the expression will be </span>
 <span class="sd">                                        taken from that key in the subject.</span>
+<span class="sd">                                        </span>
+<span class="sd">     `delimiter` (string):              The items in the result set will be delimited by this string. Defaults to `;`.</span>
 <span class="sd">     </span>
 <span class="sd">     `report_template` (string):        (optional) String (with markdown support) to be reported on success.</span>
 
@@ -1321,13 +1337,24 @@ a subject key. As namespacing is not supported, this is most useful for html.</p
 <span class="sd">        Keys changed or added to the subject on success.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         
-        <span class="n">expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;expression&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
-            <span class="n">expression</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">expression</span><span class="p">]</span>
-
+        <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;;&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;delimiter&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;delimiter&#39;</span><span class="p">]</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;expression&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+                <span class="n">expression</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">expression</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not get expression from the definition with error: `</span><span class="si">%s</span><span class="s2">`&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
+            
         <span class="k">try</span><span class="p">:</span>
             <span class="n">tree</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;subject_key&#39;</span><span class="p">]])</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span> <span class="n">expression</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="n">result</span><span class="p">:</span>                  
+                <span class="n">result</span> <span class="o">=</span> <span class="n">delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;result_key&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">result</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not execute expression with error: `</span><span class="si">%s</span><span class="s2">`&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
@@ -1347,14 +1374,14 @@ a subject key. As namespacing is not supported, this is most useful for html.</p
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#geoDSS.processors.alter_key_xpath.alter_key">alter_key</a></li>
+          <li><a href="#geoDSS.processors.alter_key_xpath.alter_key_xpath">alter_key_xpath</a></li>
           <li>geoDSS.processors.processor.processor</li>
           <li>__builtin__.object</li>
           </ul>
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="geoDSS.processors.alter_key_xpath.alter_key.__init__">
+    <div class="name def" id="geoDSS.processors.alter_key_xpath.alter_key_xpath.__init__">
     <p>def <span class="ident">__init__</span>(</p><p>self, name, definition, logger, rules, settings=None)</p>
     </div>
     
@@ -1362,8 +1389,8 @@ a subject key. As namespacing is not supported, this is most useful for html.</p
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.alter_key_xpath.alter_key.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-geoDSS.processors.alter_key_xpath.alter_key.__init__" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.alter_key_xpath.alter_key_xpath.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.processors.alter_key_xpath.alter_key_xpath.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">rules</span><span class="p">,</span> <span class="n">settings</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">definition</span>
@@ -1388,7 +1415,7 @@ a subject key. As namespacing is not supported, this is most useful for html.</p
   
             
   <div class="item">
-    <div class="name def" id="geoDSS.processors.alter_key_xpath.alter_key.execute">
+    <div class="name def" id="geoDSS.processors.alter_key_xpath.alter_key_xpath.execute">
     <p>def <span class="ident">execute</span>(</p><p>self, subject)</p>
     </div>
     
@@ -1400,8 +1427,8 @@ a subject key. As namespacing is not supported, this is most useful for html.</p
 <h2>Result</h2>
 <p>Keys changed or added to the subject on success.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.alter_key_xpath.alter_key.execute', this);">Show source &equiv;</a></p>
-  <div id="source-geoDSS.processors.alter_key_xpath.alter_key.execute" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-geoDSS.processors.alter_key_xpath.alter_key_xpath.execute', this);">Show source &equiv;</a></p>
+  <div id="source-geoDSS.processors.alter_key_xpath.alter_key_xpath.execute" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Executes the processor.</span>
@@ -1413,12 +1440,24 @@ a subject key. As namespacing is not supported, this is most useful for html.</p
 <span class="sd">    Keys changed or added to the subject on success.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
-    <span class="n">expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;expression&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
-        <span class="n">expression</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">expression</span><span class="p">]</span>
+    <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;;&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;delimiter&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="n">delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;delimiter&#39;</span><span class="p">]</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;expression&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="n">expression</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">expression</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not get expression from the definition with error: `</span><span class="si">%s</span><span class="s2">`&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
+        
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tree</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;subject_key&#39;</span><span class="p">]])</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span> <span class="n">expression</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>                  
+            <span class="n">result</span> <span class="o">=</span> <span class="n">delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;result_key&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">result</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not execute expression with error: `</span><span class="si">%s</span><span class="s2">`&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>

@@ -71,6 +71,7 @@ class request(test):
     - `{status_code}`               will be replaced by the status code of the response.
     - `{response_time}`             will be replaced with the response time.
     - `{timestamp}`                 will be replaced by the ISO timestamp. 
+    - `{url}`                       will be replaced by the requested url.
 
     `return_subject_key`    When given, this subject key will receive the response.
 
@@ -199,7 +200,8 @@ class request(test):
                 '{text}', response.text).replace(
                 '{status_code}', str(response.status_code)).replace(
                 '{response_time}', str(response.elapsed.total_seconds())).replace(
-                '{timestamp}', datetime.datetime.now().isoformat())
+                '{timestamp}', datetime.datetime.now().isoformat()).replace(
+                '{url}', url)
             )
 
         if 'return_subject_key' in self.definition:

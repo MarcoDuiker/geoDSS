@@ -1191,6 +1191,9 @@ table {
 
 <span class="sd">    optionally having:</span>
 <span class="sd">    </span>
+<span class="sd">    `search_string`         If this string is a key in the subject the search_string will be taken from subject. </span>
+<span class="sd">                            Defaults to `search_string`.</span>
+<span class="sd">    </span>
 <span class="sd">    `fuzzy_score`           When given fuzzy matching of the `search_string` is done. </span>
 
 <span class="sd">    Rule example</span>
@@ -1239,6 +1242,13 @@ table {
 <span class="sd">                           </span>
 <span class="sd">        - `search_string`  Search the text extracted from the pdf defined in the rule set for this string.   </span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">search_string_key</span> <span class="o">=</span> <span class="s1">&#39;search_string&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">search_string_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span>
+        <span class="n">search_string</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">search_string_key</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="n">search_string</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">search_string_key</span><span class="p">]</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
@@ -1321,11 +1331,11 @@ table {
                 <span class="n">text</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">COMMAND</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdfbox</span> <span class="o">=</span> <span class="n">pdfbox</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="p">),</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
                 <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)</span> 
-                <span class="k">if</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">search_string</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
                     <span class="n">score</span> <span class="o">=</span> <span class="mi">100</span>
                 <span class="k">elif</span> <span class="s1">&#39;fuzzy_score&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
-                    <span class="n">score</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">partial_ratio</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">],</span> <span class="n">text</span><span class="p">)</span>
+                    <span class="n">score</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">partial_ratio</span><span class="p">(</span><span class="n">search_string</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;fuzzy_score&#39;</span><span class="p">]:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1441,6 +1451,8 @@ and/ or the text containing a specific string.</p>
 <p><code>status_codes</code>   A list of status codes. If the returned status code is NOT in this list, this test evaluates to False.
                  If <code>None</code> or not given the test will NOT eveluate to False based on the returned status_code.</p>
 <p>optionally having:</p>
+<p><code>search_string</code>         If this string is a key in the subject the search_string will be taken from subject. 
+                        Defaults to <code>search_string</code>.</p>
 <p><code>fuzzy_score</code>           When given fuzzy matching of the <code>search_string</code> is done. </p>
 <h2>Rule example</h2>
 <p>a useful yaml snippet for this test would be:</p>
@@ -1534,6 +1546,9 @@ and/ or the text containing a specific string.</p>
 
 <span class="sd">    optionally having:</span>
 <span class="sd">    </span>
+<span class="sd">    `search_string`         If this string is a key in the subject the search_string will be taken from subject. </span>
+<span class="sd">                            Defaults to `search_string`.</span>
+<span class="sd">    </span>
 <span class="sd">    `fuzzy_score`           When given fuzzy matching of the `search_string` is done. </span>
 
 <span class="sd">    Rule example</span>
@@ -1582,6 +1597,13 @@ and/ or the text containing a specific string.</p>
 <span class="sd">                           </span>
 <span class="sd">        - `search_string`  Search the text extracted from the pdf defined in the rule set for this string.   </span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">search_string_key</span> <span class="o">=</span> <span class="s1">&#39;search_string&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">search_string_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span>
+        <span class="n">search_string</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">search_string_key</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="n">search_string</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">search_string_key</span><span class="p">]</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
@@ -1664,11 +1686,11 @@ and/ or the text containing a specific string.</p>
                 <span class="n">text</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">COMMAND</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdfbox</span> <span class="o">=</span> <span class="n">pdfbox</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="p">),</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
                 <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)</span> 
-                <span class="k">if</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">search_string</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
                     <span class="n">score</span> <span class="o">=</span> <span class="mi">100</span>
                 <span class="k">elif</span> <span class="s1">&#39;fuzzy_score&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
-                    <span class="n">score</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">partial_ratio</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">],</span> <span class="n">text</span><span class="p">)</span>
+                    <span class="n">score</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">partial_ratio</span><span class="p">(</span><span class="n">search_string</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;fuzzy_score&#39;</span><span class="p">]:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1774,6 +1796,13 @@ and/ or the text containing a specific string.</p>
 <span class="sd">                       </span>
 <span class="sd">    - `search_string`  Search the text extracted from the pdf defined in the rule set for this string.   </span>
 <span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">search_string_key</span> <span class="o">=</span> <span class="s1">&#39;search_string&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="n">search_string_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span>
+    <span class="n">search_string</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">search_string_key</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+        <span class="n">search_string</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">search_string_key</span><span class="p">]</span>
     <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
@@ -1851,11 +1880,11 @@ and/ or the text containing a specific string.</p>
             <span class="n">text</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">COMMAND</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdfbox</span> <span class="o">=</span> <span class="n">pdfbox</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="p">),</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)</span> 
-            <span class="k">if</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">search_string</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
                 <span class="n">score</span> <span class="o">=</span> <span class="mi">100</span>
             <span class="k">elif</span> <span class="s1">&#39;fuzzy_score&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
-                <span class="n">score</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">partial_ratio</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">],</span> <span class="n">text</span><span class="p">)</span>
+                <span class="n">score</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">partial_ratio</span><span class="p">(</span><span class="n">search_string</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;fuzzy_score&#39;</span><span class="p">]:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="k">else</span><span class="p">:</span>
