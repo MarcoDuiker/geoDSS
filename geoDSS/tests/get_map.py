@@ -42,7 +42,8 @@ class get_map(test):
 
     `flip_axes`      (optional) When using WMS 1.3.0 specify True if EPSG code and service requires the BBOX to be ymin,xmin,ymax,xmax
 
-    `report_template` (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url.
+    `report_template` (string):     A string containing {url}. {url} will be replaced by the WMS GetMap request url. 
+                                    After that, any specified {key} from the subject will be substituted by its value as well.
                                     
         When using the html output of the standard markdown reporter a semi opaque red box indicating the middle of the 
         image can be added by providing an alt text like this:
@@ -231,7 +232,10 @@ class get_map(test):
         self.decision = True                                                                # don't forget to set self.decision to True,
                                                                                             # otherwise "Test decision is: False" is added to the report instead of the following:
 
-        self.result.append(self.definition["report_template"].replace('{url}', url))
+        result = self.definition["report_template"].replace('{url}', url)
+        for key, value in subject.items():                               
+            result = result.replace('{%s}' % (key), str(value))
+        self.result.append(result)
         
         self.executed = True                                                                # don't forget to set self.executed to True, 
                                                                                             # otherwise "Error: test is not executed:" will be added to the report as well
