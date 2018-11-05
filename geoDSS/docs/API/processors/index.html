@@ -1048,7 +1048,9 @@ table {
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
         <li class="mono"><a href="alter_key.m.html">geoDSS.processors.alter_key</a></li>
+        <li class="mono"><a href="alter_key_xpath.m.html">geoDSS.processors.alter_key_xpath</a></li>
         <li class="mono"><a href="bag_geocoder.m.html">geoDSS.processors.bag_geocoder</a></li>
+        <li class="mono"><a href="ogr_processing.m.html">geoDSS.processors.ogr_processing</a></li>
         <li class="mono"><a href="pdok_locatieserver.m.html">geoDSS.processors.pdok_locatieserver</a></li>
         <li class="mono"><a href="postgis_processing.m.html">geoDSS.processors.postgis_processing</a></li>
         <li class="mono"><a href="postgis_unit_test.m.html">geoDSS.processors.postgis_unit_test</a></li>
@@ -1127,6 +1129,11 @@ In real life more parameters will be present in a subject.</p>
 <span class="k">except</span><span class="p">:</span>
     <span class="k">pass</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">..processors</span> <span class="kn">import</span> <span class="n">ogr_processing</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
 <span class="c1"># and as long as we are developing we try the import here to prevent exceptions being caught.</span>
 </pre></div>
 
@@ -1146,7 +1153,19 @@ In real life more parameters will be present in a subject.</p>
 
       </div>
       <div class="item">
+      <p class="name"><a href="alter_key_xpath.m.html">geoDSS.processors.alter_key_xpath</a></p>
+      
+  
+
+      </div>
+      <div class="item">
       <p class="name"><a href="bag_geocoder.m.html">geoDSS.processors.bag_geocoder</a></p>
+      
+  
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="ogr_processing.m.html">geoDSS.processors.ogr_processing</a></p>
       
   
 

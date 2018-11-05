@@ -40,6 +40,11 @@ try:
 except:
     pass
 
+try:
+    from ..processors import ogr_processing
+except:
+    pass
+
 # and as long as we are developing we try the import here to prevent exceptions being caught.
 
 
