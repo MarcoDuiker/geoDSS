@@ -23,8 +23,9 @@ class test(object):
 
     `definition` optionally can have:
 
-    `report` (bool)                       When set to `False` this rule will not be reported. The report results will be available to other tests.
-                                          Defaults to `True`.
+    `report` (bool) or `decision`         When set to `False` this rule will not be reported. The report results will be available to other tests.
+                                          When set to `decision` this rule will be reported when it evaluates to `True`, otherwise not.
+                                          Defaults to `True`. 
 
     The definition is coming from a rule as defined in a rule_set.
 
@@ -105,6 +106,9 @@ class test(object):
             self.logger.error(message)
         if report and message:
             self.result.append(message)
+            
+        if self.definition['report'] == 'decision':
+            self.definition['report'] = bool(self.decision)
 
         if self.definition['break_on_error'] and not self.executed:
             return False
