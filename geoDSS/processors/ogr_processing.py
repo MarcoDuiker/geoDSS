@@ -26,7 +26,8 @@ class ogr_processing(processor):
 
     `processor` (string):                 one of the ogr processing tools like Buffer, or Area 
 
-    `parameters` (list):                  the parameters which are taken by the relationship;
+    `parameters` (list):                  the parameters which are taken by the processor;
+                                          If a key available in the subject is specified, the value will be taken from that key.
                                           The processor always works on the subjects geometry.
 
     `result_key` (string):                The name of the key to store the result.
@@ -92,6 +93,11 @@ class ogr_processing(processor):
         if not 'geometry' in subject:
             return self._handle_execution_exception(subject, 'Could not find key "geometry" in subject.')
 
+        parameters = self.definition['parameters']
+        for index, parameter in enumerate(parameters):
+            if parameter in subject:
+                parameters[index] = subject[parameter]
+
         ewkt = subject['geometry']
         try:
             g = ogr.CreateGeometryFromWkt(self._get_WKT_geometry(ewkt))
@@ -103,14 +109,14 @@ class ogr_processing(processor):
             return self._handle_execution_exception(subject, "ogr doesn't know the processor: " + self.definition['processor'])
 
         try:
-            result = processor_to_call(*self.definition['parameters'])
+            result = processor_to_call(*parameters)
         except Exception as error:
             return self._handle_execution_exception(subject, "ogr error during processing: " + str(error))
 
         if result:
             self.executed = True
             if isinstance(geom,ogr.Geometry):
-                result = self._get_SRID_string(self,ewkt) + ";" + result.ExportToWkt()
+                result = self._EWKT_from_WKT(self._get_SRID_string(ewkt),result.ExportToWkt())
             subject[self.definition['result_key']] = result
             
         if self.executed and self.definition["report_template"]:

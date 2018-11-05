@@ -1226,12 +1226,12 @@ You can set </p>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">output_format</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;output_format&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;html&#39;</span><span class="p">]:</span>
-            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/html&#39;</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/html; charset=utf-8&#39;</span>
         <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pdf&#39;</span><span class="p">]:</span>
             <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;application/pdf&#39;</span>
             <span class="c1">#mime = &#39;text/plain&#39;</span>
         <span class="k">elif</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;markdown&#39;</span><span class="p">]:</span>
-            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/plain&#39;</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/plain; charset=utf-8&#39;</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;markdown&#39;</span>
 
@@ -1342,7 +1342,7 @@ You can set </p>
     <span class="n">headers</span> <span class="o">=</span> <span class="n">sanitize_headers</span><span class="p">(</span><span class="n">response_headers</span><span class="p">)</span>
     <span class="n">start_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
     <span class="c1">#return [data]</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;latin-1&#39;</span><span class="p">)]</span>  <span class="c1"># needed for apache to encode unicode to bytes string</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)]</span>  <span class="c1"># needed for apache to encode unicode to bytes string</span>
 
 
 <span class="k">def</span> <span class="nf">cgi_application</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
@@ -1357,8 +1357,7 @@ You can set </p>
     <span class="n">headers</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">response_headers</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span> <span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span>
      
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
 
 <span class="c1"># Get form/query params (CGI)</span>
 <span class="n">parameters</span> <span class="o">=</span> <span class="n">cgi</span><span class="o">.</span><span class="n">FieldStorage</span><span class="p">(</span><span class="n">keep_blank_values</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
@@ -1520,7 +1519,7 @@ You can set </p>
     <span class="n">headers</span> <span class="o">=</span> <span class="n">sanitize_headers</span><span class="p">(</span><span class="n">response_headers</span><span class="p">)</span>
     <span class="n">start_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
     <span class="c1">#return [data]</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;latin-1&#39;</span><span class="p">)]</span>  <span class="c1"># needed for apache to encode unicode to bytes string</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)]</span>  <span class="c1"># needed for apache to encode unicode to bytes string</span>
 </pre></div>
 
   </div>
@@ -1554,7 +1553,7 @@ You can set </p>
     <span class="n">headers</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">response_headers</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span> <span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span>
      
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1591,12 +1590,12 @@ You can set </p>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">output_format</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;output_format&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;html&#39;</span><span class="p">]:</span>
-            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/html&#39;</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/html; charset=utf-8&#39;</span>
         <span class="k">if</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pdf&#39;</span><span class="p">]:</span>
             <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;application/pdf&#39;</span>
             <span class="c1">#mime = &#39;text/plain&#39;</span>
         <span class="k">elif</span> <span class="n">output_format</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;markdown&#39;</span><span class="p">]:</span>
-            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/plain&#39;</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="s1">&#39;text/plain; charset=utf-8&#39;</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="n">output_format</span> <span class="o">=</span> <span class="s1">&#39;markdown&#39;</span>
 

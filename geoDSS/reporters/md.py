@@ -54,6 +54,7 @@ def rule_set_reporter(rule_set, output_format='markdown', **kwargs):
         html_wrapper = u'''
         <html>
         <head>
+            <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
             <title>geoDSS</title>
             <style>
                 body {width: 600px; margin: 0; padding-left: 5%; font-size: 80%; line-height: 1.5;font-family: arial;color: #333333;}
