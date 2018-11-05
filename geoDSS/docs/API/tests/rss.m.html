@@ -1173,6 +1173,9 @@ table {
 
 <span class="sd">    optionally having:</span>
 <span class="sd">    </span>
+<span class="sd">    `search_string`         If this string is a key in the subject the search_string will be taken from subject. </span>
+<span class="sd">                            Defaults to `search_string`.</span>
+<span class="sd">    </span>
 <span class="sd">    `fuzzy_score`           When given fuzzy matching of the `search_string` is done. </span>
 <span class="sd">                            Every RSS-entry with a fuzzy score above `fuzz_score` is reported.</span>
 <span class="sd">                            If there is one or more entries to reported the test evaluates to True.</span>
@@ -1225,6 +1228,13 @@ table {
 <span class="sd">                           </span>
 <span class="sd">        - `search_string`  Search a `rss_item` defined in the rule set for this string.   </span>
 <span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">search_string_key</span> <span class="o">=</span> <span class="s1">&#39;search_string&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">search_string_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span>
+        <span class="n">search_string</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">search_string_key</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="n">search_string</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">search_string_key</span><span class="p">]</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
@@ -1304,27 +1314,27 @@ table {
             <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rss_entries</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">if</span> <span class="s1">&#39;rss_item&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="ow">and</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;rss_item&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="ow">and</span> <span class="n">search_string</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
                     <span class="n">item</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">search_string</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
                 <span class="n">feed</span> <span class="o">=</span> <span class="n">feedparser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
                 <span class="c1"># first do exact matching:</span>
                 <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">search_string</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
                         <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
                         <span class="n">rss_entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entry</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">search_string</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
                         <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
                             <span class="k">break</span>
                 <span class="c1"># if nothing found and fuzzy search is asked:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="ow">and</span> <span class="s1">&#39;fuzzy_score&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
                     <span class="n">testset</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">]</span>
-                    <span class="n">summary_list</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">extractBests</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">],</span> 
+                    <span class="n">summary_list</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">extractBests</span><span class="p">(</span><span class="n">search_string</span><span class="p">,</span> 
                         <span class="n">testset</span><span class="p">,</span> 
                         <span class="n">scorer</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">token_set_ratio</span><span class="p">,</span>
                         <span class="n">score_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;fuzzy_score&#39;</span><span class="p">],</span>
@@ -1420,6 +1430,8 @@ and/ or the RSS-feed containing a specific string.</p>
                  If not given, only the returned status code will determine if the test evaluates to True.
                  If <code>rss_item</code> is a key in the subject, then the value of that key is used as <code>rss_item</code>.</p>
 <p>optionally having:</p>
+<p><code>search_string</code>         If this string is a key in the subject the search_string will be taken from subject. 
+                        Defaults to <code>search_string</code>.</p>
 <p><code>fuzzy_score</code>           When given fuzzy matching of the <code>search_string</code> is done. 
                         Every RSS-entry with a fuzzy score above <code>fuzz_score</code> is reported.
                         If there is one or more entries to reported the test evaluates to True.</p>
@@ -1521,6 +1533,9 @@ and/ or the RSS-feed containing a specific string.</p>
 
 <span class="sd">    optionally having:</span>
 <span class="sd">    </span>
+<span class="sd">    `search_string`         If this string is a key in the subject the search_string will be taken from subject. </span>
+<span class="sd">                            Defaults to `search_string`.</span>
+<span class="sd">    </span>
 <span class="sd">    `fuzzy_score`           When given fuzzy matching of the `search_string` is done. </span>
 <span class="sd">                            Every RSS-entry with a fuzzy score above `fuzz_score` is reported.</span>
 <span class="sd">                            If there is one or more entries to reported the test evaluates to True.</span>
@@ -1573,6 +1588,13 @@ and/ or the RSS-feed containing a specific string.</p>
 <span class="sd">                           </span>
 <span class="sd">        - `search_string`  Search a `rss_item` defined in the rule set for this string.   </span>
 <span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">search_string_key</span> <span class="o">=</span> <span class="s1">&#39;search_string&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+            <span class="n">search_string_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span>
+        <span class="n">search_string</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">search_string_key</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="n">search_string</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">search_string_key</span><span class="p">]</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
@@ -1652,27 +1674,27 @@ and/ or the RSS-feed containing a specific string.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rss_entries</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">if</span> <span class="s1">&#39;rss_item&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="ow">and</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;rss_item&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="ow">and</span> <span class="n">search_string</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
                     <span class="n">item</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">search_string</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
                 <span class="n">feed</span> <span class="o">=</span> <span class="n">feedparser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
                 <span class="c1"># first do exact matching:</span>
                 <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">search_string</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
                         <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
                         <span class="n">rss_entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entry</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">search_string</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
                         <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
                             <span class="k">break</span>
                 <span class="c1"># if nothing found and fuzzy search is asked:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="ow">and</span> <span class="s1">&#39;fuzzy_score&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
                     <span class="n">testset</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">]</span>
-                    <span class="n">summary_list</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">extractBests</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">],</span> 
+                    <span class="n">summary_list</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">extractBests</span><span class="p">(</span><span class="n">search_string</span><span class="p">,</span> 
                         <span class="n">testset</span><span class="p">,</span> 
                         <span class="n">scorer</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">token_set_ratio</span><span class="p">,</span>
                         <span class="n">score_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;fuzzy_score&#39;</span><span class="p">],</span>
@@ -1787,6 +1809,12 @@ and/ or the RSS-feed containing a specific string.</p>
 <span class="sd">                       </span>
 <span class="sd">    - `search_string`  Search a `rss_item` defined in the rule set for this string.   </span>
 <span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">search_string_key</span> <span class="o">=</span> <span class="s1">&#39;search_string&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
+        <span class="n">search_string_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span>
+    <span class="n">search_string</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">search_string_key</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+        <span class="n">search_string</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">search_string_key</span><span class="p">]</span>
     <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">url</span><span class="p">]</span>
@@ -1861,27 +1889,27 @@ and/ or the RSS-feed containing a specific string.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">rss_entries</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="s1">&#39;rss_item&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="ow">and</span> <span class="s1">&#39;search_string&#39;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;rss_item&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="ow">and</span> <span class="n">search_string</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
                 <span class="n">item</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;rss_item&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">search_string</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
             <span class="n">feed</span> <span class="o">=</span> <span class="n">feedparser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
             <span class="c1"># first do exact matching:</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">search_string</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">True</span>
                     <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
                     <span class="n">rss_entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entry</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">search_string</span> <span class="p">,</span><span class="n">item</span><span class="p">))</span>
                     <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
                         <span class="k">break</span>
             <span class="c1"># if nothing found and fuzzy search is asked:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="ow">and</span> <span class="s1">&#39;fuzzy_score&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">:</span>
                 <span class="n">testset</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entries</span><span class="p">]</span>
-                <span class="n">summary_list</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">extractBests</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;search_string&#39;</span><span class="p">],</span> 
+                <span class="n">summary_list</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">extractBests</span><span class="p">(</span><span class="n">search_string</span><span class="p">,</span> 
                     <span class="n">testset</span><span class="p">,</span> 
                     <span class="n">scorer</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">token_set_ratio</span><span class="p">,</span>
                     <span class="n">score_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;fuzzy_score&#39;</span><span class="p">],</span>

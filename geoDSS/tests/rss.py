@@ -98,6 +98,9 @@ class rss(test):
 
     optionally having:
     
+    `search_string`         If this string is a key in the subject the search_string will be taken from subject. 
+                            Defaults to `search_string`.
+    
     `fuzzy_score`           When given fuzzy matching of the `search_string` is done. 
                             Every RSS-entry with a fuzzy score above `fuzz_score` is reported.
                             If there is one or more entries to reported the test evaluates to True.
@@ -150,6 +153,13 @@ class rss(test):
                            
         - `search_string`  Search a `rss_item` defined in the rule set for this string.   
         '''
+
+        search_string_key = 'search_string'
+        if 'search_string' in self.definition:
+            search_string_key = self.definition['search_string']
+        search_string = None
+        if search_string_key in subject:
+            search_string = subject[search_string_key]
 
         url = self.definition['url']
         if url in subject:
@@ -229,27 +239,27 @@ class rss(test):
             self.decision = False
         else:
             rss_entries = []
-            if 'rss_item' in self.definition and 'search_string' in subject:
+            if 'rss_item' in self.definition and search_string:
                 if self.definition['rss_item'] in subject:
                     item = subject[self.definition['rss_item']]
                 else:
                     item = self.definition['rss_item']
-                self.logger.debug("Looking for %s in %s" % ( subject['search_string'] ,item))
+                self.logger.debug("Looking for %s in %s" % ( search_string ,item))
                 feed = feedparser.parse(response.text)
                 # first do exact matching:
                 i = 0
                 for entry in feed.entries:
-                    if subject['search_string'] in entry[item]:
+                    if search_string in entry[item]:
                         self.decision = True
                         i = i + 1
                         rss_entries.append((entry, 100))
-                        self.logger.debug("Found %s in %s" % ( subject['search_string'] ,item))
+                        self.logger.debug("Found %s in %s" % ( search_string ,item))
                         if i > limit:
                             break
                 # if nothing found and fuzzy search is asked:
                 if not self.decision and 'fuzzy_score' in self.definition:
                     testset = [entry[item] for entry in feed.entries]
-                    summary_list = process.extractBests(subject['search_string'], 
+                    summary_list = process.extractBests(search_string, 
                         testset, 
                         scorer = fuzz.token_set_ratio,
                         score_cutoff = self.definition['fuzzy_score'],

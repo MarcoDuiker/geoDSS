@@ -29,6 +29,10 @@ from ..processors import    alter_key, \
                             random_value
 
 # then try to import other processors as well; skip a processor if import fails.
+try:
+    from ..processors import alter_key_xpath
+except:
+    pass
 
 try:
     from ..processors import postgis_processing

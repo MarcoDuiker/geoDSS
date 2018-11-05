@@ -106,6 +106,9 @@ class pdf(test):
 
     optionally having:
     
+    `search_string`         If this string is a key in the subject the search_string will be taken from subject. 
+                            Defaults to `search_string`.
+    
     `fuzzy_score`           When given fuzzy matching of the `search_string` is done. 
 
     Rule example
@@ -154,6 +157,13 @@ class pdf(test):
                            
         - `search_string`  Search the text extracted from the pdf defined in the rule set for this string.   
         '''
+        
+        search_string_key = 'search_string'
+        if 'search_string' in self.definition:
+            search_string_key = self.definition['search_string']
+        search_string = None
+        if search_string_key in subject:
+            search_string = subject[search_string_key]
 
         url = self.definition['url']
         if url in subject:
@@ -236,11 +246,11 @@ class pdf(test):
                 text = subprocess.check_output(COMMAND.format(pdfbox = pdfbox, fname = fname), shell=True).decode('utf-8')
                 os.remove(fname)
                 text = text.replace('-\n','').replace('\n',' ') 
-                if subject['search_string'] in text:
+                if search_string in text:
                     self.decision = True
                     score = 100
                 elif 'fuzzy_score' in self.definition:
-                    score = fuzz.partial_ratio(subject['search_string'], text)
+                    score = fuzz.partial_ratio(search_string, text)
                     if score >= self.definition['fuzzy_score']:
                         self.decision = True
             else:
