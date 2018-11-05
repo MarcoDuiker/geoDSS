@@ -370,6 +370,7 @@ class wfs2_SpatialOperator(test):
                 if dataSource is None:
                     return self._handle_execution_exception( subject, 'Failed reading WFS request for an unknown reason')
                 else:
+                    self.decision = False
                     layer = dataSource.GetLayer()
                     if layer:
                         layerDefinition = layer.GetLayerDefn()
@@ -386,9 +387,7 @@ class wfs2_SpatialOperator(test):
                                     to_report = to_report.replace("{%s}" % col, str(feature.GetField(col)))
                             if not to_report in self.result:
                                 self.result.append(to_report)
-                    else:
-                        # we have 0 features
-                        self.decision = False
+                        
             else:
                 return self._handle_execution_exception( subject, 'WFS returned statuscode: ' + str(r.status_code) )
                 
