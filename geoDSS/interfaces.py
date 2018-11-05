@@ -104,12 +104,12 @@ def load_execute_report(params):
     try:
         output_format = params['output_format'][0]
         if output_format in ['html']:
-            mime = 'text/html'
+            mime = 'text/html; charset=utf-8'
         if output_format in ['pdf']:
             mime = 'application/pdf'
             #mime = 'text/plain'
         elif output_format in ['markdown']:
-            mime = 'text/plain'
+            mime = 'text/plain; charset=utf-8'
     except:
         output_format = 'markdown'
 
@@ -220,7 +220,7 @@ def application(environ, start_response):
     headers = sanitize_headers(response_headers)
     start_response(status, headers.items())
     #return [data]
-    return [data.encode('latin-1')]  # needed for apache to encode unicode to bytes string
+    return [data.encode('utf-8')]  # needed for apache to encode unicode to bytes string
 
 
 def cgi_application(params):
@@ -235,8 +235,7 @@ def cgi_application(params):
     headers = '\r\n'.join( ["%s: %s;" % (key, value) for key, value in response_headers.iteritems()] ) + '\r\n' + '\r\n'
      
     sys.stdout.write(headers)
-    sys.stdout.write(data)
-
+    sys.stdout.write(data.encode('utf-8'))
 
 # Get form/query params (CGI)
 parameters = cgi.FieldStorage(keep_blank_values = True)

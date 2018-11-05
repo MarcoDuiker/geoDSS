@@ -315,6 +315,8 @@ class wfs2_SpatialOperator(test):
                      
         '''
 
+        gdal.UseExceptions()
+
         _distance = None
         if 'distance' in self.definition:
             _distance = self.definition['distance']

@@ -1074,6 +1074,7 @@ It loads a rule_set from a yaml file.</p>
 <span class="sd">It loads a rule_set from a yaml file.</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
+<span class="kn">import</span> <span class="nn">codecs</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
 <span class="k">def</span> <span class="nf">load_rule_set</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1105,9 +1106,7 @@ It loads a rule_set from a yaml file.</p>
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c1"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
-
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
 </pre></div>
 
@@ -1181,9 +1180,7 @@ It loads a rule_set from a yaml file.</p>
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c1"># todo: we might need something like: input_file = codecs.open(&quot;some_file.txt&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)</span>
-
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rules_set_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
 </pre></div>
 

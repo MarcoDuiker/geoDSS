@@ -45,5 +45,10 @@ try:
 except:
     pass
     
+try:
+    from ..tests import pdf
+except:
+    pass
+    
 # and as long as we are developing we try the import here to prevent exceptions being caught.
 

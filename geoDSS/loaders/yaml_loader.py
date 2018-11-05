@@ -4,6 +4,7 @@ This is the default rule_set loader.
 It loads a rule_set from a yaml file.
 '''
 
+import codecs
 import yaml
 
 def load_rule_set(rules_set_file, **kwargs):
@@ -35,7 +36,5 @@ def load_rule_set(rules_set_file, **kwargs):
 
     '''
 
-    # todo: we might need something like: input_file = codecs.open("some_file.txt", mode="r", encoding="utf-8")
-
-    with open(rules_set_file) as stream:
+    with codecs.open(rules_set_file, mode="r", encoding="utf-8") as stream:
         return yaml.load(stream)

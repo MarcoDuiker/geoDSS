@@ -21,7 +21,9 @@ In real life more parameters will be present in a subject.
 '''
 
 # first import all processors dependent on python libraries needed by geoDSS only.
-from ..processors import    bag_geocoder, \
+
+from ..processors import    alter_key, \
+                            bag_geocoder, \
                             pdok_locatieserver, \
                             random_point_geometry, \
                             random_value
@@ -38,5 +40,11 @@ try:
 except:
     pass
 
+try:
+    from ..processors import ogr_processing
+except:
+    pass
+
 # and as long as we are developing we try the import here to prevent exceptions being caught.
+
 
