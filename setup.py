@@ -6,13 +6,16 @@ geoDSS is a library supported by several interfaces to quickly evaluate a subjec
 
 setup(
     name='geoDSS',
-    version='1.3',
+    version='1.4',
     description='geoDSS',
     long_description=long_description,
     url='',
     author='Marco Duiker',
     author_email='md@md-kwadraat.nl',
     license='MIT',
+    package_data = {
+        'libs': ['*'],
+    },
     classifiers=[
         'Development Status :: 2 - Beta',
         'Intended Audience :: Developers',
