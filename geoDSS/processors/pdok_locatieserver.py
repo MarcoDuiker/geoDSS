@@ -12,7 +12,7 @@ except:
     pass
 
 from ..processors.processor import processor
-
+from ..processors.processor import utils
 
 class pdok_locatieserver(processor):
     '''
@@ -66,60 +66,6 @@ class pdok_locatieserver(processor):
         subject = '{"postcode": "4171KG", "huisnummer": "74"}'
     '''
 
-    class _WKTParser:
-        """
-        Private class to grab gml posList and geoType from WKT.
-
-        Modified from pysal which is Modified from...
-
-        - URL: http://dev.openlayers.org/releases/OpenLayers-2.7/lib/OpenLayers/Format/WKT.js
-        - Reg Ex Strings copied from OpenLayers.Format.WKT
-        """
-
-        regExes = {'typeStr': re.compile('^\s*([\w\s]+)\s*\(\s*(.*)\s*\)\s*$'),
-                   'spaces': re.compile('\s+'),
-                   'parenComma': re.compile('\)\s*,\s*\('),
-                   'doubleParenComma': re.compile('\)\s*\)\s*,\s*\(\s*\('),  # can't use {2} here
-                   'trimParens': re.compile('^\s*\(?(.*?)\)?\s*$')}
-
-        def __init__(self):
-            self.parsers = p = {}
-            p['point'] = self.Point
-            p['linestring'] = self.LineString
-            p['polygon'] = self.Polygon
-
-        def Point(self, geoStr):
-            return [geoStr.strip()]
-
-        def LineString(self, geoStr):
-            return geoStr.strip().split(',')
-
-        def Polygon(self, geoStr, outer_ring_only=True):
-            rings = self.regExes['parenComma'].split(geoStr.strip())
-            for i, ring in enumerate(rings):
-                ring = self.regExes['trimParens'].match(ring).groups()[0]
-                ring = self.LineString(ring)
-                rings[i] = ring
-                if outer_ring_only:
-                    return rings[0]
-            return rings
-
-        def fromWKT(self, wkt, returnGeoType=False):
-            matches = self.regExes['typeStr'].match(wkt)
-            if matches:
-                geoType, geoStr = matches.groups()
-                geoType = geoType.lower().strip()
-                try:
-                    if returnGeoType:
-                        return geoType, self.parsers[geoType](geoStr)
-                    else:
-                        return self.parsers[geoType](geoStr)
-                except KeyError:
-                    raise NotImplementedError("Unsupported WKT Type: %s" % geoType)
-            else:
-                return None
-
-        __call__ = fromWKT
 
     def execute(self, subject):
         '''
@@ -156,7 +102,7 @@ class pdok_locatieserver(processor):
                         result = json.loads(response.content)                   # workaround for old requests libraries
                     if result["response"]["numFound"] > 0:
                         doc = result["response"]["docs"][0]
-                        _wkt = self._WKTParser()
+                        _wkt = utils.wkt._WKTParser()
                         _posLists = _wkt(doc["centroide_rd"])
                         XY = _posLists[0].split()
                         if XY:

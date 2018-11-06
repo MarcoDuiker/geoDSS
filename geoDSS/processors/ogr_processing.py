@@ -9,10 +9,12 @@ except:
     pass
 
 from ..processors.processor import processor
+from ..processors.processor import utils
 
 class ogr_processing(processor):
     '''
     This processor does basic ogr processing like Buffer or Area.
+    Available functions are listed here: `https://gdal.org/python/osgeo.ogr.Geometry-class.html`.
     
     Dependencies
     ------------
@@ -24,7 +26,9 @@ class ogr_processing(processor):
 
     `definition` is expected to be a dict having:
 
-    `processor` (string):                 one of the ogr processing tools like Buffer, or Area 
+    `processor` (string):                 one of the ogr processing tools like Buffer, or Area. 
+                                          You can use any function which operates on a geometry.
+                                          These functions are listed on: `https://gdal.org/python/osgeo.ogr.Geometry-class.html`.
 
     `parameters` (list):                  the parameters which are taken by the processor;
                                           If a key available in the subject is specified, the value will be taken from that key.
@@ -50,34 +54,6 @@ class ogr_processing(processor):
 
     '''
 
-    def _get_srsName(self, ewkt):
-        '''
-        A private method to get a proper srsName for the WFS request from an EWKT string
-        '''
-
-        code = ewkt.split(';')[0].split('=')[1].strip()
-        return "urn:ogc:def:crs:EPSG::%s" % str(code)
-        
-    def _get_SRID_string(self,ewkt):
-        '''
-        A private method to get the EWKT projection string from an EWKT string
-        '''
-        
-        return ewkt.split(';')[0].strip()
-        
-    def _get_WKT_geometry(self, ewkt):
-        '''
-        A private method to get a WKT geometry string from an EWKT string
-        '''
-        
-        return ewkt.split(';')[1].strip()
-        
-    def _EWKT_from_WKT(self, srid, wkt ):
-        '''
-        Private method to get a valid EWKT geometry string from a WKT string and a EWKT SRID string
-        '''
-        
-        return ';'.join([srid,wkt])
 
     def execute(self, subject):
         ''' 
@@ -100,7 +76,7 @@ class ogr_processing(processor):
 
         ewkt = subject['geometry']
         try:
-            g = ogr.CreateGeometryFromWkt(self._get_WKT_geometry(ewkt))
+            g = ogr.CreateGeometryFromWkt(utils.wkt._get_WKT_geometry(ewkt))
         except Exception as error:
             return self._handle_execution_exception(subject, "Could not create ogr geometry from subject: " + str(error))
         try:
@@ -109,14 +85,14 @@ class ogr_processing(processor):
             return self._handle_execution_exception(subject, "ogr doesn't know the processor: " + self.definition['processor'])
 
         try:
-            result = processor_to_call(*parameters)
+            result = processor_to_call(*parameters)  # we might be more flexible using an eval(expression)
         except Exception as error:
             return self._handle_execution_exception(subject, "ogr error during processing: " + str(error))
 
         if result:
             self.executed = True
-            if isinstance(geom,ogr.Geometry):
-                result = self._EWKT_from_WKT(self._get_SRID_string(ewkt),result.ExportToWkt())
+            if isinstance(result,ogr.Geometry):
+                result = utils.wkt._EWKT_from_WKT(utils.wkt._get_SRID_string(ewkt),result.ExportToWkt())
             subject[self.definition['result_key']] = result
             
         if self.executed and self.definition["report_template"]:

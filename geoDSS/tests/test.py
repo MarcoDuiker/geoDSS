@@ -7,6 +7,7 @@ try:
 except:
     pass
 
+import utils
 
 class test(object):
     '''

@@ -32,22 +32,22 @@ from ..tests import evaluate, \
 # then try to import other tests as well; skip a test if import fails.
 try:
     from ..tests import postgis_spatial_select
-except:
+except ImportError:
     pass
 
 try:
     from ..tests import rss
-except:
+except ImportError:
     pass
 
 try:
     from ..tests import wfs2_SpatialOperator
-except:
+except ImportError:
     pass
     
 try:
     from ..tests import pdf
-except:
+except ImportError:
     pass
     
 # and as long as we are developing we try the import here to prevent exceptions being caught.

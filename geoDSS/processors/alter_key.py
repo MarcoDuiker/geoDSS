@@ -19,6 +19,12 @@ except ImportError:
     # python3
     from urllib.parse import urlencode
 
+try:
+    from gdal import ogr, gdal
+    gdal.UseExceptions()
+except ImportError:
+    pass
+
 from contextlib import contextmanager
 
 try:
@@ -63,6 +69,7 @@ class alter_key(processor):
                                         - json
                                         - locale
                                         - math
+                                        - ogr (if you have this installed)
                                         - os
                                         - re
                                         - string

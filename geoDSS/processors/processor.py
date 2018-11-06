@@ -6,6 +6,8 @@ try:
 except:
     pass
 
+import utils
+
 class processor(object):
     '''
     This is a base class meant to sub class.

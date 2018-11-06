@@ -1110,6 +1110,8 @@ table {
     <span class="k">pass</span>
     
 <span class="kn">from</span> <span class="nn">..tests.test</span> <span class="kn">import</span> <span class="n">test</span>
+<span class="kn">from</span> <span class="nn">..tests.test</span> <span class="kn">import</span> <span class="n">utils</span>
+
 
 <span class="k">class</span> <span class="nc">wfs2_SpatialOperator</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
@@ -1202,119 +1204,17 @@ table {
 
 <span class="sd">        subject = { &quot;geometry&quot;: &quot;SRID=28992;POINT(138034.181 452694.342)&quot;}</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-
-    <span class="k">class</span> <span class="nc">_WKTParser</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">        Private class to grab gml posList and geoType from WKT.</span>
-
-<span class="sd">        Modified from pysal which is Modified from... </span>
-
-<span class="sd">        - URL: http://dev.openlayers.org/releases/OpenLayers-2.7/lib/OpenLayers/Format/WKT.js</span>
-<span class="sd">        - Reg Ex Strings copied from OpenLayers.Format.WKT</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">regExes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;typeStr&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^\s*([\w\s]+)\s*\(\s*(.*)\s*\)\s*$&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;spaces&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\s+&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;parenComma&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\)\s*,\s*\(&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;doubleParenComma&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\)\s*\)\s*,\s*\(\s*\(&#39;</span><span class="p">),</span>  <span class="c1"># can&#39;t use {2} here</span>
-                   <span class="s1">&#39;trimParens&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^\s*\(?(.*?)\)?\s*$&#39;</span><span class="p">)}</span>
-
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;point&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Point</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;linestring&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LineString</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;polygon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Polygon</span>
-
-        <span class="k">def</span> <span class="nf">Point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
-
-        <span class="k">def</span> <span class="nf">LineString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">Polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">,</span> <span class="n">outer_ring_only</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
-            <span class="n">rings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;parenComma&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ring</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rings</span><span class="p">):</span>
-                <span class="n">ring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;trimParens&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">ring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LineString</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span>
-                <span class="n">rings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ring</span>
-                <span class="k">if</span> <span class="n">outer_ring_only</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">rings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">rings</span>
-            
-        <span class="k">def</span> <span class="nf">fromWKT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkt</span><span class="p">,</span> <span class="n">returnGeoType</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
-            <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;typeStr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">wkt</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">matches</span><span class="p">:</span>
-                <span class="n">geoType</span><span class="p">,</span> <span class="n">geoStr</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
-                <span class="n">geoType</span> <span class="o">=</span> <span class="n">geoType</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">returnGeoType</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="n">geoType</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span><span class="p">[</span><span class="n">geoType</span><span class="p">](</span><span class="n">geoStr</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span><span class="p">[</span><span class="n">geoType</span><span class="p">](</span><span class="n">geoStr</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Unsupported WKT Type: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">geoType</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">None</span>
-        
-        <span class="fm">__call__</span> <span class="o">=</span> <span class="n">fromWKT</span>
-
-    <span class="k">def</span> <span class="nf">_get_srsName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get a proper srsName for the WFS request from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-
-        <span class="n">code</span> <span class="o">=</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">return</span> <span class="s2">&quot;urn:ogc:def:crs:EPSG::</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">_get_SRID_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get the EWKT projection string from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">_get_WKT_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get a WKT geometry string from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">srid</span><span class="p">,</span> <span class="n">wkt</span> <span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Private method to get a valid EWKT geometry string from a WKT string and a EWKT SRID string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">srid</span><span class="p">,</span><span class="n">wkt</span><span class="p">])</span>
-        
+       
         
     <span class="k">def</span> <span class="nf">_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        A private method which buffers the geometry with a distance</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         
-        <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
         <span class="n">ng</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">Buffer</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">ng</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="nf">_getGMLGeom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Returns a gml geometry for use in WFS spatial filtering.</span>
-<span class="sd">        </span>
-<span class="sd">        Does NOT support geometries of the MULTI type.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
-        <span class="n">_wktGeomType</span><span class="p">,</span> <span class="n">_posLists</span> <span class="o">=</span> <span class="n">_wkt</span><span class="p">(</span><span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">True</span><span class="p">)</span>
-        <span class="n">_posList</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_posLists</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;point&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Point gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:pos&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:pos&gt;&lt;/gml:Point&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;linestring&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:LineString gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:LineString&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;polygon&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Polygon gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:exterior&gt;&lt;gml:LinearRing&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:LinearRing&gt;&lt;/gml:exterior&gt;&lt;/gml:Polygon&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">ng</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">_getFeature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1449,7 +1349,6 @@ table {
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 
-                <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span> 
                 <span class="n">dataSource</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">dataSource</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed reading WFS request for an unknown reason&#39;</span><span class="p">)</span>
@@ -1685,119 +1584,17 @@ table {
 
 <span class="sd">        subject = { &quot;geometry&quot;: &quot;SRID=28992;POINT(138034.181 452694.342)&quot;}</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-
-    <span class="k">class</span> <span class="nc">_WKTParser</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">        Private class to grab gml posList and geoType from WKT.</span>
-
-<span class="sd">        Modified from pysal which is Modified from... </span>
-
-<span class="sd">        - URL: http://dev.openlayers.org/releases/OpenLayers-2.7/lib/OpenLayers/Format/WKT.js</span>
-<span class="sd">        - Reg Ex Strings copied from OpenLayers.Format.WKT</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">regExes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;typeStr&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^\s*([\w\s]+)\s*\(\s*(.*)\s*\)\s*$&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;spaces&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\s+&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;parenComma&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\)\s*,\s*\(&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;doubleParenComma&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\)\s*\)\s*,\s*\(\s*\(&#39;</span><span class="p">),</span>  <span class="c1"># can&#39;t use {2} here</span>
-                   <span class="s1">&#39;trimParens&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^\s*\(?(.*?)\)?\s*$&#39;</span><span class="p">)}</span>
-
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;point&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Point</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;linestring&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LineString</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;polygon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Polygon</span>
-
-        <span class="k">def</span> <span class="nf">Point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
-
-        <span class="k">def</span> <span class="nf">LineString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">Polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">,</span> <span class="n">outer_ring_only</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
-            <span class="n">rings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;parenComma&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ring</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rings</span><span class="p">):</span>
-                <span class="n">ring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;trimParens&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">ring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LineString</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span>
-                <span class="n">rings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ring</span>
-                <span class="k">if</span> <span class="n">outer_ring_only</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">rings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">rings</span>
-            
-        <span class="k">def</span> <span class="nf">fromWKT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkt</span><span class="p">,</span> <span class="n">returnGeoType</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
-            <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;typeStr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">wkt</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">matches</span><span class="p">:</span>
-                <span class="n">geoType</span><span class="p">,</span> <span class="n">geoStr</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
-                <span class="n">geoType</span> <span class="o">=</span> <span class="n">geoType</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">returnGeoType</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="n">geoType</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span><span class="p">[</span><span class="n">geoType</span><span class="p">](</span><span class="n">geoStr</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span><span class="p">[</span><span class="n">geoType</span><span class="p">](</span><span class="n">geoStr</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Unsupported WKT Type: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">geoType</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">None</span>
-        
-        <span class="fm">__call__</span> <span class="o">=</span> <span class="n">fromWKT</span>
-
-    <span class="k">def</span> <span class="nf">_get_srsName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get a proper srsName for the WFS request from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-
-        <span class="n">code</span> <span class="o">=</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">return</span> <span class="s2">&quot;urn:ogc:def:crs:EPSG::</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">_get_SRID_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get the EWKT projection string from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">_get_WKT_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get a WKT geometry string from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">srid</span><span class="p">,</span> <span class="n">wkt</span> <span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Private method to get a valid EWKT geometry string from a WKT string and a EWKT SRID string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">srid</span><span class="p">,</span><span class="n">wkt</span><span class="p">])</span>
-        
+       
         
     <span class="k">def</span> <span class="nf">_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">,</span> <span class="n">distance</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        A private method which buffers the geometry with a distance</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         
-        <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
         <span class="n">ng</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">Buffer</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">ng</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="nf">_getGMLGeom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Returns a gml geometry for use in WFS spatial filtering.</span>
-<span class="sd">        </span>
-<span class="sd">        Does NOT support geometries of the MULTI type.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
-        <span class="n">_wktGeomType</span><span class="p">,</span> <span class="n">_posLists</span> <span class="o">=</span> <span class="n">_wkt</span><span class="p">(</span><span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">True</span><span class="p">)</span>
-        <span class="n">_posList</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_posLists</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;point&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Point gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:pos&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:pos&gt;&lt;/gml:Point&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;linestring&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:LineString gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:LineString&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_wktGeomType</span> <span class="o">==</span> <span class="s2">&quot;polygon&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;&#39;&lt;gml:Polygon gml:id=&quot;P1&quot; srsName=&quot;</span><span class="si">%s</span><span class="s1">&quot;&gt;&lt;gml:exterior&gt;&lt;gml:LinearRing&gt;&lt;gml:posList&gt;</span><span class="si">%s</span><span class="s1">&lt;/gml:posList&gt;&lt;/gml:LinearRing&gt;&lt;/gml:exterior&gt;&lt;/gml:Polygon&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_srsName</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span> <span class="n">_posList</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">ng</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">_getFeature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1932,7 +1729,6 @@ table {
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 
-                <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span> 
                 <span class="n">dataSource</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">dataSource</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed reading WFS request for an unknown reason&#39;</span><span class="p">)</span>
@@ -2087,7 +1883,6 @@ table {
             <span class="n">gml_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span><span class="s2">&quot;response.gml&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-            <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span> 
             <span class="n">dataSource</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">gml_file</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">dataSource</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Failed reading WFS request for an unknown reason&#39;</span><span class="p">)</span>

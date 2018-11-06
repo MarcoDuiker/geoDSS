@@ -1057,6 +1057,7 @@ table {
         <li class="mono"><a href="rss.m.html">geoDSS.tests.rss</a></li>
         <li class="mono"><a href="test.m.html">geoDSS.tests.test</a></li>
         <li class="mono"><a href="unit_test.m.html">geoDSS.tests.unit_test</a></li>
+        <li class="mono"><a href="utils/index.html">geoDSS.tests.utils</a></li>
         <li class="mono"><a href="wfs2_SpatialOperator.m.html">geoDSS.tests.wfs2_SpatialOperator</a></li>
       </ul>
     </li>
@@ -1122,22 +1123,22 @@ In real life more parameters will be present in a subject.</p>
 <span class="c1"># then try to import other tests as well; skip a test if import fails.</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">..tests</span> <span class="kn">import</span> <span class="n">postgis_spatial_select</span>
-<span class="k">except</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">..tests</span> <span class="kn">import</span> <span class="n">rss</span>
-<span class="k">except</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">..tests</span> <span class="kn">import</span> <span class="n">wfs2_SpatialOperator</span>
-<span class="k">except</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
     
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">..tests</span> <span class="kn">import</span> <span class="n">pdf</span>
-<span class="k">except</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
     
 <span class="c1"># and as long as we are developing we try the import here to prevent exceptions being caught.</span>
@@ -1208,6 +1209,12 @@ In real life more parameters will be present in a subject.</p>
       </div>
       <div class="item">
       <p class="name"><a href="unit_test.m.html">geoDSS.tests.unit_test</a></p>
+      
+  
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="utils/index.html">geoDSS.tests.utils</a></p>
       
   
 

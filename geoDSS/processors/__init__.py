@@ -31,22 +31,22 @@ from ..processors import    alter_key, \
 # then try to import other processors as well; skip a processor if import fails.
 try:
     from ..processors import alter_key_xpath
-except:
+except ImportError:
     pass
 
 try:
     from ..processors import postgis_processing
-except:
+except ImportError:
     pass
 
 try:
     from ..processors import postgis_unit_test
-except:
+except ImportError:
     pass
 
 try:
     from ..processors import ogr_processing
-except:
+except ImportError:
     pass
 
 # and as long as we are developing we try the import here to prevent exceptions being caught.

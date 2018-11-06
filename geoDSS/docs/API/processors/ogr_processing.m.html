@@ -1084,10 +1084,12 @@ table {
     <span class="k">pass</span>
 
 <span class="kn">from</span> <span class="nn">..processors.processor</span> <span class="kn">import</span> <span class="n">processor</span>
+<span class="kn">from</span> <span class="nn">..processors.processor</span> <span class="kn">import</span> <span class="n">utils</span>
 
 <span class="k">class</span> <span class="nc">ogr_processing</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This processor does basic ogr processing like Buffer or Area.</span>
+<span class="sd">    Available functions are listed here: `https://gdal.org/python/osgeo.ogr.Geometry-class.html`.</span>
 <span class="sd">    </span>
 <span class="sd">    Dependencies</span>
 <span class="sd">    ------------</span>
@@ -1099,7 +1101,9 @@ table {
 
 <span class="sd">    `definition` is expected to be a dict having:</span>
 
-<span class="sd">    `processor` (string):                 one of the ogr processing tools like Buffer, or Area </span>
+<span class="sd">    `processor` (string):                 one of the ogr processing tools like Buffer, or Area. </span>
+<span class="sd">                                          You can use any function which operates on a geometry.</span>
+<span class="sd">                                          These functions are listed on: `https://gdal.org/python/osgeo.ogr.Geometry-class.html`.</span>
 
 <span class="sd">    `parameters` (list):                  the parameters which are taken by the processor;</span>
 <span class="sd">                                          If a key available in the subject is specified, the value will be taken from that key.</span>
@@ -1125,34 +1129,6 @@ table {
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">_get_srsName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get a proper srsName for the WFS request from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-
-        <span class="n">code</span> <span class="o">=</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">return</span> <span class="s2">&quot;urn:ogc:def:crs:EPSG::</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">_get_SRID_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get the EWKT projection string from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">_get_WKT_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get a WKT geometry string from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">srid</span><span class="p">,</span> <span class="n">wkt</span> <span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Private method to get a valid EWKT geometry string from a WKT string and a EWKT SRID string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">srid</span><span class="p">,</span><span class="n">wkt</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
@@ -1175,7 +1151,7 @@ table {
 
         <span class="n">ewkt</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not create ogr geometry from subject: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1184,14 +1160,14 @@ table {
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;ogr doesn&#39;t know the processor: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;processor&#39;</span><span class="p">])</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">processor_to_call</span><span class="p">(</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">processor_to_call</span><span class="p">(</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>  <span class="c1"># we might be more flexible using an eval(expression)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;ogr error during processing: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span><span class="n">ogr</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">result</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">ogr</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">result</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
             <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;result_key&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">result</span>
             
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]:</span>
@@ -1214,14 +1190,17 @@ table {
       <p id="geoDSS.processors.ogr_processing.ogr_processing" class="name">class <span class="ident">ogr_processing</span></p>
       
   
-    <div class="desc"><p>This processor does basic ogr processing like Buffer or Area.</p>
+    <div class="desc"><p>This processor does basic ogr processing like Buffer or Area.
+Available functions are listed here: <code>https://gdal.org/python/osgeo.ogr.Geometry-class.html</code>.</p>
 <h2>Dependencies</h2>
 <ul>
 <li>osgeo</li>
 </ul>
 <h2>Definition</h2>
 <p><code>definition</code> is expected to be a dict having:</p>
-<p><code>processor</code> (string):                 one of the ogr processing tools like Buffer, or Area </p>
+<p><code>processor</code> (string):                 one of the ogr processing tools like Buffer, or Area. 
+                                      You can use any function which operates on a geometry.
+                                      These functions are listed on: <code>https://gdal.org/python/osgeo.ogr.Geometry-class.html</code>.</p>
 <p><code>parameters</code> (list):                  the parameters which are taken by the processor;
                                       If a key available in the subject is specified, the value will be taken from that key.
                                       The processor always works on the subjects geometry.</p>
@@ -1246,6 +1225,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ogr_processing</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This processor does basic ogr processing like Buffer or Area.</span>
+<span class="sd">    Available functions are listed here: `https://gdal.org/python/osgeo.ogr.Geometry-class.html`.</span>
 <span class="sd">    </span>
 <span class="sd">    Dependencies</span>
 <span class="sd">    ------------</span>
@@ -1257,7 +1237,9 @@ table {
 
 <span class="sd">    `definition` is expected to be a dict having:</span>
 
-<span class="sd">    `processor` (string):                 one of the ogr processing tools like Buffer, or Area </span>
+<span class="sd">    `processor` (string):                 one of the ogr processing tools like Buffer, or Area. </span>
+<span class="sd">                                          You can use any function which operates on a geometry.</span>
+<span class="sd">                                          These functions are listed on: `https://gdal.org/python/osgeo.ogr.Geometry-class.html`.</span>
 
 <span class="sd">    `parameters` (list):                  the parameters which are taken by the processor;</span>
 <span class="sd">                                          If a key available in the subject is specified, the value will be taken from that key.</span>
@@ -1283,34 +1265,6 @@ table {
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">_get_srsName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get a proper srsName for the WFS request from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-
-        <span class="n">code</span> <span class="o">=</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">return</span> <span class="s2">&quot;urn:ogc:def:crs:EPSG::</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">_get_SRID_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get the EWKT projection string from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">_get_WKT_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewkt</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        A private method to get a WKT geometry string from an EWKT string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="n">ewkt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">srid</span><span class="p">,</span> <span class="n">wkt</span> <span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Private method to get a valid EWKT geometry string from a WKT string and a EWKT SRID string</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="k">return</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">srid</span><span class="p">,</span><span class="n">wkt</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
@@ -1333,7 +1287,7 @@ table {
 
         <span class="n">ewkt</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not create ogr geometry from subject: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1342,14 +1296,14 @@ table {
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;ogr doesn&#39;t know the processor: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;processor&#39;</span><span class="p">])</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">processor_to_call</span><span class="p">(</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">processor_to_call</span><span class="p">(</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>  <span class="c1"># we might be more flexible using an eval(expression)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;ogr error during processing: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span><span class="n">ogr</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">result</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">ogr</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">result</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
             <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;result_key&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">result</span>
             
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]:</span>
@@ -1435,7 +1389,7 @@ table {
             <span class="n">parameters</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
     <span class="n">ewkt</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">CreateGeometryFromWkt</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_get_WKT_geometry</span><span class="p">(</span><span class="n">ewkt</span><span class="p">))</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Could not create ogr geometry from subject: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1443,13 +1397,13 @@ table {
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;ogr doesn&#39;t know the processor: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;processor&#39;</span><span class="p">])</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">processor_to_call</span><span class="p">(</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">processor_to_call</span><span class="p">(</span><span class="o">*</span><span class="n">parameters</span><span class="p">)</span>  <span class="c1"># we might be more flexible using an eval(expression)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_execution_exception</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;ogr error during processing: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span><span class="n">ogr</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">result</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">ogr</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_EWKT_from_WKT</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_get_SRID_string</span><span class="p">(</span><span class="n">ewkt</span><span class="p">),</span><span class="n">result</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
         <span class="n">subject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s1">&#39;result_key&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">result</span>
         
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">[</span><span class="s2">&quot;report_template&quot;</span><span class="p">]:</span>

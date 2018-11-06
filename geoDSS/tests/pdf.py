@@ -19,15 +19,18 @@ except ImportError:
     from urllib.parse import urlencode
 
 # test if pdfbox is available
-found = False
-jars = glob.glob(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    '../libs/pdfbox/*.jar')))
+found_mapbox_app = False
+libfolder = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                         '../libs/pdfbox/'))
+jars = glob.glob(os.path.join(libfolder,'*.jar'))
 for jar in jars:
     if 'pdfbox-app' in jar:
-        found = True
+        found_mapbox_app = True
         pdfbox = os.path.abspath(jar)
-if not found:
-    raise Exception()
+del jar
+if not found_mapbox_app:
+    raise ImportError('pdfbox-app not found in: ' + libfolder)
+        
 
 try:
     from fuzzywuzzy import fuzz 

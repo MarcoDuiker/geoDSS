@@ -1,0 +1,16 @@
+# a simple rule set demonstrating the 'alter_string' processor
+name: ogr_processing
+title: Test the ogr_processing processor
+description: "Test by buffering a geometry"
+logging:
+  level: DEBUG
+rules:
+- buffer:
+    type: processors.ogr_processing
+    title: buffer geometry
+    description: ""
+    processor: Buffer
+    parameters: 
+    - 100
+    result_key: buffered_geometry
+    report_template: "Buffer result: {result}"

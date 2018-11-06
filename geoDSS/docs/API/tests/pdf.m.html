@@ -1043,9 +1043,9 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
-    <li class="mono"><a href="#geoDSS.tests.pdf.found">found</a></li>
-    <li class="mono"><a href="#geoDSS.tests.pdf.jar">jar</a></li>
+    <li class="mono"><a href="#geoDSS.tests.pdf.found_mapbox_app">found_mapbox_app</a></li>
     <li class="mono"><a href="#geoDSS.tests.pdf.jars">jars</a></li>
+    <li class="mono"><a href="#geoDSS.tests.pdf.libfolder">libfolder</a></li>
     <li class="mono"><a href="#geoDSS.tests.pdf.pdfbox">pdfbox</a></li>
   </ul>
 
@@ -1104,15 +1104,18 @@ table {
     <span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlencode</span>
 
 <span class="c1"># test if pdfbox is available</span>
-<span class="n">found</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="n">jars</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
-    <span class="s1">&#39;../libs/pdfbox/*.jar&#39;</span><span class="p">)))</span>
+<span class="n">found_mapbox_app</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">libfolder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
+                                         <span class="s1">&#39;../libs/pdfbox/&#39;</span><span class="p">))</span>
+<span class="n">jars</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">libfolder</span><span class="p">,</span><span class="s1">&#39;*.jar&#39;</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">jar</span> <span class="ow">in</span> <span class="n">jars</span><span class="p">:</span>
     <span class="k">if</span> <span class="s1">&#39;pdfbox-app&#39;</span> <span class="ow">in</span> <span class="n">jar</span><span class="p">:</span>
-        <span class="n">found</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">found_mapbox_app</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">pdfbox</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">jar</span><span class="p">)</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">()</span>
+<span class="k">del</span> <span class="n">jar</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">found_mapbox_app</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;pdfbox-app not found in: &#39;</span> <span class="o">+</span> <span class="n">libfolder</span><span class="p">)</span>
+        
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">fuzzywuzzy</span> <span class="kn">import</span> <span class="n">fuzz</span> 
@@ -1363,15 +1366,7 @@ table {
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p id="geoDSS.tests.pdf.found" class="name">var <span class="ident">found</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="geoDSS.tests.pdf.jar" class="name">var <span class="ident">jar</span></p>
+      <p id="geoDSS.tests.pdf.found_mapbox_app" class="name">var <span class="ident">found_mapbox_app</span></p>
       
   
   <div class="source_cont">
@@ -1380,6 +1375,14 @@ table {
       </div>
       <div class="item">
       <p id="geoDSS.tests.pdf.jars" class="name">var <span class="ident">jars</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="geoDSS.tests.pdf.libfolder" class="name">var <span class="ident">libfolder</span></p>
       
   
   <div class="source_cont">

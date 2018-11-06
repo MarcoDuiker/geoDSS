@@ -1087,7 +1087,7 @@ table {
     <span class="k">pass</span>
 
 <span class="kn">from</span> <span class="nn">..processors.processor</span> <span class="kn">import</span> <span class="n">processor</span>
-
+<span class="kn">from</span> <span class="nn">..processors.processor</span> <span class="kn">import</span> <span class="n">utils</span>
 
 <span class="k">class</span> <span class="nc">pdok_locatieserver</span><span class="p">(</span><span class="n">processor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
@@ -1141,60 +1141,6 @@ table {
 <span class="sd">        subject = &#39;{&quot;postcode&quot;: &quot;4171KG&quot;, &quot;huisnummer&quot;: &quot;74&quot;}&#39;</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">class</span> <span class="nc">_WKTParser</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Private class to grab gml posList and geoType from WKT.</span>
-
-<span class="sd">        Modified from pysal which is Modified from...</span>
-
-<span class="sd">        - URL: http://dev.openlayers.org/releases/OpenLayers-2.7/lib/OpenLayers/Format/WKT.js</span>
-<span class="sd">        - Reg Ex Strings copied from OpenLayers.Format.WKT</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">regExes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;typeStr&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^\s*([\w\s]+)\s*\(\s*(.*)\s*\)\s*$&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;spaces&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\s+&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;parenComma&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\)\s*,\s*\(&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;doubleParenComma&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\)\s*\)\s*,\s*\(\s*\(&#39;</span><span class="p">),</span>  <span class="c1"># can&#39;t use {2} here</span>
-                   <span class="s1">&#39;trimParens&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^\s*\(?(.*?)\)?\s*$&#39;</span><span class="p">)}</span>
-
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;point&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Point</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;linestring&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LineString</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;polygon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Polygon</span>
-
-        <span class="k">def</span> <span class="nf">Point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
-
-        <span class="k">def</span> <span class="nf">LineString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">Polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">,</span> <span class="n">outer_ring_only</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-            <span class="n">rings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;parenComma&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ring</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rings</span><span class="p">):</span>
-                <span class="n">ring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;trimParens&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">ring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LineString</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span>
-                <span class="n">rings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ring</span>
-                <span class="k">if</span> <span class="n">outer_ring_only</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">rings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">rings</span>
-
-        <span class="k">def</span> <span class="nf">fromWKT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkt</span><span class="p">,</span> <span class="n">returnGeoType</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-            <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;typeStr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">wkt</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">matches</span><span class="p">:</span>
-                <span class="n">geoType</span><span class="p">,</span> <span class="n">geoStr</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
-                <span class="n">geoType</span> <span class="o">=</span> <span class="n">geoType</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">returnGeoType</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="n">geoType</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span><span class="p">[</span><span class="n">geoType</span><span class="p">](</span><span class="n">geoStr</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span><span class="p">[</span><span class="n">geoType</span><span class="p">](</span><span class="n">geoStr</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Unsupported WKT Type: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">geoType</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">None</span>
-
-        <span class="fm">__call__</span> <span class="o">=</span> <span class="n">fromWKT</span>
 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1231,7 +1177,7 @@ table {
                         <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>                   <span class="c1"># workaround for old requests libraries</span>
                     <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="s2">&quot;numFound&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="n">doc</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="s2">&quot;docs&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
+                        <span class="n">_wkt</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
                         <span class="n">_posLists</span> <span class="o">=</span> <span class="n">_wkt</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;centroide_rd&quot;</span><span class="p">])</span>
                         <span class="n">XY</span> <span class="o">=</span> <span class="n">_posLists</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                         <span class="k">if</span> <span class="n">XY</span><span class="p">:</span>
@@ -1370,60 +1316,6 @@ This geocoder takes the first hit as a result.</p>
 <span class="sd">        subject = &#39;{&quot;postcode&quot;: &quot;4171KG&quot;, &quot;huisnummer&quot;: &quot;74&quot;}&#39;</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">class</span> <span class="nc">_WKTParser</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Private class to grab gml posList and geoType from WKT.</span>
-
-<span class="sd">        Modified from pysal which is Modified from...</span>
-
-<span class="sd">        - URL: http://dev.openlayers.org/releases/OpenLayers-2.7/lib/OpenLayers/Format/WKT.js</span>
-<span class="sd">        - Reg Ex Strings copied from OpenLayers.Format.WKT</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">regExes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;typeStr&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^\s*([\w\s]+)\s*\(\s*(.*)\s*\)\s*$&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;spaces&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\s+&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;parenComma&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\)\s*,\s*\(&#39;</span><span class="p">),</span>
-                   <span class="s1">&#39;doubleParenComma&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;\)\s*\)\s*,\s*\(\s*\(&#39;</span><span class="p">),</span>  <span class="c1"># can&#39;t use {2} here</span>
-                   <span class="s1">&#39;trimParens&#39;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^\s*\(?(.*?)\)?\s*$&#39;</span><span class="p">)}</span>
-
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;point&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Point</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;linestring&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LineString</span>
-            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;polygon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Polygon</span>
-
-        <span class="k">def</span> <span class="nf">Point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
-
-        <span class="k">def</span> <span class="nf">LineString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">Polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geoStr</span><span class="p">,</span> <span class="n">outer_ring_only</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-            <span class="n">rings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;parenComma&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">geoStr</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ring</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rings</span><span class="p">):</span>
-                <span class="n">ring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;trimParens&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">ring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LineString</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span>
-                <span class="n">rings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ring</span>
-                <span class="k">if</span> <span class="n">outer_ring_only</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">rings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">rings</span>
-
-        <span class="k">def</span> <span class="nf">fromWKT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkt</span><span class="p">,</span> <span class="n">returnGeoType</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-            <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regExes</span><span class="p">[</span><span class="s1">&#39;typeStr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">wkt</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">matches</span><span class="p">:</span>
-                <span class="n">geoType</span><span class="p">,</span> <span class="n">geoStr</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
-                <span class="n">geoType</span> <span class="o">=</span> <span class="n">geoType</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">returnGeoType</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="n">geoType</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span><span class="p">[</span><span class="n">geoType</span><span class="p">](</span><span class="n">geoStr</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span><span class="p">[</span><span class="n">geoType</span><span class="p">](</span><span class="n">geoStr</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Unsupported WKT Type: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">geoType</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">None</span>
-
-        <span class="fm">__call__</span> <span class="o">=</span> <span class="n">fromWKT</span>
 
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1460,7 +1352,7 @@ This geocoder takes the first hit as a result.</p>
                         <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>                   <span class="c1"># workaround for old requests libraries</span>
                     <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="s2">&quot;numFound&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="n">doc</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="s2">&quot;docs&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
+                        <span class="n">_wkt</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
                         <span class="n">_posLists</span> <span class="o">=</span> <span class="n">_wkt</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;centroide_rd&quot;</span><span class="p">])</span>
                         <span class="n">XY</span> <span class="o">=</span> <span class="n">_posLists</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                         <span class="k">if</span> <span class="n">XY</span><span class="p">:</span>
@@ -1592,7 +1484,7 @@ This geocoder takes the first hit as a result.</p>
                     <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>                   <span class="c1"># workaround for old requests libraries</span>
                 <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="s2">&quot;numFound&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">doc</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="s2">&quot;docs&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
+                    <span class="n">_wkt</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">_WKTParser</span><span class="p">()</span>
                     <span class="n">_posLists</span> <span class="o">=</span> <span class="n">_wkt</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;centroide_rd&quot;</span><span class="p">])</span>
                     <span class="n">XY</span> <span class="o">=</span> <span class="n">_posLists</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                     <span class="k">if</span> <span class="n">XY</span><span class="p">:</span>
