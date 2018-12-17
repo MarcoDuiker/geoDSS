@@ -165,8 +165,8 @@ class rss(test):
         if url in subject:
             url = subject[url]
         for key in subject.keys():
-            if "{%s}" % subject[key] in url:
-                url = url.replace("{%s}" % subject[key],subject[key])
+            if "{%s}" % key in url:
+                url = url.replace("{%s}" % key,subject[key])
 
         auth = None
         verify = True
@@ -272,15 +272,22 @@ class rss(test):
                 self.decision = True
 
         if self.decision:
-            for rss_entry, score in rss_entries:
+            if rss_entries:
+                for rss_entry, score in rss_entries:
+                    result = self.definition["report_template"].replace(
+                        '{status_code}', str(response.status_code)).replace(
+                        '{response_time}', str(response.elapsed.total_seconds())).replace(
+                        '{timestamp}', datetime.datetime.now().isoformat()).replace(
+                        '{score}', str(score))
+                    for item in rss_entry.keys():
+                        if '{%s}' % item in result:
+                            result = result.replace('{%s}' % item, rss_entry[item])
+                    self.result.append(result)
+            else:
                 result = self.definition["report_template"].replace(
-                    '{status_code}', str(response.status_code)).replace(
-                    '{response_time}', str(response.elapsed.total_seconds())).replace(
-                    '{timestamp}', datetime.datetime.now().isoformat()).replace(
-                    '{score}', str(score))
-                for item in rss_entry.keys():
-                    if '{%s}' % item in result:
-                        result = result.replace('{%s}' % item, rss_entry[item])
+                        '{status_code}', str(response.status_code)).replace(
+                        '{response_time}', str(response.elapsed.total_seconds())).replace(
+                        '{timestamp}', datetime.datetime.now().isoformat())
                 self.result.append(result)
 
         if 'return_subject_key' in self.definition:

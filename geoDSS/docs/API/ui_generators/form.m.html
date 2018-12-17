@@ -1189,7 +1189,7 @@ An optional template can be passed, in which the the form fields will be embedde
 <span class="sd">        &lt;h1&gt;%title%&lt;/h1&gt;</span>
 <span class="sd">        &lt;p class=&#39;geoDSS&#39;&gt;&lt;em class=&#39;geoDSS&#39;&gt;%description%&lt;/em&gt;&lt;/p&gt;</span>
 <span class="sd">        &lt;h2&gt;%subtitle%&lt;/h2&gt;</span>
-<span class="sd">        &lt;form id=&#39;geoDSS&#39; onsubmit=&quot;submit_form(this)&quot;&gt;</span>
+<span class="sd">        &lt;form id=&#39;geoDSS&#39; onsubmit=&quot;submit_form(this); return false;&quot;&gt;</span>
 <span class="sd">            %generated_form_fields%</span>
 <span class="sd">            &lt;div class=&#39;button&#39;&gt;</span>
 <span class="sd">                &lt;input type=&quot;button&quot; onClick=&quot;submit_form(this.parentNode.parentNode); return false;&quot; value=&quot;Verwerk&quot; &gt;&lt;/input&gt;</span>
@@ -1332,7 +1332,7 @@ the form as a subject to a rule_set.</p>
 <div class="codehilite"><pre><span></span><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="nf">%title</span><span class="o">%&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">p</span> <span class="n">class</span><span class="o">=</span><span class="err">&#39;</span><span class="n">geoDSS</span><span class="err">&#39;</span><span class="o">&gt;&lt;</span><span class="n">em</span> <span class="n">class</span><span class="o">=</span><span class="err">&#39;</span><span class="n">geoDSS</span><span class="err">&#39;</span><span class="o">&gt;</span><span class="nf">%description</span><span class="o">%&lt;/</span><span class="n">em</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">h2</span><span class="o">&gt;</span><span class="nf">%subtitle</span><span class="o">%&lt;/</span><span class="n">h2</span><span class="o">&gt;</span>
-<span class="o">&lt;</span><span class="n">form</span> <span class="n">id</span><span class="o">=</span><span class="err">&#39;</span><span class="n">geoDSS</span><span class="err">&#39;</span> <span class="n">onsubmit</span><span class="o">=</span><span class="s">&quot;submit_form(this)&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">form</span> <span class="n">id</span><span class="o">=</span><span class="err">&#39;</span><span class="n">geoDSS</span><span class="err">&#39;</span> <span class="n">onsubmit</span><span class="o">=</span><span class="s">&quot;submit_form(this); return false;&quot;</span><span class="o">&gt;</span>
     <span class="nf">%generated_form_fields</span><span class="o">%</span>
     <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="err">&#39;</span><span class="n">button</span><span class="err">&#39;</span><span class="o">&gt;</span>
         <span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;button&quot;</span> <span class="n">onClick</span><span class="o">=</span><span class="s">&quot;submit_form(this.parentNode.parentNode); return false;&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;Verwerk&quot;</span> <span class="o">&gt;&lt;/</span><span class="n">input</span><span class="o">&gt;</span>
@@ -1431,7 +1431,7 @@ the form as a subject to a rule_set.</p>
 <span class="sd">        &lt;h1&gt;%title%&lt;/h1&gt;</span>
 <span class="sd">        &lt;p class=&#39;geoDSS&#39;&gt;&lt;em class=&#39;geoDSS&#39;&gt;%description%&lt;/em&gt;&lt;/p&gt;</span>
 <span class="sd">        &lt;h2&gt;%subtitle%&lt;/h2&gt;</span>
-<span class="sd">        &lt;form id=&#39;geoDSS&#39; onsubmit=&quot;submit_form(this)&quot;&gt;</span>
+<span class="sd">        &lt;form id=&#39;geoDSS&#39; onsubmit=&quot;submit_form(this); return false;&quot;&gt;</span>
 <span class="sd">            %generated_form_fields%</span>
 <span class="sd">            &lt;div class=&#39;button&#39;&gt;</span>
 <span class="sd">                &lt;input type=&quot;button&quot; onClick=&quot;submit_form(this.parentNode.parentNode); return false;&quot; value=&quot;Verwerk&quot; &gt;&lt;/input&gt;</span>

@@ -117,7 +117,7 @@ def generate(form_yaml, template=None, prefix='%', postfix='%'):
         <h1>%title%</h1>
         <p class='geoDSS'><em class='geoDSS'>%description%</em></p>
         <h2>%subtitle%</h2>
-        <form id='geoDSS' onsubmit="submit_form(this)">
+        <form id='geoDSS' onsubmit="submit_form(this); return false;">
             %generated_form_fields%
             <div class='button'>
                 <input type="button" onClick="submit_form(this.parentNode.parentNode); return false;" value="Verwerk" ></input>
